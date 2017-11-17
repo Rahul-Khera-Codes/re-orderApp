@@ -1,14 +1,26 @@
 <ion-header>
-  <ion-navbar>
-    <ion-title>
-      Ionic Blank
-    </ion-title>
-  </ion-navbar>
+    <ion-navbar color="primary">
+        <ion-title>
+            Home Page
+        </ion-title>
+    </ion-navbar>
 </ion-header>
 
 <ion-content padding>
-  The world is your oyster.
-  <p>
-    If you get lost, the <a href="http://ionicframework.com/docs/v2">docs</a> will be your guide.
-  </p>
+    <ion-list>
+        <ion-item *ngIf="consignment && consignment.length >1">
+            <ion-label>List</ion-label>
+            <ion-select  [(ngModel)]="consignmentList" (ngModelChange)="selectedConsignment()" placeholder="Select">
+                <ion-option [value]="list" *ngFor="let list of consignment">{{list.product}}</ion-option>
+            </ion-select>
+        </ion-item>
+        <ion-item *ngIf="consignment && consignment.length == 1">
+            <ion-label color="textLable" text-left>List</ion-label>
+            <ion-label text-right>{{consignment[0].product}}</ion-label>
+        </ion-item>
+    </ion-list>
+    <ion-item>
+        <ion-label color="primary">Enter ID</ion-label>
+        <ion-input placeholder="ID"></ion-input>
+    </ion-item>
 </ion-content>
