@@ -12,7 +12,7 @@ export class LoginPage {
     private loginform: FormGroup;
     login = "custom";
     barcodeData: object;
-    err:string;
+    err: string;
     constructor(private barcodeScanner: BarcodeScanner, public navCtrl: NavController, public navParams: NavParams, private formBuilder: FormBuilder) {
         this.loginform = this.formBuilder.group({
             password: ['', Validators.compose([Validators.required, Validators.minLength(6)])],
@@ -21,10 +21,8 @@ export class LoginPage {
     }
 
     ionViewDidLoad() {
-        console.log('ionViewDidLoad LoginPage');
     }
     signin(formData) {
-        console.log("formData", formData)
         this.navCtrl.setRoot(HomePage);
     }
     openBarCode() {

@@ -1,0 +1,57 @@
+
+<ion-header>
+
+    <ion-navbar color="primary">
+        <ion-title>consignmentIn</ion-title>
+    </ion-navbar>
+
+</ion-header>
+
+
+<ion-content padding>
+    <ion-list>
+        <ion-item *ngIf="consignment && consignment.length == 1">
+            <ion-label color="textLable" text-left>List</ion-label>
+            <ion-label text-right>{{consignment[0].product}}</ion-label>
+        </ion-item>
+
+        <ion-item>
+            <ion-label color="primary">Enter ID</ion-label>
+            <ion-input placeholder="ID" [(ngModel)]="textID"></ion-input>
+        </ion-item>
+        <ion-grid padding-top>
+            <ion-row>
+                <ion-col col-6>
+                    <button ion-button full color="secondary"  (click)="buttonClick()">Submit Id</button>
+                </ion-col>
+                <ion-col col-6>
+                    <button ion-button  full  (click)="openBarCode()">Scan Id</button>
+                </ion-col>
+            </ion-row>
+        </ion-grid>
+        <div *ngIf="(barcodeData && barcodeData.format) || myInputEnable">
+            <ion-searchbar
+                [(ngModel)]="myInput"
+                [showCancelButton]="shouldShowCancel"
+                (ionInput)="searchProduct($event)"
+                (ionCancel)="onSearchCancel($event)">
+            </ion-searchbar>
+            <div padding text-center *ngIf="products && products.length==0">
+                 <ion-badge color="danger"> Not found </ion-badge>
+            </div>
+            <ion-grid  *ngIf="products && products.length">
+                <ion-row text-uppercase>
+                    <ion-col col-3>Sno.</ion-col>
+                    <ion-col col-6>Produt Name</ion-col>
+                    <ion-col col-3>Qty</ion-col>
+                </ion-row>
+                <ion-row *ngFor="let product of products; let i=index" class="gray" text-capitalize>
+                    <ion-col col-3>{{i+1}}</ion-col>
+                    <ion-col col-6>{{product.name}}</ion-col>
+                    <ion-col col-3><input type="text" class="qtyBox" [(ngModel)]="product.qty" ></ion-col>
+                </ion-row>
+            </ion-grid>
+            <button ion-button full margin-top  (click)="addItemByBarcode()">Scan Product</button>
+        </div>
+    </ion-list>
+</ion-content>
