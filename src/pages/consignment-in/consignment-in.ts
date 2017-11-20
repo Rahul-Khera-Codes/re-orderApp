@@ -2,13 +2,7 @@ import {Component} from '@angular/core';
 import {NavController, NavParams} from 'ionic-angular';
 import {BarcodeScanner} from '@ionic-native/barcode-scanner';
 import {AlertController} from 'ionic-angular';
-/**
- * Generated class for the ConsignmentInPage page.
- *
- * See https://ionicframework.com/docs/components/#navigation for more info on
- * Ionic pages and navigation.
- */
-
+import {ApiServiceProvider} from '../../providers/api-service/api-service';
 @Component({
     selector: 'page-consignment-in',
     templateUrl: 'consignment-in.html',
@@ -19,27 +13,17 @@ export class ConsignmentInPage {
     myInput;
     myInputEnable: boolean = false;
     textID;
-    products = [
-        {
-            "id": 1,
-            "name": "product1",
-            "qty": 1
-        }, {
-            "id": 2,
-            "name": "product2",
-            "qty": 1
-        }, {
-            "id": 3,
-            "name": "product3",
-            "qty": 1
-        }, {
-            "id": 4,
-            "name": "product4",
-            "qty": 1
+    products: any;
+    productsRef: any;
+    selectedConsignment: any;
+    constructor(private _apiProvider: ApiServiceProvider, public alertCtrl: AlertController, private barcodeScanner: BarcodeScanner, public navCtrl: NavController, public navParams: NavParams) {
+        this.selectedConsignment = this.navParams.get('selectedConsignment');
+        if (this.selectedConsignment) {
+            this._apiProvider.apiCall("productList.json").subscribe(productList => {
+                this.products = productList['products'];
+                this.productsRef = productList['products'];
+            })
         }
-    ];
-    productsRef: any = this.products;
-    constructor(public alertCtrl: AlertController,private barcodeScanner: BarcodeScanner, public navCtrl: NavController, public navParams: NavParams) {
     }
 
     ionViewDidLoad() {
@@ -47,6 +31,8 @@ export class ConsignmentInPage {
     buttonClick() {
         if (this.textID && this.textID.length) {
             this.myInputEnable = true;
+        } else {
+            this.myInputEnable = false;
         }
     }
     openBarCode() {
@@ -61,8 +47,8 @@ export class ConsignmentInPage {
     addItemByBarcode() {
         this.barcodeScanner.scan().then((barcodeData) => {
             let prompt = this.alertCtrl.create({
-                title: 'Quentity',
-                message: "Enter a quentity for this product you're so keen on adding",
+                title: 'Quantity',
+                message: "Enter a quantity for this product you're so keen on adding",
                 inputs: [
                     {
                         name: 'qty',

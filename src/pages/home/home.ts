@@ -1,5 +1,5 @@
 import {Component} from '@angular/core';
-import {NavController} from 'ionic-angular';
+import {NavController, NavParams} from 'ionic-angular';
 import {ConsignmentInPage} from '../consignment-in/consignment-in';
 @Component({
     selector: 'page-home',
@@ -7,30 +7,11 @@ import {ConsignmentInPage} from '../consignment-in/consignment-in';
 })
 export class HomePage {
     private consignmentList: object | null;
-    consignment = [
-        {
-            "id": 1,
-            "product": "Consignment1",
-        }, {
-            "id": 2,
-            "product": "Consignment2",
-        }, {
-            "id": 3,
-            "product": "Consignment3",
-        }, {
-            "id": 4,
-            "product": "Consignment4",
-        }
-    ]
-
-
-    constructor(public navCtrl: NavController) {
-        if (this.consignment && this.consignment.length == 1) {
-            this.consignmentList = this.consignment[0];
-        }
+    constructor(public navParams: NavParams, public navCtrl: NavController) {
+        this.consignmentList = this.navParams.get('consignmentList')['consignment'];
     }
-    itemSelected(data) {
-        this.navCtrl.push(ConsignmentInPage);
+    itemSelected(selectedConsignment) {
+        this.navCtrl.push(ConsignmentInPage,{"selectedConsignment":selectedConsignment});
     }
 
 }

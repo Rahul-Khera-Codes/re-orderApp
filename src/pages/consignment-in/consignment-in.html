@@ -2,7 +2,7 @@
 <ion-header>
 
     <ion-navbar color="primary">
-        <ion-title>consignmentIn</ion-title>
+        <ion-title></ion-title>
     </ion-navbar>
 
 </ion-header>
@@ -10,11 +10,6 @@
 
 <ion-content padding>
     <ion-list>
-        <ion-item *ngIf="consignment && consignment.length == 1">
-            <ion-label color="textLable" text-left>List</ion-label>
-            <ion-label text-right>{{consignment[0].product}}</ion-label>
-        </ion-item>
-
         <ion-item>
             <ion-label color="primary">Enter ID</ion-label>
             <ion-input placeholder="ID" [(ngModel)]="textID"></ion-input>

@@ -1,7 +1,7 @@
 {
-    "name": "re-orderApp",
+    "name": "ReOrder App",
     "version": "0.0.1",
-    "author": "Ionic Framework",
+    "author": "Ron Kidd",
     "homepage": "http://ionicframework.com/",
     "private": true,
     "scripts": {

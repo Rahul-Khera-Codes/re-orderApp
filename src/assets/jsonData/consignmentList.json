@@ -1,0 +1,17 @@
+{
+    "consignment": [
+        {
+            "id": 1,
+            "name": "Consignment1"
+        }, {
+            "id": 2,
+            "name": "Consignment2"
+        }, {
+            "id": 3,
+            "name": "Consignment3"
+        }, {
+            "id": 4,
+            "name": "Consignment4"
+        }
+    ]
+}
