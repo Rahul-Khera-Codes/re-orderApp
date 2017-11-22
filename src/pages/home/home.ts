@@ -1,14 +1,17 @@
-import { Component } from '@angular/core';
-import { NavController } from 'ionic-angular';
-
+import {Component} from '@angular/core';
+import {NavController, NavParams} from 'ionic-angular';
+import {ConsignmentInPage} from '../consignment-in/consignment-in';
 @Component({
-  selector: 'page-home',
-  templateUrl: 'home.html'
+    selector: 'page-home',
+    templateUrl: 'home.html'
 })
 export class HomePage {
-
-  constructor(public navCtrl: NavController) {
-
-  }
+    private consignmentList: object | null;
+    constructor(public navParams: NavParams, public navCtrl: NavController) {
+        this.consignmentList = this.navParams.get('consignmentList')['consignment'];
+    }
+    itemSelected(selectedConsignment) {
+        this.navCtrl.push(ConsignmentInPage,{"selectedConsignment":selectedConsignment});
+    }
 
 }

@@ -1,14 +1,16 @@
 <ion-header>
-  <ion-navbar>
-    <ion-title>
-      Ionic Blank
-    </ion-title>
-  </ion-navbar>
+    <ion-navbar color="primary">
+        <ion-title>
+            Home Page
+        </ion-title>
+    </ion-navbar>
 </ion-header>
 
 <ion-content padding>
-  The world is your oyster.
-  <p>
-    If you get lost, the <a href="http://ionicframework.com/docs/v2">docs</a> will be your guide.
-  </p>
+    <ion-list>
+        <button ion-item *ngFor="let list of consignmentList" (click)="itemSelected(list)">
+                {{ list.name }}
+                <ion-icon item-end name="md-arrow-dropright"></ion-icon>
+        </button>
+    </ion-list>
 </ion-content>
