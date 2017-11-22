@@ -25,11 +25,11 @@ export class LoginPage {
     }
     consignmentCheck() {
         this._apiProvider.apiCall("consignmentList.json").subscribe(consignmentList => {
-            if (consignmentList.consignment && consignmentList.consignment.length > 1) {
-                this.navCtrl.setRoot(HomePage, {"consignmentList": consignmentList});
-            } else {
-                this.navCtrl.setRoot(ConsignmentInPage, {"selectedConsignment": consignmentList['consignment'][0]});
-            }
+//            if (consignmentList.consignment && consignmentList.consignment.length > 1) {
+//                this.navCtrl.setRoot(HomePage, {"consignmentList": consignmentList});
+//            } else {
+//                this.navCtrl.setRoot(ConsignmentInPage, {"selectedConsignment": consignmentList['consignment'][0]});
+//            }
         })
     }
     signin(formData) {

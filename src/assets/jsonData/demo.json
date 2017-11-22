@@ -1,0 +1,20 @@
+[
+{"type":"header","version":"4.7.4","comment":"Export to JSON plugin for PHPMyAdmin"},
+{"type":"database","name":"hr_recruit_dev"},
+{"type":"table","name":"CANDIDATE_DEVICE","database":"hr_recruit_dev","structure":
+        {"id":"INTEGER","device_id":"CHAR","createdAt":"CHAR","updatedAt":"CHAR"}
+,"data":
+[
+{"id":"5","device_id":null,"createdAt":"2017-08-31 12:35:54","updatedAt":"2017-09-13 06:33:19"},
+{"id":"6","device_id":"a88cd961528e9607","createdAt":"2017-09-01 07:58:31","updatedAt":"2017-09-04 09:36:16"},
+{"id":"7","device_id":"6eb04ca62d721b58","createdAt":"2017-09-11 06:44:16","updatedAt":"2017-09-11 06:44:16"}
+]
+}
+,{"type":"table","name":"IMAP","database":"hr_recruit_dev","structure":
+        {"id":"INTEGER","password":"CHAR","imap_server":"CHAR","server_port":"CHAR","type":"CHAR","status":"CHAR","active":"CHAR","createdAt":"CHAR","updatedAt":"CHAR","last_fetched_time":"CHAR","total_emails":"CHAR","days_left_to_fetched":"CHAR","fetched_date_till":"CHAR"}
+,"data":
+[
+{"id":"3","password":"java@123","imap_server":"imap.gmail.com","server_port":"993","type":"TLS","status":"0","active":"1","createdAt":"2017-08-17 12:22:09","updatedAt":"2017-10-03 08:10:17","last_fetched_time":"2015-01-25 18:30:00","total_emails":"61","days_left_to_fetched":"0","fetched_date_till":"2017-07-27 18:30:00"}
+]
+}
+]

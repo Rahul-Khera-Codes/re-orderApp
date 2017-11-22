@@ -10,6 +10,8 @@ import {LoginPage} from '../pages/login/login';
 import {ConsignmentInPage} from '../pages/consignment-in/consignment-in';
 import {ApiServiceProvider} from '../providers/api-service/api-service';
 import {HttpClientModule} from '@angular/common/http';
+import { SQLite } from '@ionic-native/sqlite';
+import { SQLitePorter } from '@ionic-native/sqlite-porter';
 
 @NgModule({
     declarations: [
@@ -35,7 +37,9 @@ import {HttpClientModule} from '@angular/common/http';
         SplashScreen,
         BarcodeScanner,
         {provide: ErrorHandler, useClass: IonicErrorHandler},
-        ApiServiceProvider
+        ApiServiceProvider,
+        SQLite,
+        SQLitePorter
     ]
 })
 export class AppModule {}
