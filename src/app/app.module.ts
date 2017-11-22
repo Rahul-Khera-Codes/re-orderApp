@@ -12,6 +12,7 @@ import {ApiServiceProvider} from '../providers/api-service/api-service';
 import {HttpClientModule} from '@angular/common/http';
 import { SQLite } from '@ionic-native/sqlite';
 import { SQLitePorter } from '@ionic-native/sqlite-porter';
+import { SqlLiteProvider } from '../providers/sql-lite/sql-lite';
 
 @NgModule({
     declarations: [
@@ -39,7 +40,8 @@ import { SQLitePorter } from '@ionic-native/sqlite-porter';
         {provide: ErrorHandler, useClass: IonicErrorHandler},
         ApiServiceProvider,
         SQLite,
-        SQLitePorter
+        SQLitePorter,
+    SqlLiteProvider
     ]
 })
 export class AppModule {}

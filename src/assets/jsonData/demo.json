@@ -1,20 +1,194 @@
 [
-{"type":"header","version":"4.7.4","comment":"Export to JSON plugin for PHPMyAdmin"},
-{"type":"database","name":"hr_recruit_dev"},
-{"type":"table","name":"CANDIDATE_DEVICE","database":"hr_recruit_dev","structure":
-        {"id":"INTEGER","device_id":"CHAR","createdAt":"CHAR","updatedAt":"CHAR"}
-,"data":
-[
-{"id":"5","device_id":null,"createdAt":"2017-08-31 12:35:54","updatedAt":"2017-09-13 06:33:19"},
-{"id":"6","device_id":"a88cd961528e9607","createdAt":"2017-09-01 07:58:31","updatedAt":"2017-09-04 09:36:16"},
-{"id":"7","device_id":"6eb04ca62d721b58","createdAt":"2017-09-11 06:44:16","updatedAt":"2017-09-11 06:44:16"}
-]
-}
-,{"type":"table","name":"IMAP","database":"hr_recruit_dev","structure":
-        {"id":"INTEGER","password":"CHAR","imap_server":"CHAR","server_port":"CHAR","type":"CHAR","status":"CHAR","active":"CHAR","createdAt":"CHAR","updatedAt":"CHAR","last_fetched_time":"CHAR","total_emails":"CHAR","days_left_to_fetched":"CHAR","fetched_date_till":"CHAR"}
-,"data":
-[
-{"id":"3","password":"java@123","imap_server":"imap.gmail.com","server_port":"993","type":"TLS","status":"0","active":"1","createdAt":"2017-08-17 12:22:09","updatedAt":"2017-10-03 08:10:17","last_fetched_time":"2015-01-25 18:30:00","total_emails":"61","days_left_to_fetched":"0","fetched_date_till":"2017-07-27 18:30:00"}
-]
-}
+    {
+        "type": "database",
+        "name": "reorderDB"
+    },
+    {
+        "type": "table",
+        "name": "Customer_Table",
+        "database": "reorderDB",
+        "structure":
+                {
+                    "IDLocal": "INTEGER",
+                    "IDWeb": "INTEGER",
+                    "FirstName": "CHAR",
+                    "LastName": "CHAR",
+                    "EmailAddress": "CHAR",
+                    "Password": "CHAR",
+                    "CustomerAccountIDLocal": "CHAR",
+                    "JobIDForce": "CHAR",
+                    "LastUpdatedDateTime": "CHAR"
+                }
+        ,
+        "data":
+                [
+                    {
+                        "IDLocal": "5",
+                        "IDWeb": null,
+                        "FirstName": "xyz",
+                        "LastName": "fdknk",
+                        "EmailAddress": "m@gmail.com",
+                        "Password": "daf",
+                        "CustomerAccountIDLocal": null,
+                        "JobIDForce": null,
+                        "LastUpdatedDateTime": null
+                    },
+                    {
+                        "IDLocal": "6",
+                        "IDWeb": null,
+                        "FirstName": "zzzz",
+                        "LastName": "fdns",
+                        "EmailAddress": "msd@gmail.com",
+                        "Password": "ASDffda",
+                        "CustomerAccountIDLocal": null,
+                        "JobIDForce": null,
+                        "LastUpdatedDateTime": null
+                    },
+                    {
+                        "IDLocal": "7",
+                        "IDWeb": null,
+                        "FirstName": "qqqqq",
+                        "LastName": "fdknk",
+                        "EmailAddress": "mdaf@gmail.com",
+                        "Password": "dbjfbvj",
+                        "CustomerAccountIDLocal": null,
+                        "JobIDForce": null,
+                        "LastUpdatedDateTime": null
+                    }
+
+                ]
+    }
+    , {
+        "type": "table",
+        "name": "Contact_Table",
+        "database": "reorderDB",
+        "structure":
+                {
+                    "IDLocal": "INTEGER",
+                    "IDWeb": "INTEGER",
+                    "FirstName": "CHAR",
+                    "LastName": "CHAR",
+                    "EmailAddress": "CHAR",
+                    "Password": "CHAR",
+                    "CustomerIDLocal": "CHAR",
+                    "CustomerIDWeb": "CHAR",
+                    "JobIDForce": "CHAR",
+                    "LastUpdatedDateTime": "CHAR"
+                }
+        ,
+        "data":
+                [
+                    {
+                        "IDLocal": "5",
+                        "IDWeb": null,
+                        "FirstName": "xyz",
+                        "LastName": "fdknk",
+                        "EmailAddress": "m@gmail.com",
+                        "Password": "daf",
+                        , "CustomerIDLocal": "CHAR",
+                        "CustomerIDWeb": "NASDJKN",
+                        "JobIDForce": null,
+                        "LastUpdatedDateTime": null
+                    },
+                    {
+                        "IDLocal": "6",
+                        "IDWeb": null,
+                        "FirstName": "zzzz",
+                        "LastName": "fdns",
+                        "EmailAddress": "msd@gmail.com",
+                        "Password": "ASDffda",
+                        , "CustomerIDLocal": "CHAR",
+                        "CustomerIDWeb": "NSDAKBDSA",
+                        "JobIDForce": null,
+                        "LastUpdatedDateTime": null
+                    },
+                    {
+                        "IDLocal": "7",
+                        "IDWeb": null,
+                        "FirstName": "qqqqq",
+                        "LastName": "fdknk",
+                        "EmailAddress": "mdaf@gmail.com",
+                        "Password": "dbjfbvj",
+                        , "CustomerIDLocal": "CHAR",
+                        "CustomerIDWeb": "KLDJNLK",
+                        "JobIDForce": null,
+                        "LastUpdatedDateTime": null
+                    }
+
+                ]
+    }
+    , {
+        "type": "table",
+        "name": "Product",
+        "database": "reorderDB",
+        "structure":
+                {
+                    "ID": "INTEGER",
+                    "Code": "INTEGER",
+                    "Name": "CHAR",
+                    "Barcode1": "CHAR",
+                    "Barcode2": "CHAR",
+                    "Barcode3": "CHAR",
+                    "SearchText": "CHAR",
+                    "URL": "CHAR",
+                    "ImageURL": "CHAR"
+                }
+        ,
+        "data":
+                [
+                    {
+                        "ID": "5",
+                        "Code": 21,
+                        "Name": "xyz",
+                        "Barcode1": null,
+                        "Barcode2": null,
+                        "Barcode3": null,
+                        "SearchText": "dafad",
+                        "URL": "http://google.com",
+                        "ImageURL": null
+                    },
+                    {
+                        "ID": "6",
+                        "Code": 2132,
+                        "Name": "xyz",
+                        "Barcode1": null,
+                        "Barcode2": null,
+                        "Barcode3": null,
+                        "SearchText": "dafad",
+                        "URL": "http://google.com",
+                        "ImageURL": null
+                    },
+                    {
+                        "ID": "2",
+                        "Code": 23321,
+                        "Name": "xyz",
+                        "Barcode1": null,
+                        "Barcode2": null,
+                        "Barcode3": null,
+                        "SearchText": "dafad",
+                        "URL": "http://google.com",
+                        "ImageURL": null
+                    }
+                ]
+    }
+    , {
+        "type": "table",
+        "name": "ProductCodes",
+        "database": "reorderDB",
+        "structure":
+                {
+                    "ProductID": "INTEGER",
+                    "Barcode": "INTEGER",
+                    "Name": "CHAR"
+                }
+        ,
+        "data":
+                [
+                    {
+                        "ProductID": "5",
+                        "Barcode": null,
+                        "SupplierID": null
+                    }
+                ]
+    }
 ]

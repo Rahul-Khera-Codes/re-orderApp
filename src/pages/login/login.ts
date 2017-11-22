@@ -5,6 +5,7 @@ import {BarcodeScanner} from '@ionic-native/barcode-scanner';
 import {HomePage} from '../home/home';
 import {ConsignmentInPage} from '../consignment-in/consignment-in';
 import {ApiServiceProvider} from '../../providers/api-service/api-service';
+import {SqlLiteProvider} from '../../providers/sql-lite/sql-lite';
 @Component({
     selector: 'page-login',
     templateUrl: 'login.html',
@@ -14,22 +15,24 @@ export class LoginPage {
     login = "custom";
     barcodeData: object;
     err: string;
-    constructor(private _apiProvider: ApiServiceProvider, private barcodeScanner: BarcodeScanner, public navCtrl: NavController, public navParams: NavParams, private formBuilder: FormBuilder) {
+    constructor(private _apiProvider: ApiServiceProvider, private _sqlProvider: SqlLiteProvider, private barcodeScanner: BarcodeScanner, public navCtrl: NavController, public navParams: NavParams, private formBuilder: FormBuilder) {
         this.loginform = this.formBuilder.group({
             password: ['', Validators.compose([Validators.required, Validators.minLength(6)])],
             email: ['', Validators.compose([Validators.maxLength(50), Validators.required])],
         });
+        this._sqlProvider.createSqlLiteConnectionWithTables().then((res) => {
+        })
     }
 
     ionViewDidLoad() {
     }
     consignmentCheck() {
         this._apiProvider.apiCall("consignmentList.json").subscribe(consignmentList => {
-//            if (consignmentList.consignment && consignmentList.consignment.length > 1) {
-//                this.navCtrl.setRoot(HomePage, {"consignmentList": consignmentList});
-//            } else {
-//                this.navCtrl.setRoot(ConsignmentInPage, {"selectedConsignment": consignmentList['consignment'][0]});
-//            }
+            if (consignmentList.consignment && consignmentList.consignment.length > 1) {
+                this.navCtrl.setRoot(HomePage, {"consignmentList": consignmentList});
+            } else {
+                this.navCtrl.setRoot(ConsignmentInPage, {"selectedConsignment": consignmentList['consignment'][0]});
+            }
         })
     }
     signin(formData) {
