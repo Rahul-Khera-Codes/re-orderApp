@@ -86,4 +86,5 @@
     <plugin name="cordova-sqlite-storage" spec="^2.1.2" />
     <plugin name="uk.co.workingedge.cordova.plugin.sqliteporter" spec="^1.0.2" />
     <plugin name="cordova-plugin-statusbar" spec="^2.3.0" />
+    <allow-navigation href="http://192.168.1.27:8101" />
 </widget>

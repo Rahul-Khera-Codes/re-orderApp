@@ -1,59 +1,31 @@
 [
     {
-        "type": "database",
-        "name": "reorderDB"
-    },
-    {
         "type": "table",
         "name": "Customer_Table",
         "database": "reorderDB",
-        "structure":
-                {
-                    "IDLocal": "INTEGER",
-                    "IDWeb": "INTEGER",
-                    "FirstName": "CHAR",
-                    "LastName": "CHAR",
-                    "EmailAddress": "CHAR",
-                    "Password": "CHAR",
-                    "CustomerAccountIDLocal": "CHAR",
-                    "JobIDForce": "CHAR",
-                    "LastUpdatedDateTime": "CHAR"
-                }
-        ,
         "data":
                 [
                     {
-                        "IDLocal": "5",
-                        "IDWeb": null,
-                        "FirstName": "xyz",
-                        "LastName": "fdknk",
-                        "EmailAddress": "m@gmail.com",
-                        "Password": "daf",
-                        "CustomerAccountIDLocal": null,
-                        "JobIDForce": null,
-                        "LastUpdatedDateTime": null
+                        "IDLocal": 1,
+                        "IDWeb": 1,
+                        "FirstName": "Ron1",
+                        "LastName": "Smith1",
+                        "EmailAddress": "ron.kidd@bstgroup.com.au",
+                        "Password": "abc123",
+                        "CustomerAccountIDLocal": "1",
+                        "JobIDForce": "0",
+                        "LastUpdatedDateTime": "2017-11-21 10:06:45.873"
                     },
                     {
-                        "IDLocal": "6",
-                        "IDWeb": null,
-                        "FirstName": "zzzz",
-                        "LastName": "fdns",
-                        "EmailAddress": "msd@gmail.com",
-                        "Password": "ASDffda",
-                        "CustomerAccountIDLocal": null,
-                        "JobIDForce": null,
-                        "LastUpdatedDateTime": null
-                    },
-                    {
-                        "IDLocal": "7",
-                        "IDWeb": null,
-                        "FirstName": "qqqqq",
-                        "LastName": "fdknk",
-                        "EmailAddress": "mdaf@gmail.com",
-                        "Password": "dbjfbvj",
-                        "CustomerAccountIDLocal": null,
-                        "JobIDForce": null,
-                        "LastUpdatedDateTime": null
+                        "IDLocal": 2,
+                        "IDWeb": 1,
+                        "FirstName": "Ron2",
+                        "LastName": "Smith2",
+                        "EmailAddress": "ron@toolsforschools.com.au",
+                        "Password": "abc123",
+                        "CustomerAccountIDLocal": "1",
+                        "JobIDForce": "1",
+                        "LastUpdatedDateTime": "2017-11-21 10:07:46.520"
                     }
 
                 ]
@@ -62,57 +34,31 @@
         "type": "table",
         "name": "Contact_Table",
         "database": "reorderDB",
-        "structure":
-                {
-                    "IDLocal": "INTEGER",
-                    "IDWeb": "INTEGER",
-                    "FirstName": "CHAR",
-                    "LastName": "CHAR",
-                    "EmailAddress": "CHAR",
-                    "Password": "CHAR",
-                    "CustomerIDLocal": "CHAR",
-                    "CustomerIDWeb": "CHAR",
-                    "JobIDForce": "CHAR",
-                    "LastUpdatedDateTime": "CHAR"
-                }
-        ,
         "data":
                 [
                     {
-                        "IDLocal": "5",
-                        "IDWeb": null,
-                        "FirstName": "xyz",
-                        "LastName": "fdknk",
-                        "EmailAddress": "m@gmail.com",
-                        "Password": "daf",
-                        , "CustomerIDLocal": "CHAR",
-                        "CustomerIDWeb": "NASDJKN",
-                        "JobIDForce": null,
-                        "LastUpdatedDateTime": null
+                        "IDLocal": 1,
+                        "IDWeb": -1,
+                        "FirstName": "Ron1",
+                        "LastName": "Smith1",
+                        "EmailAddress": "ron.kidd@bstgroup.com.au",
+                        "Password": "abc123",
+                        "CustomerIDLocal": "1",
+                        "CustomerIDWeb": "-1",
+                        "JobIDForce": "0",
+                        "LastUpdatedDateTime": "2017-11-21 10:06:45.873"
                     },
                     {
-                        "IDLocal": "6",
-                        "IDWeb": null,
-                        "FirstName": "zzzz",
-                        "LastName": "fdns",
-                        "EmailAddress": "msd@gmail.com",
-                        "Password": "ASDffda",
-                        , "CustomerIDLocal": "CHAR",
-                        "CustomerIDWeb": "NSDAKBDSA",
-                        "JobIDForce": null,
-                        "LastUpdatedDateTime": null
-                    },
-                    {
-                        "IDLocal": "7",
-                        "IDWeb": null,
-                        "FirstName": "qqqqq",
-                        "LastName": "fdknk",
-                        "EmailAddress": "mdaf@gmail.com",
-                        "Password": "dbjfbvj",
-                        , "CustomerIDLocal": "CHAR",
-                        "CustomerIDWeb": "KLDJNLK",
-                        "JobIDForce": null,
-                        "LastUpdatedDateTime": null
+                        "IDLocal": 2,
+                        "IDWeb": -1,
+                        "FirstName": "Ron2",
+                        "LastName": "Smith2",
+                        "EmailAddress": "ron@toolsforschools.com.au",
+                        "Password": "abc123",
+                        "CustomerIDLocal": "1",
+                        "CustomerIDWeb": "-1",
+                        "JobIDForce": "1",
+                        "LastUpdatedDateTime": "2017-11-21 10:07:46.520"
                     }
 
                 ]
@@ -121,19 +67,6 @@
         "type": "table",
         "name": "Product",
         "database": "reorderDB",
-        "structure":
-                {
-                    "ID": "INTEGER",
-                    "Code": "INTEGER",
-                    "Name": "CHAR",
-                    "Barcode1": "CHAR",
-                    "Barcode2": "CHAR",
-                    "Barcode3": "CHAR",
-                    "SearchText": "CHAR",
-                    "URL": "CHAR",
-                    "ImageURL": "CHAR"
-                }
-        ,
         "data":
                 [
                     {
@@ -175,19 +108,140 @@
         "type": "table",
         "name": "ProductCodes",
         "database": "reorderDB",
-        "structure":
-                {
-                    "ProductID": "INTEGER",
-                    "Barcode": "INTEGER",
-                    "Name": "CHAR"
-                }
-        ,
         "data":
                 [
                     {
-                        "ProductID": "5",
-                        "Barcode": null,
-                        "SupplierID": null
+                        "ProductID": "3006",
+                        "Barcode": 9310357704324,
+                        "SupplierID": 507
+                    }, {
+                        "ProductID": "3007",
+                        "Barcode": 9310357704317,
+                        "SupplierID": 507
+                    },
+                    {
+                        "ProductID": "3009",
+                        "Barcode": 9310357704300,
+                        "SupplierID": 507
+                    },
+                    {
+                        "ProductID": "31838",
+                        "Barcode": 9310357266013,
+                        "SupplierID": 507
+                    },
+                    {
+                        "ProductID": "83952",
+                        "Barcode": 9310357705826,
+                        "SupplierID": 507
+                    }
+                ]
+    }
+    , {
+        "type": "table",
+        "name": "Product_Control_List",
+        "database": "reorderDB",
+        "data":
+                [
+                    {
+                        "IDLocal": 1,
+                        "IDWeb": -1,
+                        "Name": "Assembly Area",
+                        "LastUpdatedDateTime": "2017-11-21 10:13:19.320",
+                        "CustomerIDLocal": "-1",
+                        "CustomerIDWeb": "1"
+                    },
+                    {
+                        "IDLocal": 2,
+                        "IDWeb": 1,
+                        "Name": "Manafacture Area",
+                        "LastUpdatedDateTime": "2017-11-21 10:13:32.297",
+                        "CustomerIDLocal": "-1",
+                        "CustomerIDWeb": "1"
+                    },
+                    {
+                        "IDLocal": 3,
+                        "IDWeb": -1,
+                        "Name": "Main Shed",
+                        "LastUpdatedDateTime": "2017-11-21 10:13:42.930",
+                        "CustomerIDLocal": "-1",
+                        "CustomerIDWeb": "2"
+                    },
+                    {
+                        "IDLocal": 4,
+                        "IDWeb": 1,
+                        "Name": "Maintanance Shed",
+                        "LastUpdatedDateTime": "2017-11-21 10:13:49.307",
+                        "CustomerIDLocal": "-1",
+                        "CustomerIDWeb": "3"
+                    }
+                ]
+    }
+    , {
+        "type": "table",
+        "name": "Product_Control_Line",
+        "database": "reorderDB",
+        "data":
+                [
+                    {
+                        "IDLocal": 1,
+                        "IDWeb": 1,
+                        "ListIDLocal": "1",
+                        "ListIDWeb": "-1",
+                        "ProductIDLocal": 34025
+                    },
+                    {
+                        "IDLocal": 2,
+                        "IDWeb": -1,
+                        "ListIDLocal": "1",
+                        "ListIDWeb": "-1",
+                        "ProductIDLocal": 34050
+                    },
+                    {
+                        "IDLocal": 1,
+                        "IDWeb": -1,
+                        "ListIDLocal": "1",
+                        "ListIDWeb": "-1",
+                        "ProductIDLocal": 34583
+                    },
+                    {
+                        "IDLocal": 4,
+                        "IDWeb": -1,
+                        "ListIDLocal": "1",
+                        "ListIDWeb": "-1",
+                        "ProductIDLocal": 15582
+                    },
+                    {
+                        "IDLocal": 5,
+                        "IDWeb": -1,
+                        "ListIDLocal": "1",
+                        "ListIDWeb": -1,
+                        "ProductIDLocal": 15566
+                    }
+                ]
+    }, {
+        "type": "table",
+        "name": "List_to_Contact",
+        "database": "reorderDB",
+        "data":
+                [
+                    {
+                        "IDLocal": 1,
+                        "IDWeb": -1,
+                        "ContactIDLocal": "1",
+                        "ContactIDWeb": "-1",
+                        "ListIDLocal": "1",
+                        "ListIDWeb": "-1",
+                        "IsActive": "1",
+                        "IsDefault": "1"
+                    }, {
+                        "IDLocal": 2,
+                        "IDWeb": -1,
+                        "ContactIDLocal": 1,
+                        "ContactIDWeb": "-1",
+                        "ListIDLocal": "0",
+                        "ListIDWeb": "3",
+                        "IsActive": "-1",
+                        "IsDefault": "2"
                     }
                 ]
     }

@@ -6,6 +6,8 @@ import {HomePage} from '../home/home';
 import {ConsignmentInPage} from '../consignment-in/consignment-in';
 import {ApiServiceProvider} from '../../providers/api-service/api-service';
 import {SqlLiteProvider} from '../../providers/sql-lite/sql-lite';
+import {SQLite, SQLiteObject} from '@ionic-native/sqlite';
+
 @Component({
     selector: 'page-login',
     templateUrl: 'login.html',
@@ -20,8 +22,7 @@ export class LoginPage {
             password: ['', Validators.compose([Validators.required, Validators.minLength(6)])],
             email: ['', Validators.compose([Validators.maxLength(50), Validators.required])],
         });
-        this._sqlProvider.createSqlLiteConnectionWithTables().then((res) => {
-        })
+
     }
 
     ionViewDidLoad() {
@@ -36,7 +37,12 @@ export class LoginPage {
         })
     }
     signin(formData) {
-        this.consignmentCheck();
+        this._sqlProvider.openDb().then((db: SQLiteObject) => {
+            db.executeSql(`SELECT EmailAddress,Password FROM Customer_Table WHERE EmailAddress='${formData.email}'`, []).then((res) => {
+                this.consignmentCheck();
+            }).catch(e => console.log(e));
+        })
+
     }
     openBarCode() {
         this.barcodeScanner.scan().then((barcodeData) => {
