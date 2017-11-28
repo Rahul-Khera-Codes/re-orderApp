@@ -18,9 +18,7 @@ export class MyApp {
             this._sqlLiteservice.createSqlLiteDB().then((res) => {
                 if (res) {
                     this._sqlLiteservice.createSqlLiteTable().then(() => {
-                        setTimeout(() => {
-                            this._sqlLiteservice.manageSqlLiteData();
-                        }, 500)
+                        this._sqlLiteservice.manageSqlLiteData();
                     })
                 }
             })
