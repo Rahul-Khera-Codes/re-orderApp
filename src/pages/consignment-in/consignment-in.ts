@@ -2,7 +2,7 @@ import {Component} from '@angular/core';
 import {NavController, NavParams} from 'ionic-angular';
 import {BarcodeScanner} from '@ionic-native/barcode-scanner';
 import {AlertController} from 'ionic-angular';
-import {ApiServiceProvider} from '../../providers/api-service/api-service';
+import {ProductProvider} from './../../providers/product/product';
 @Component({
     selector: 'page-consignment-in',
     templateUrl: 'consignment-in.html',
@@ -16,13 +16,16 @@ export class ConsignmentInPage {
     products: any;
     productsRef: any;
     selectedConsignment: any;
-    constructor(private _apiProvider: ApiServiceProvider, public alertCtrl: AlertController, private barcodeScanner: BarcodeScanner, public navCtrl: NavController, public navParams: NavParams) {
+    constructor(private _productProvider: ProductProvider, public alertCtrl: AlertController, private barcodeScanner: BarcodeScanner, public navCtrl: NavController, public navParams: NavParams) {
         this.selectedConsignment = this.navParams.get('selectedConsignment');
         if (this.selectedConsignment) {
-            this._apiProvider.apiCall("productList.json").subscribe(productList => {
-                this.products = productList['products'];
-                this.productsRef = productList['products'];
+            _productProvider.queryToProduct_Control_Line(this.selectedConsignment).then(() => {
+
             })
+            //            this._apiProvider.apiCall("productList.json").subscribe(productList => {
+            //                this.products = productList['products'];
+            //                this.productsRef = productList['products'];
+            //            })
         }
     }
 

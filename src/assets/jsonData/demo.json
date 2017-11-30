@@ -7,7 +7,7 @@
                 [
                     {
                         "IDLocal": 1,
-                        "IDWeb": 1,
+                        "IDWeb": -1,
                         "FirstName": "Ron1",
                         "LastName": "Smith1",
                         "EmailAddress": "ron.kidd@bstgroup.com.au",
@@ -18,7 +18,7 @@
                     },
                     {
                         "IDLocal": 2,
-                        "IDWeb": 1,
+                        "IDWeb": -1,
                         "FirstName": "Ron2",
                         "LastName": "Smith2",
                         "EmailAddress": "ron@toolsforschools.com.au",
@@ -41,8 +41,8 @@
                         "IDWeb": -1,
                         "FirstName": "Ron1",
                         "LastName": "Smith1",
-                        "EmailAddress": "ron.kidd@bstgroup.com.au",
-                        "Password": "abc123",
+                        "EmailAddress": "m@gmail.com",
+                        "Password": "123456",
                         "CustomerIDLocal": "1",
                         "CustomerIDWeb": "-1",
                         "JobIDForce": "0",
@@ -147,32 +147,32 @@
                         "IDWeb": -1,
                         "Name": "Assembly Area",
                         "LastUpdatedDateTime": "2017-11-21 10:13:19.320",
-                        "CustomerIDLocal": "-1",
-                        "CustomerIDWeb": "1"
+                        "CustomerIDLocal": -1,
+                        "CustomerIDWeb": -1
                     },
                     {
                         "IDLocal": 2,
                         "IDWeb": 1,
                         "Name": "Manafacture Area",
                         "LastUpdatedDateTime": "2017-11-21 10:13:32.297",
-                        "CustomerIDLocal": "-1",
-                        "CustomerIDWeb": "1"
+                        "CustomerIDLocal": -1,
+                        "CustomerIDWeb": -1
                     },
                     {
                         "IDLocal": 3,
                         "IDWeb": -1,
                         "Name": "Main Shed",
                         "LastUpdatedDateTime": "2017-11-21 10:13:42.930",
-                        "CustomerIDLocal": "-1",
-                        "CustomerIDWeb": "2"
+                        "CustomerIDLocal": -1,
+                        "CustomerIDWeb": 2
                     },
                     {
                         "IDLocal": 4,
                         "IDWeb": 1,
                         "Name": "Maintanance Shed",
                         "LastUpdatedDateTime": "2017-11-21 10:13:49.307",
-                        "CustomerIDLocal": "-1",
-                        "CustomerIDWeb": "3"
+                        "CustomerIDLocal": -1,
+                        "CustomerIDWeb": 3
                     }
                 ]
     }
@@ -192,28 +192,28 @@
                     {
                         "IDLocal": 2,
                         "IDWeb": -1,
-                        "ListIDLocal": "1",
-                        "ListIDWeb": "-1",
+                        "ListIDLocal": 1,
+                        "ListIDWeb": -1,
                         "ProductIDLocal": 34050
                     },
                     {
                         "IDLocal": 1,
                         "IDWeb": -1,
-                        "ListIDLocal": "1",
-                        "ListIDWeb": "-1",
+                        "ListIDLocal": 1,
+                        "ListIDWeb": -1,
                         "ProductIDLocal": 34583
                     },
                     {
                         "IDLocal": 4,
                         "IDWeb": -1,
-                        "ListIDLocal": "1",
-                        "ListIDWeb": "-1",
+                        "ListIDLocal": 1,
+                        "ListIDWeb": -1,
                         "ProductIDLocal": 15582
                     },
                     {
                         "IDLocal": 5,
                         "IDWeb": -1,
-                        "ListIDLocal": "1",
+                        "ListIDLocal": 1,
                         "ListIDWeb": -1,
                         "ProductIDLocal": 15566
                     }
@@ -227,8 +227,8 @@
                     {
                         "IDLocal": 1,
                         "IDWeb": -1,
-                        "ContactIDLocal": "1",
-                        "ContactIDWeb": "-1",
+                        "ContactIDLocal": 1,
+                        "ContactIDWeb": -1,
                         "ListIDLocal": "1",
                         "ListIDWeb": "-1",
                         "IsActive": "1",
@@ -237,7 +237,7 @@
                         "IDLocal": 2,
                         "IDWeb": -1,
                         "ContactIDLocal": 1,
-                        "ContactIDWeb": "-1",
+                        "ContactIDWeb": -1,
                         "ListIDLocal": "0",
                         "ListIDWeb": "3",
                         "IsActive": "-1",

@@ -10,10 +10,12 @@ import {LoginPage} from '../pages/login/login';
 import {ConsignmentInPage} from '../pages/consignment-in/consignment-in';
 import {ApiServiceProvider} from '../providers/api-service/api-service';
 import {HttpClientModule} from '@angular/common/http';
-import { SQLite } from '@ionic-native/sqlite';
-import { SQLitePorter } from '@ionic-native/sqlite-porter';
-import { SqlLiteProvider } from '../providers/sql-lite/sql-lite';
-
+import {SQLite} from '@ionic-native/sqlite';
+import {SQLitePorter} from '@ionic-native/sqlite-porter';
+import {SqlLiteProvider} from '../providers/sql-lite/sql-lite';
+import {LoginProvider} from '../providers/login/login';
+import {ConsignmentProvider} from '../providers/consignment/consignment';
+import {ProductProvider} from '../providers/product/product';
 @NgModule({
     declarations: [
         MyApp,
@@ -41,7 +43,9 @@ import { SqlLiteProvider } from '../providers/sql-lite/sql-lite';
         ApiServiceProvider,
         SQLite,
         SQLitePorter,
-    SqlLiteProvider
-    ]
+        SqlLiteProvider,
+        LoginProvider,
+        ConsignmentProvider,
+        ProductProvider]
 })
 export class AppModule {}

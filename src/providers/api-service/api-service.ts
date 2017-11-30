@@ -10,11 +10,8 @@ export class ApiServiceProvider {
         let completePath = `assets/jsonData/${path}`;
         return this.http.get(completePath).map((res: Response) => {
             return res;
-        })
-            //...errors if any
-            .catch((error: any) => {
-                return Observable.throw(error || 'Server error')
-            });
-
+        }).catch((error: any) => {
+            return Observable.throw(error || 'Server error')
+        });
     }
 }
