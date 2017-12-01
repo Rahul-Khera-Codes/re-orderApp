@@ -36,8 +36,18 @@ export class LoginPage {
     signin(formData) {
         this._login.authUserCustomer(formData).then((response: any) => {
             if (response && response.rows.length) {
-                this._consignmentProvider.checkUserType().then((consignmentList) => {
-                    this.consignmentCheck(consignmentList);
+                this._consignmentProvider.checkUserType().then((userType) => {
+                    if (userType == "customer") {
+                        this._consignmentProvider.queryToProductControlList().then((consignmentList) => {
+                            this.consignmentCheck(consignmentList['list']);
+                        })
+                    } else {
+                        this._consignmentProvider.queryListToContact().then((listToContact) => {
+                            this._consignmentProvider.queryProductControlListContentLogin(listToContact).then((consignmentList) => {
+                                this.consignmentCheck(consignmentList['list']);
+                            })
+                        })
+                    }
                 });
             }
         })

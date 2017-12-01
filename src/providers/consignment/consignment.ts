@@ -1,6 +1,7 @@
 import {Injectable} from '@angular/core';
 import {SqlLiteProvider} from '../sql-lite/sql-lite';
 import {SQLiteObject} from '@ionic-native/sqlite';
+import {idType} from './../config/config';
 @Injectable()
 export class ConsignmentProvider {
     userData: any;
@@ -30,12 +31,7 @@ export class ConsignmentProvider {
     checkUserType() {
         return new Promise((resolve, reject) => {
             this.openDB().then(() => {
-                let userType = localStorage.getItem('userType');
-                if (userType == "customer") {
-                    resolve(this.queryToProduct_Control_List());
-                } else {
-                    resolve(this.queryListToContact());
-                }
+                resolve(localStorage.getItem('userType'))
             })
         })
     }
@@ -43,76 +39,93 @@ export class ConsignmentProvider {
         if (userdata && userdata.length) {
             let idForConditionCheck = {}
             if (userdata[0].IDWeb != -1) {
-                idForConditionCheck['name'] = "IDWeb";
+                idForConditionCheck['name'] = idType['idWeb'];
                 idForConditionCheck['value'] = userdata[0].IDWeb;
                 return idForConditionCheck;
             } else {
-                idForConditionCheck['name'] = "IDLocal";
+                idForConditionCheck['name'] = idType['idLocal'];
                 idForConditionCheck['value'] = userdata[0].IDLocal;
                 return idForConditionCheck;
             }
         }
     }
-    queryToProduct_Control_List() {
+    queryToProductControlList() {
         return new Promise((resolve, reject) => {
             let userdata = this.getUserData();
             let IDToBeCheck = null;
             if (this.checkIdIfNegative(userdata)['name'] == "IDWeb") {
-                IDToBeCheck = 'CustomerIDWeb';
+                IDToBeCheck = idType['customerIDWeb'];
             } else {
-                IDToBeCheck = 'CustomerIDLocal';
+                IDToBeCheck = idType['customerIDLocal'];
             }
             this.DB.executeSql(`SELECT * FROM Product_Control_List WHERE ${IDToBeCheck}=${this.checkIdIfNegative(userdata)['value']}`, []).then((res) => {
-                resolve(this.createConsigmentData(res));
+                if (res && res.rows.length) {
+                    for (let i = 0; i < res.rows.length; i++) {
+                        if (res.rows.item(i)) {
+                            this.consignmentList.push(res.rows.item(i));
+                        }
+                    }
+                    resolve({list: this.consignmentList});
+                }
             }).catch(e => console.log(e));
         })
     }
 
     queryListToContact() {
+        let listToContact = [];
         return new Promise((resolve, reject) => {
             let userdata = this.getUserData();
             let IDToBeCheck = null;
             if (this.checkIdIfNegative(userdata)['name'] == "IDWeb") {
-                IDToBeCheck = 'ContactIDWeb';
+                IDToBeCheck = idType['contactIDWeb'];
             } else {
-                IDToBeCheck = 'ContactIDLocal';
+                IDToBeCheck = idType['contactIDLocal'];
             }
             this.DB.executeSql(`SELECT * FROM List_to_Contact WHERE ${IDToBeCheck}=${this.checkIdIfNegative(userdata)['value']}`, []).then((res) => {
                 for (let i = 0; i < res.rows.length; i++) {
-                    resolve(this.IDCheckListToContact(res.rows.item(i).ListIDLocal, res.rows.item(i).ListIDWeb));
+                    listToContact.push(res.rows.item(i));
                 }
+                resolve(listToContact);
             }).catch(e => console.log(e));
         })
     }
-    IDCheckListToContact(idLocal, idWeb) {
-        return new Promise((resolve, reject) => {
-            let idForConditionCheck = {};
-            if (idWeb != -1) {
-                idForConditionCheck['name'] = "IDWeb";
-                idForConditionCheck['value'] = idWeb;
-                resolve(this.queryProductControlListContentLogin(idForConditionCheck));
-            } else {
-                idForConditionCheck['name'] = "IDLocal";
-                idForConditionCheck['value'] = idLocal;
-                resolve(this.queryProductControlListContentLogin(idForConditionCheck));
-            }
-        });
+    IDCheckListToContact(listToContact) {
+        let idForConditionCheck = {};
+        if (listToContact.IDWeb != -1) {
+            idForConditionCheck['name'] = idType['idWeb'];
+            idForConditionCheck['value'] = listToContact.IDWeb;
+        } else {
+            idForConditionCheck['name'] = idType['idLocal'];
+            idForConditionCheck['value'] = listToContact.IDLocal;
+        }
+        return idForConditionCheck;
     }
-    queryProductControlListContentLogin(id) {
+    queryProductControlListContentLogin(listToContact) {
         return new Promise((resolve, reject) => {
-            this.DB.executeSql(`SELECT * FROM Product_Control_List WHERE ${id.name}=${id['value']}`, []).then((res) => {
-                resolve(this.createConsigmentData(res));
-            }).catch(e => console.log(e));
+            let j;
+            let Product_Control_ListComplete = false;
+            for (let i = 0; i < listToContact.length; i++) {
+                this.DB.executeSql(`SELECT * FROM Product_Control_List WHERE ${this.IDCheckListToContact(listToContact[i])['name']}=${this.IDCheckListToContact(listToContact[i])['value']}`, []).then((res) => {
+                    if (res && res.rows.length) {
+                        for (j = 0; j < res.rows.length; j++) {
+                            if (res.rows.item(j)) {
+                                this.consignmentList.push(res.rows.item(j));
+                            }
+                            if (j == res.rows.length - 1) {
+                                Product_Control_ListComplete = true;
+                            } else {
+                                Product_Control_ListComplete = false;
+                            }
+                        }
+                    }
+                }).catch(e => console.log(e)).then(() => {
+                    if (i == (listToContact.length - 1) && Product_Control_ListComplete) {
+                        resolve({list: this.consignmentList});
+                    }
+                })
+
+            }
         })
     }
-    createConsigmentData(res) {
-        return new Promise((resolve, reject) => {
-            if (res && res.rows.length) {
-                for (let i = 0; i < res.rows.length; i++) {
-                    this.consignmentList.push(res.rows.item(i));
-                }
-            }
-            resolve(this.consignmentList);
-        })
-    }
+
 }

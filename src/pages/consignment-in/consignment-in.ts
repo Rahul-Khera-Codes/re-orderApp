@@ -19,7 +19,7 @@ export class ConsignmentInPage {
     constructor(private _productProvider: ProductProvider, public alertCtrl: AlertController, private barcodeScanner: BarcodeScanner, public navCtrl: NavController, public navParams: NavParams) {
         this.selectedConsignment = this.navParams.get('selectedConsignment');
         if (this.selectedConsignment) {
-            _productProvider.queryToProduct_Control_Line(this.selectedConsignment).then(() => {
+            this._productProvider.queryToProductControlLine(this.selectedConsignment).then((productControlLineData) => {
 
             })
             //            this._apiProvider.apiCall("productList.json").subscribe(productList => {
