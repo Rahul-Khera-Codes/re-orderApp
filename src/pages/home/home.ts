@@ -8,7 +8,7 @@ import {ConsignmentInPage} from '../consignment-in/consignment-in';
 export class HomePage {
     private consignmentList: object | null;
     constructor(public navParams: NavParams, public navCtrl: NavController) {
-        this.consignmentList = this.navParams.get('consignmentList')['consignment'];
+        this.consignmentList = this.navParams.get('consignmentList');
     }
     itemSelected(selectedConsignment) {
         this.navCtrl.push(ConsignmentInPage,{"selectedConsignment":selectedConsignment});
