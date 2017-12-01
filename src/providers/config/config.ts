@@ -1,4 +1,4 @@
-export const idType = {
+export const constantidType = {
     "idWeb": "IDWeb",
     "idLocal": "IDLocal",
     "listWeb": "ListIDWeb",

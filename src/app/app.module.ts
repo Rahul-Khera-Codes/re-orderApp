@@ -16,6 +16,7 @@ import {SqlLiteProvider} from '../providers/sql-lite/sql-lite';
 import {LoginProvider} from '../providers/login/login';
 import {ConsignmentProvider} from '../providers/consignment/consignment';
 import {ProductProvider} from '../providers/product/product';
+import { LocalStorageProvider } from '../providers/local-storage/local-storage';
 @NgModule({
     declarations: [
         MyApp,
@@ -46,6 +47,7 @@ import {ProductProvider} from '../providers/product/product';
         SqlLiteProvider,
         LoginProvider,
         ConsignmentProvider,
-        ProductProvider]
+        ProductProvider,
+    LocalStorageProvider]
 })
 export class AppModule {}

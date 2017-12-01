@@ -1,24 +1,25 @@
 import {Injectable} from '@angular/core';
 import {SqlLiteProvider} from '../sql-lite/sql-lite';
 import {SQLiteObject} from '@ionic-native/sqlite';
-import {idType} from './../config/config';
+import {constantidType} from './../config/config';
+import {LocalStorageProvider} from './../local-storage/local-storage';
 @Injectable()
 export class ConsignmentProvider {
     userData: any;
     DB: SQLiteObject;
     consignmentList = [];
-    constructor(private _sqlProvider: SqlLiteProvider) {}
+    constructor(private _localStorageProvider: LocalStorageProvider, private _sqlProvider: SqlLiteProvider) {}
     getUserData() {
         if (this.userData) {
             return this.userData;
         } else {
-            return this.userData = JSON.parse(localStorage.getItem('userDetails'));
+            return this.userData = JSON.parse(this._localStorageProvider.getLocalStorageData('userDetails'));
         }
     }
     removeUserData() {
         this.userData = null;
-        localStorage.removeItem('userDetails');
-        localStorage.removeItem('userType');
+        this._localStorageProvider.removeLocalStorageData('userDetails');
+        this._localStorageProvider.removeLocalStorageData('userType');
     }
     openDB() {
         return new Promise((resolve, reject) => {
@@ -31,34 +32,32 @@ export class ConsignmentProvider {
     checkUserType() {
         return new Promise((resolve, reject) => {
             this.openDB().then(() => {
-                resolve(localStorage.getItem('userType'))
+                resolve(this._localStorageProvider.getLocalStorageData('userType'));
             })
         })
     }
-    checkIdIfNegative(userdata) {
-        if (userdata && userdata.length) {
-            let idForConditionCheck = {}
-            if (userdata[0].IDWeb != -1) {
-                idForConditionCheck['name'] = idType['idWeb'];
-                idForConditionCheck['value'] = userdata[0].IDWeb;
-                return idForConditionCheck;
-            } else {
-                idForConditionCheck['name'] = idType['idLocal'];
-                idForConditionCheck['value'] = userdata[0].IDLocal;
-                return idForConditionCheck;
-            }
+    checkIdIfNegative(userdataIDWeb, userdataIDLocal) {
+        let idForConditionCheck = {}
+        if (userdataIDWeb != -1) {
+            idForConditionCheck['name'] = constantidType['idWeb'];
+            idForConditionCheck['value'] = userdataIDWeb;
+            return idForConditionCheck;
+        } else {
+            idForConditionCheck['name'] = constantidType['idLocal'];
+            idForConditionCheck['value'] = userdataIDLocal;
+            return idForConditionCheck;
         }
     }
     queryToProductControlList() {
         return new Promise((resolve, reject) => {
             let userdata = this.getUserData();
             let IDToBeCheck = null;
-            if (this.checkIdIfNegative(userdata)['name'] == "IDWeb") {
-                IDToBeCheck = idType['customerIDWeb'];
+            if (this.checkIdIfNegative(userdata[0].IDWeb, userdata[0].IDLocal)['name'] == "IDWeb") {
+                IDToBeCheck = constantidType['customerIDWeb'];
             } else {
-                IDToBeCheck = idType['customerIDLocal'];
+                IDToBeCheck = constantidType['customerIDLocal'];
             }
-            this.DB.executeSql(`SELECT * FROM Product_Control_List WHERE ${IDToBeCheck}=${this.checkIdIfNegative(userdata)['value']}`, []).then((res) => {
+            this.DB.executeSql(`SELECT * FROM Product_Control_List WHERE ${IDToBeCheck}=${this.checkIdIfNegative(userdata[0].IDWeb, userdata[0].IDLocal)['value']}`, []).then((res) => {
                 if (res && res.rows.length) {
                     for (let i = 0; i < res.rows.length; i++) {
                         if (res.rows.item(i)) {
@@ -76,12 +75,12 @@ export class ConsignmentProvider {
         return new Promise((resolve, reject) => {
             let userdata = this.getUserData();
             let IDToBeCheck = null;
-            if (this.checkIdIfNegative(userdata)['name'] == "IDWeb") {
-                IDToBeCheck = idType['contactIDWeb'];
+            if (this.checkIdIfNegative(userdata[0].IDWeb, userdata[0].IDLocal)['name'] == "IDWeb") {
+                IDToBeCheck = constantidType['contactIDWeb'];
             } else {
-                IDToBeCheck = idType['contactIDLocal'];
+                IDToBeCheck = constantidType['contactIDLocal'];
             }
-            this.DB.executeSql(`SELECT * FROM List_to_Contact WHERE ${IDToBeCheck}=${this.checkIdIfNegative(userdata)['value']}`, []).then((res) => {
+            this.DB.executeSql(`SELECT * FROM List_to_Contact WHERE ${IDToBeCheck}=${this.checkIdIfNegative(userdata[0].IDWeb, userdata[0].IDLocal)['value']}`, []).then((res) => {
                 for (let i = 0; i < res.rows.length; i++) {
                     listToContact.push(res.rows.item(i));
                 }
@@ -89,14 +88,14 @@ export class ConsignmentProvider {
             }).catch(e => console.log(e));
         })
     }
-    IDCheckListToContact(listToContact) {
+    IDCheckListToContact(listToContactIDWeb, listToContactIDLocal) {
         let idForConditionCheck = {};
-        if (listToContact.IDWeb != -1) {
-            idForConditionCheck['name'] = idType['idWeb'];
-            idForConditionCheck['value'] = listToContact.IDWeb;
+        if (listToContactIDWeb != -1) {
+            idForConditionCheck['name'] = constantidType['idWeb'];
+            idForConditionCheck['value'] = listToContactIDWeb;
         } else {
-            idForConditionCheck['name'] = idType['idLocal'];
-            idForConditionCheck['value'] = listToContact.IDLocal;
+            idForConditionCheck['name'] = constantidType['idLocal'];
+            idForConditionCheck['value'] = listToContactIDLocal;
         }
         return idForConditionCheck;
     }
@@ -105,7 +104,7 @@ export class ConsignmentProvider {
             let j;
             let Product_Control_ListComplete = false;
             for (let i = 0; i < listToContact.length; i++) {
-                this.DB.executeSql(`SELECT * FROM Product_Control_List WHERE ${this.IDCheckListToContact(listToContact[i])['name']}=${this.IDCheckListToContact(listToContact[i])['value']}`, []).then((res) => {
+                this.DB.executeSql(`SELECT * FROM Product_Control_List WHERE ${this.IDCheckListToContact(listToContact[i].IDWeb, listToContact[i].IDLocal)['name']}=${this.IDCheckListToContact(listToContact[i].IDWeb, listToContact[i].IDLocal)['value']}`, []).then((res) => {
                     if (res && res.rows.length) {
                         for (j = 0; j < res.rows.length; j++) {
                             if (res.rows.item(j)) {
@@ -123,7 +122,6 @@ export class ConsignmentProvider {
                         resolve({list: this.consignmentList});
                     }
                 })
-
             }
         })
     }

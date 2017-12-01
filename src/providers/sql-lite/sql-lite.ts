@@ -65,7 +65,7 @@ export class SqlLiteProvider {
         })
         insertData = insertData.slice(0, -1);
         setTimeout(() => {
-            this.db.executeSql(`UPDATE ${value.name} SET ${insertData} WHERE IDWeb != -1`, []).then((data) => console.log('Executed SQL update', data))
+            this.db.executeSql(`UPDATE ${value.name} SET ${insertData} WHERE IDWeb != -1`, []).then(() => console.log('Executed SQL update'))
                 .catch(e => console.log(e));
         }, 500)
     }

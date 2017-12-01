@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {SqlLiteProvider} from '../sql-lite/sql-lite';
 import {SQLiteObject} from '@ionic-native/sqlite';
-import {idType} from './../config/config';
+import {constantidType} from './../config/config';
 
 @Injectable()
 export class ProductProvider {
@@ -15,11 +15,11 @@ export class ProductProvider {
             })
         })
     }
-    queryToProductControlLine(selectedConsignment) {
+    queryToProductControlLine(selectedConsignmentIDWeb, selectedConsignmentIDLocal) {
         return new Promise((resolve, reject) => {
             let productControlLineData = [];
             this.openDB().then(() => {
-                this.DB.executeSql(`SELECT * FROM Product_Control_Line WHERE ${this.cheakWhichIDHaveData(selectedConsignment)['name']}=${this.cheakWhichIDHaveData(selectedConsignment)['value']}`, []).then((res) => {
+                this.DB.executeSql(`SELECT * FROM Product_Control_Line WHERE ${this.checkWhichIDHaveData(selectedConsignmentIDWeb, selectedConsignmentIDLocal)['name']}=${this.checkWhichIDHaveData(selectedConsignmentIDWeb, selectedConsignmentIDLocal)['value']}`, []).then((res) => {
                     if (res.rows.length) {
                         for (let i = 0; i < res.rows.length; i++) {
                             productControlLineData.push((res.rows.item(i)));
@@ -30,22 +30,22 @@ export class ProductProvider {
             })
         })
     }
-    cheakWhichIDHaveData(selectedConsignmentData) {
+    checkWhichIDHaveData(selectedConsignmentIDWeb, selectedConsignmentIDLocal) {
         let idForConditionCheck = {}
-        if (selectedConsignmentData.IDWeb != -1) {
-            idForConditionCheck['name'] = idType['listWeb'];
-            idForConditionCheck['value'] = selectedConsignmentData.IDWeb;
+        if (selectedConsignmentIDWeb != -1) {
+            idForConditionCheck['name'] = constantidType['listWeb'];
+            idForConditionCheck['value'] = selectedConsignmentIDWeb;
             return idForConditionCheck;
         } else {
-            idForConditionCheck['name'] = idType['listLocal'];
-            idForConditionCheck['value'] = selectedConsignmentData.IDLocal;
+            idForConditionCheck['name'] = constantidType['listLocal'];
+            idForConditionCheck['value'] = selectedConsignmentIDLocal;
             return idForConditionCheck;
         }
     }
-    getProductDetailsByQueryProduct(productControlLineData) {
+    getProductDetailsByQueryProduct(ProductIDLocal) {
         return new Promise((resolve, reject) => {
             this.openDB().then(() => {
-                this.DB.executeSql(`SELECT * FROM Product WHERE ID=${productControlLineData['ProductIDLocal']}`, []).then((res) => {
+                this.DB.executeSql(`SELECT * FROM Product WHERE ID=${ProductIDLocal}`, []).then((res) => {
                     console.log("Product", res)
                     //                    resolve(this.getProductDetails(res));
                 }).catch(e => console.log(e));

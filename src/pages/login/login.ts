@@ -29,12 +29,14 @@ export class LoginPage {
     consignmentCheck(consignmentList) {
         if (consignmentList && consignmentList.length > 1) {
             this.navCtrl.setRoot(HomePage, {"consignmentList": consignmentList});
-        } else {
+        } else if (consignmentList && consignmentList.length < 1 && consignmentList.length != 0) {
             this.navCtrl.setRoot(ConsignmentInPage, {"selectedConsignment": consignmentList[0]});
+        } else {
+            console.log("consignmentList not exist")
         }
     }
     signin(formData) {
-        this._login.authUserCustomer(formData).then((response: any) => {
+        this._login.authUserCustomer(formData.email, formData.password).then((response: any) => {
             if (response && response.rows.length) {
                 this._consignmentProvider.checkUserType().then((userType) => {
                     if (userType == "customer") {

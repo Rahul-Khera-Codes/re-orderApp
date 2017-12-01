@@ -19,7 +19,7 @@ export class ConsignmentInPage {
     constructor(private _productProvider: ProductProvider, public alertCtrl: AlertController, private barcodeScanner: BarcodeScanner, public navCtrl: NavController, public navParams: NavParams) {
         this.selectedConsignment = this.navParams.get('selectedConsignment');
         if (this.selectedConsignment) {
-            this._productProvider.queryToProductControlLine(this.selectedConsignment).then((productControlLineData) => {
+            this._productProvider.queryToProductControlLine(this.selectedConsignment.IDWeb, this.selectedConsignment.IDLocal).then((productControlLineData) => {
 
             })
             //            this._apiProvider.apiCall("productList.json").subscribe(productList => {
@@ -44,7 +44,6 @@ export class ConsignmentInPage {
         }, (err) => {
             console.log("err", err)
             this.err = err;
-            // An error occurred
         });
     }
     addItemByBarcode() {
