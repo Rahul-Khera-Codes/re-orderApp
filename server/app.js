@@ -70,7 +70,6 @@ app.get("/fetch/data", (req, res, next) => {
                         type: val.type,
                         name: val.name,
                         database: val.database,
-                        structure: val.structure,
                         data: table_data
                     })
                     table_data = []
