@@ -16,13 +16,18 @@ import {SqlLiteProvider} from '../providers/sql-lite/sql-lite';
 import {LoginProvider} from '../providers/login/login';
 import {ConsignmentProvider} from '../providers/consignment/consignment';
 import {ProductProvider} from '../providers/product/product';
-import { LocalStorageProvider } from '../providers/local-storage/local-storage';
+import {LocalStorageProvider} from '../providers/local-storage/local-storage';
+import {SideMenuComponent} from './../components/side-menu/side-menu';
+import {Geolocation} from '@ionic-native/geolocation';
+import {ProgressDetailsPage} from './../pages/progress-details/progress-details'
 @NgModule({
     declarations: [
         MyApp,
         LoginPage,
         HomePage,
-        ConsignmentInPage
+        ConsignmentInPage,
+        SideMenuComponent,
+        ProgressDetailsPage
     ],
     imports: [
         BrowserModule,
@@ -34,7 +39,8 @@ import { LocalStorageProvider } from '../providers/local-storage/local-storage';
         MyApp,
         HomePage,
         LoginPage,
-        ConsignmentInPage
+        ConsignmentInPage,
+        ProgressDetailsPage
     ],
     providers: [
         StatusBar,
@@ -48,6 +54,7 @@ import { LocalStorageProvider } from '../providers/local-storage/local-storage';
         LoginProvider,
         ConsignmentProvider,
         ProductProvider,
-    LocalStorageProvider]
+        LocalStorageProvider,
+        Geolocation]
 })
 export class AppModule {}

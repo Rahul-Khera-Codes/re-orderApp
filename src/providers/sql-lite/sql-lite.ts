@@ -2,12 +2,20 @@ import {HttpClient} from '@angular/common/http';
 import {Injectable} from '@angular/core';
 import {SQLite, SQLiteObject} from '@ionic-native/sqlite';
 import {ApiServiceProvider} from '../api-service/api-service';
+import {Output, EventEmitter} from '@angular/core';
 import forEach from 'lodash/forEach';
+import keys from 'lodash/keys';
+import clone from 'lodash/clone';
+import {constantidType} from './../config/config';
+import {UUID} from 'angular2-uuid';
+
 @Injectable()
 export class SqlLiteProvider {
     db: SQLiteObject;
-    constructor(private _apiProvider: ApiServiceProvider, public http: HttpClient, private sqlite: SQLite) {
-    }
+    @Output()
+    progressDataEvent = new EventEmitter();
+    tablesEvent = new EventEmitter();
+    constructor(private _apiProvider: ApiServiceProvider, public http: HttpClient, private sqlite: SQLite) {}
     createSqlLiteDB() {
         return new Promise((resolve, reject) => {
             let createData: any = {};
@@ -27,47 +35,67 @@ export class SqlLiteProvider {
             if (this.db) {
                 resolve(this.db);
             } else {
-                this.createSqlLiteDB();
+                resolve(this.createSqlLiteDB());
             }
         });
     }
+    createIDLocal() {
+        return UUID.UUID();
+    }
     createSqlLiteTable() {
         return new Promise((resolve, reject) => {
-            this._apiProvider.apiCall("structure.json").subscribe(res => {
-                forEach(res, (value) => {
-                    let structure: string = "";
-                    forEach(value.structure, (key, value) => {
-                        structure = structure + value + " " + key + ",";
-                    })
-                    structure = structure.slice(0, -1);
-                    this.db.executeSql(`CREATE TABLE IF NOT EXISTS ${value.name}(${structure})`, []).then(() => console.log('Executed SQL create'))
-                        .catch(e => console.log(e));
+            this._apiProvider.apiCall("assets/jsonData/structure.json").subscribe(res => {
+                let findLength = keys(res);
+                let count = 0;
+                forEach(res, (value, key) => {
+                    count++;
+                    this.db.executeSql(`${value}`, []).then(() => console.log('Executed SQL create'))
+                        .catch(e => console.log(e)).then(() => {
+                            if (count == findLength.length) {
+                                resolve(true);
+                            }
+                        });
                 })
-                resolve(true);
             })
+
         })
     }
-    insertSqlLiteData(value, valueTable) {
-        setTimeout(() => {
+    insertSqlLiteData(tableName, valueTable) {
+        return new Promise((resolve, reject) => {
             let insertData: string = "";
             forEach(valueTable, (record, key) => {
-                insertData = insertData + "'" + record + "'" + "" + ","
+                if (key == constantidType.idLocal && record == -1) {
+                    record = this.createIDLocal();
+                }
+                insertData = insertData + '"' + record + '"' + "" + ",";
             })
             insertData = insertData.slice(0, -1);
-            this.db.executeSql(`insert into ${value.name} VALUES (${insertData})`, []).then(() => console.log('Executed SQL insert'))
-                .catch(e => console.log(e));
-        }, 500)
+            this.db.executeSql(`insert into ${tableName} VALUES (${insertData})`, []).then(() => {
+                this.getCurrentTableProcessDetails("Insert", tableName);
+                resolve(tableName);
+            })
+                .catch(e => {
+                    console.log(e)
+                    reject(e);
+                });
+        });
     }
-    updateSqlLiteData(value, valueTable) {
-        let insertData: string = "";
-        forEach(valueTable, (record, key) => {
-            insertData = insertData + key + "=" + "'" + record + "'" + "" + ","
-        })
-        insertData = insertData.slice(0, -1);
-        setTimeout(() => {
-            this.db.executeSql(`UPDATE ${value.name} SET ${insertData} WHERE IDWeb != -1`, []).then(() => console.log('Executed SQL update'))
-                .catch(e => console.log(e));
-        }, 500)
+    updateSqlLiteData(tableName, valueTable) {
+        return new Promise((resolve, reject) => {
+            let insertData: string = "";
+            forEach(valueTable, (record, key) => {
+                insertData = insertData + key + "=" + "'" + record + "'" + "" + ","
+            })
+            insertData = insertData.slice(0, -1);
+            this.db.executeSql(`UPDATE ${tableName} SET ${insertData} WHERE IDWeb != -1`, []).then(() => {
+                this.getCurrentTableProcessDetails("Update", tableName);
+                resolve(tableName);
+            })
+                .catch(e => {
+                    console.log(e);
+                    reject(e);
+                });
+        });
     }
     checkDataExistInTable(value) {
         return new Promise((resolve, reject) => {
@@ -75,29 +103,85 @@ export class SqlLiteProvider {
                 .catch(e => console.log(e));
         })
     }
+    getCurrentTableProcessDetails(query, tableName) {
+        this.tablesEvent.emit({query: query, tableName: tableName})
+    }
+    progressBar(tableName, NoOfTotalTables, error?) {
+        this.progressDataEvent.emit({"tableName": tableName, NoOfTotalTables: NoOfTotalTables});
+    }
+
     manageSqlLiteData() {
-        this._apiProvider.apiCall("demo.json").subscribe(res => {
-            if (res && res.length) {
-                forEach(res, (value) => {
-                    if (value.type == "table") {
-                        this.checkDataExistInTable(value).then((isExist) => {
-                            if (isExist && (value.name == "Customer_Table" || value.name == "Contact_Table" || value.name == "Product_Control_List" || value.name == "Product_Control_Line" || value.name == "List_to_Contact")) {
-                                forEach(value.data, (valueTable, key) => {
-                                    if (valueTable && valueTable['IDWeb'] == -1) {
-                                        this.insertSqlLiteData(value, valueTable);
+        this._apiProvider.apiCall("assets/jsonData/demo.json").subscribe(res => {
+            let totalTable = clone(res['data']);
+            if (res['data'] && res['data'].length) {
+                let manageData = (data, callback) => {
+                    let RefData = data;
+                    let first_data = RefData.splice(0, 1)[0];
+                    if (first_data && first_data.type == "table") {
+                        this.checkDataExistInTable(first_data).then((isExist) => {
+                            if (isExist && (first_data.name == "Customer_Table" || first_data.name == "Contact_Table" || first_data.name == "Product_Control_List" || first_data.name == "Product_Control_Line" || first_data.name == "List_to_Contact")) {
+                                insertOrUpdate(first_data, (response) => {
+                                    if (RefData.length) {
+                                        this.progressBar(first_data['name'], totalTable.length);
+                                        manageData(RefData, callback);
+
                                     } else {
-                                        this.updateSqlLiteData(value, valueTable);
+                                        this.progressBar(first_data['name'], totalTable.length);
+                                        callback(true)
                                     }
                                 })
                             } else {
-                                forEach(value.data, (valueTable, key) => {
-                                    this.insertSqlLiteData(value, valueTable);
+                                insert(first_data, (response) => {
+                                    if (RefData.length) {
+                                        this.progressBar(first_data['name'], totalTable.length);
+                                        manageData(RefData, callback)
+                                    } else {
+                                        this.progressBar(first_data['name'], totalTable.length);
+                                        callback(true)
+                                    }
                                 })
                             }
                         })
                     }
+                }
+
+                let insert = (data, callback) => {
+                    let first_row = data['data'].splice(0, 1)[0];
+                    this.insertSqlLiteData(data.name, first_row).then(() => {
+                        if (data['data'].length) {
+                            insert(data, callback);
+                        } else {
+                            callback(true);
+                        }
+                    });
+                }
+
+                let insertOrUpdate = (data, callback) => {
+                    let first_row = data['data'].splice(0, 1)[0];
+                    if (first_row && first_row['IDWeb'] == -1) {
+                        this.insertSqlLiteData(data.name, first_row).then(() => {
+                            if (data['data'].length) {
+                                insertOrUpdate(data, callback)
+                            } else {
+                                callback(true)
+                            }
+                        });
+                    } else {
+                        this.updateSqlLiteData(data.name, first_row).then(() => {
+                            if (data['data'].length) {
+                                insertOrUpdate(data, callback)
+                            } else {
+                                callback(true)
+                            }
+                        });
+                    }
+                }
+
+                manageData(res['data'], (response) => {
                 })
             }
+        }, (error) => {
+            this.progressBar("", 0, error);
         })
     }
 }

@@ -49,6 +49,7 @@ export class ConsignmentProvider {
         }
     }
     queryToProductControlList() {
+        this.consignmentList = [];
         return new Promise((resolve, reject) => {
             let userdata = this.getUserData();
             let IDToBeCheck = null;
@@ -64,9 +65,10 @@ export class ConsignmentProvider {
                             this.consignmentList.push(res.rows.item(i));
                         }
                     }
-                    resolve({list: this.consignmentList});
                 }
-            }).catch(e => console.log(e));
+            }).catch(e => console.log(e)).then(() => {
+                resolve({list: this.consignmentList});
+            });
         })
     }
 
