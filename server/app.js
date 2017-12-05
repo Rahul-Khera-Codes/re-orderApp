@@ -62,7 +62,7 @@ app.get("/fetch/data", (req, res, next) => {
         let j = 0;
         let a = {};
         _.forEach(val.structure, (data_value, key_value) => {
-          a[key_value] = filtered_data[j++];
+          a[key_value] = (filtered_data[j++] != undefined ? filtered_data[j-1].replace(/\"/g, "") : "");
         })
         table_data.push(a);
         if (filtered_key == filtered[0].data.length - 1) {
