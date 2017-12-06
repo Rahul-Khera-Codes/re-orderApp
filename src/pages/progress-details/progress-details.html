@@ -1,0 +1,22 @@
+
+<ion-header no-border>
+    <ion-toolbar>
+        <ion-title>Loading...</ion-title>
+    </ion-toolbar>
+</ion-header>
+
+<ion-content padding>
+    <div *ngIf="progress && progress['error']" class="center">
+        <ion-badge color="danger">Error Occur</ion-badge>
+
+    </div>
+    <div *ngIf="progress && !progress['error']">
+        <div class="center" padding-top *ngIf="progress && progress['tableName']" >Sync done with {{progress['tableName']}}</div>
+        <div class="center" padding-top *ngIf="details && details['tableName']" >{{details['query']}} in {{details['tableName']}}</div>
+        <div class="progress-outer">
+            <div class="progress-inner" [style.width]="base + '%'">
+                {{base | number:'.0-0'}}%
+            </div>
+        </div>
+    </div>
+</ion-content>

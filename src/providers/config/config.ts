@@ -8,3 +8,6 @@ export const constantidType = {
     "customerIDWeb": "CustomerIDWeb",
     "customerIDLocal": "CustomerIDLocal"
 }
+export const constantUserType = {
+    "customer": "customer",
+}

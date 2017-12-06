@@ -4,9 +4,10 @@ import {FormGroup, FormBuilder, Validators, FormControl} from '@angular/forms';
 import {BarcodeScanner} from '@ionic-native/barcode-scanner';
 import {HomePage} from '../home/home';
 import {ConsignmentInPage} from '../consignment-in/consignment-in';
-import {ApiServiceProvider} from '../../providers/api-service/api-service';
 import {LoginProvider} from '../../providers/login/login';
 import {ConsignmentProvider} from '../../providers/consignment/consignment';
+import {constantUserType} from './../../providers/config/config';
+
 @Component({
     selector: 'page-login',
     templateUrl: 'login.html',
@@ -16,30 +17,32 @@ export class LoginPage {
     login = "custom";
     barcodeData: object;
     err: string;
-    constructor(private _consignmentProvider: ConsignmentProvider, private _login: LoginProvider, private _apiProvider: ApiServiceProvider, private barcodeScanner: BarcodeScanner, public navCtrl: NavController, public navParams: NavParams, private formBuilder: FormBuilder) {
+    isConsignmentExist: boolean = false;
+    constructor(private _consignmentProvider: ConsignmentProvider, private _login: LoginProvider, private barcodeScanner: BarcodeScanner, public navCtrl: NavController, public navParams: NavParams, private formBuilder: FormBuilder) {
         this.loginform = this.formBuilder.group({
             password: ['', Validators.compose([Validators.required, Validators.minLength(6)])],
             email: ['', Validators.compose([Validators.maxLength(50), Validators.required])],
         });
-
     }
 
     ionViewDidLoad() {
     }
     consignmentCheck(consignmentList) {
         if (consignmentList && consignmentList.length > 1) {
+            this.isConsignmentExist = false;
             this.navCtrl.setRoot(HomePage, {"consignmentList": consignmentList});
         } else if (consignmentList && consignmentList.length < 1 && consignmentList.length != 0) {
+            this.isConsignmentExist = false;
             this.navCtrl.setRoot(ConsignmentInPage, {"selectedConsignment": consignmentList[0]});
         } else {
-            console.log("consignmentList not exist")
+            this.isConsignmentExist = true;
         }
     }
     signin(formData) {
         this._login.authUserCustomer(formData.email, formData.password).then((response: any) => {
             if (response && response.rows.length) {
                 this._consignmentProvider.checkUserType().then((userType) => {
-                    if (userType == "customer") {
+                    if (userType == constantUserType['customer']) {
                         this._consignmentProvider.queryToProductControlList().then((consignmentList) => {
                             this.consignmentCheck(consignmentList['list']);
                         })
@@ -52,6 +55,9 @@ export class LoginPage {
                     }
                 });
             }
+        }, (err) => {
+            console.log(err)
+            this.err = err;
         })
     }
     openBarCode() {

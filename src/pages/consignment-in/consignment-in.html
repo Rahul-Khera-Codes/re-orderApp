@@ -1,18 +1,17 @@
 
 <ion-header>
-
     <ion-navbar color="primary">
         <ion-title></ion-title>
     </ion-navbar>
-
 </ion-header>
 
+<side-menu></side-menu>
 
 <ion-content padding>
     <ion-list>
         <ion-item>
             <ion-label color="primary">Enter ID</ion-label>
-            <ion-input placeholder="ID" [(ngModel)]="textID"></ion-input>
+            <ion-input placeholder="ID" [(ngModel)]="usageData['jobID']"></ion-input>
         </ion-item>
         <ion-grid padding-top>
             <ion-row>
@@ -42,11 +41,12 @@
                 </ion-row>
                 <ion-row *ngFor="let product of products; let i=index" class="gray" text-capitalize>
                     <ion-col col-3>{{i+1}}</ion-col>
-                    <ion-col col-6>{{product.name}}</ion-col>
-                    <ion-col col-3><input type="text" class="qtyBox" [(ngModel)]="product.qty" ></ion-col>
+                    <ion-col col-6>{{product.Name}}</ion-col>
+                    <ion-col col-3><input type="text" class="qtyBox" [(ngModel)]="product['qty']" (blur)="addQty(product.ID,product['qty'])"></ion-col>
                 </ion-row>
             </ion-grid>
             <button ion-button full margin-top  (click)="addItemByBarcode()">Scan Product</button>
+            <button ion-button full margin-top  (click)="submitProduct()">Submit Product</button>
         </div>
     </ion-list>
 </ion-content>

@@ -2,7 +2,7 @@ import {Injectable} from '@angular/core';
 import {SqlLiteProvider} from '../sql-lite/sql-lite';
 import {SQLiteObject} from '@ionic-native/sqlite';
 import {constantidType} from './../config/config';
-
+import forEach from 'lodash/forEach'
 @Injectable()
 export class ProductProvider {
     DB: SQLiteObject;
@@ -42,14 +42,45 @@ export class ProductProvider {
             return idForConditionCheck;
         }
     }
-    getProductDetailsByQueryProduct(ProductIDLocal) {
+    queryToUsage(usageData) {
         return new Promise((resolve, reject) => {
-            this.openDB().then(() => {
-                this.DB.executeSql(`SELECT * FROM Product WHERE ID=${ProductIDLocal}`, []).then((res) => {
-                    console.log("Product", res)
-                    //                    resolve(this.getProductDetails(res));
-                }).catch(e => console.log(e));
+            this.DB.executeSql(`insert into Usage VALUES (?,?,?,?,?,?,?,?)`, [usageData.IDLocal, usageData.listIDLocal, usageData.customerIDLocal, usageData.contactIDLocal, usageData.currentData, usageData.jobID, usageData.latitude, usageData.longitude]).then((res) => {
+                resolve(res);
+            }).catch(e => console.log(e))
+        })
+    }
+    queryToUsageLine(UsageLineDataArray) {
+        return new Promise((resolve, reject) => {
+            forEach(UsageLineDataArray, (value, key) => {
+                this.DB.executeSql(`insert into Usage_Line VALUES (?,?,?,?,?)`, [value.IDLocal, value.usageIDLocal, value.productID, value.qty, value.createdDateTime]).then((res) => {
+                    resolve(res);
+                }).catch(e => {
+                    console.log(e);
+                    reject(e);
+                })
             })
         })
+    }
+    getProductDetailsByQueryProduct(productControlLineData) {
+        return new Promise((resolve, reject) => {
+            let productDetails = [];
+            let productControlLineDataLoopOver = false;
+            for (let i = 0; i < productControlLineData.length; i++) {
+                this.DB.executeSql(`SELECT * FROM Product WHERE ID=${productControlLineData[i]['ProductIDLocal']}`, []).then((res) => {
+                    if (res.rows.length) {
+                        productDetails.push(res.rows.item(0));
+                    }
+                    if (i == productControlLineData.length - 1) {
+                        productControlLineDataLoopOver = true;
+                    } else {
+                        productControlLineDataLoopOver = false;
+                    }
+                }).catch(e => console.log(e)).then(() => {
+                    if (productControlLineDataLoopOver) {
+                        resolve(productDetails);
+                    }
+                })
+            }
+        });
     }
 }

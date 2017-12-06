@@ -37,7 +37,7 @@ export class LoginProvider {
                     this._localStorageProvider.setLocalStorageData('userType', "contact");
                     resolve(res);
                 } else {
-                    console.log("user not exist");
+                    reject("user not exist");
                 }
             }).catch(e => reject(e));
         })

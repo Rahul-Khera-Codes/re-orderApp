@@ -34,6 +34,12 @@
             <div padding>
                 <button ion-button color="primary" block [disabled]="!loginform.valid" >Sign In</button>
             </div>
+            <div class="center" margin-top *ngIf="err">
+                <ion-badge  color="danger">{{err}}</ion-badge>
+            </div>
+            <div class="center" margin-top *ngIf="isConsignmentExist">
+                <ion-badge  color="danger">Consignment List not Exist</ion-badge>
+            </div>
         </form> 
         <div *ngSwitchCase="'remote'">
             <img class="paddingBarCode" src="assets/imgs/br.png" alt=""/>
