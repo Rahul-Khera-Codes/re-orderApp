@@ -13,7 +13,8 @@
         "Password": "CHAR",
         "CustomerAccountIDLocal": "CHAR",
         "JobIDForce": "CHAR",
-        "LastUpdatedDateTime": "CHAR"
+        "LastUpdatedDateTime": "CHAR",
+        "LoginBarcode": "CHAR"
     }
 },
 {
@@ -32,7 +33,8 @@
         "CustomerIDLocal": "CHAR",
         "CustomerIDWeb": "CHAR",
         "JobIDForce": "CHAR",
-        "LastUpdatedDateTime": "CHAR"
+        "LastUpdatedDateTime": "CHAR",
+        "LoginBarcode": "CHAR"
     }
 },
 {
@@ -78,7 +80,9 @@
         "Name": "CHAR",
         "LastUpdatedDateTime": "CHAR",
         "CustomerIDLocal": "INTEGER",
-        "CustomerIDWeb": "INTEGER"
+        "CustomerIDWeb": "INTEGER",
+        "IsDefault": "CHAR",
+        "ReLoginToSubmit": "BOOLEAN"
     }
 
 },

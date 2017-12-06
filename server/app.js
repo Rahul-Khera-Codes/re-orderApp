@@ -6,6 +6,7 @@ let fs = require('fs');
 let _ = require('lodash');
 let app = express();
 let structure = require('./structure');
+let upload_data = require('./data');
 
 app.server = http.createServer(app);
 
@@ -62,7 +63,7 @@ app.get("/fetch/data", (req, res, next) => {
         let j = 0;
         let a = {};
         _.forEach(val.structure, (data_value, key_value) => {
-          a[key_value] = (filtered_data[j++] != undefined ? filtered_data[j-1].replace(/\"/g, "") : "");
+          a[key_value] = (filtered_data[j++] != undefined ? filtered_data[j - 1].replace(/\"/g, "") : (data_value == "BOOLEAN" ? false : ""));
         })
         table_data.push(a);
         if (filtered_key == filtered[0].data.length - 1) {
@@ -81,6 +82,13 @@ app.get("/fetch/data", (req, res, next) => {
       }
     })
   }
+})
+
+
+app.post('/save/data', function(req, res, next) {
+  _.forEach(structure, (val, key) => {
+    let filtered = _.filter(upload_data, (filtered_data) => { return filtered_data.name == val.filename })
+  })
 })
 
 app.listen(process.env.PORT || 3031)
