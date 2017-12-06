@@ -6,7 +6,6 @@ let fs = require('fs');
 let _ = require('lodash');
 let app = express();
 let structure = require('./structure');
-let upload_data = require('./data');
 
 app.server = http.createServer(app);
 
