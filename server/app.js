@@ -6,6 +6,7 @@ let fs = require('fs');
 let _ = require('lodash');
 let app = express();
 let structure = require('./structure');
+let upload_data = require('./jsonData.json')
 
 app.server = http.createServer(app);
 
@@ -13,7 +14,7 @@ app.use(cors({
   exposedHeaders: ["Link"]
 }));
 app.use(bodyParser.json({
-  limit: "1000kb"
+  limit: "5mb"
 }));
 
 app.use(bodyParser.urlencoded({
@@ -85,9 +86,40 @@ app.get("/fetch/data", (req, res, next) => {
 
 
 app.post('/save/data', function(req, res, next) {
-  _.forEach(structure, (val, key) => {
-    let filtered = _.filter(upload_data, (filtered_data) => { return filtered_data.name == val.filename })
+  let orignal_data = req.body;
+  let fileData = "";
+
+  function createDataString(data, callback) {
+    let records = data.splice(0, 1)[0]
+    if (fileData != "") {
+      fileData += '[#]';
+    }
+    Object.keys(records).forEach(function(value, key) {
+      fileData += records[value] + "|#"
+    })
+    if (data.length) {
+      createDataString(data, callback)
+    } else {
+      callback(fileData)
+    }
+  }
+  createDataString(orignal_data['data'], function(response) {
+    let filtered = _.filter(structure, (filtered_data) => {
+     return filtered_data.name == orignal_data.name 
+   })
+    let file_path = filtered[0].filename ? `CustomerProductControl/${filtered[0].filename}` : `CustomerProductControl/${orignal_data.name}` 
+    fs.writeFile(file_path, response +"[#]", function(err) {
+      if (err) {
+        console.log(err);
+      } else {
+        res.json("file is saved")
+      }
+    });
   })
+})
+
+app.get('/track/:email', function(req, res, next){
+  console.log(req.params.email)
 })
 
 app.listen(process.env.PORT || 3031)
