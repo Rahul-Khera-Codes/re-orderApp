@@ -6,7 +6,7 @@ let fs = require('fs');
 let _ = require('lodash');
 let app = express();
 let structure = require('./structure');
-let upload_data = require('./jsonData.json')
+let mailer = require('nodemailer')
 
 app.server = http.createServer(app);
 
@@ -88,14 +88,27 @@ app.get("/fetch/data", (req, res, next) => {
 app.post('/save/data', function(req, res, next) {
   let orignal_data = req.body;
   let fileData = "";
+  let filtered = _.filter(structure, (filtered_data) => {
+    return filtered_data.name == orignal_data.name
+  })
+  let file_path = filtered.length ? `CustomerProductControl/${filtered[0].filename}.txt` : `CustomerProductControl/${orignal_data.name}.txt`
 
   function createDataString(data, callback) {
     let records = data.splice(0, 1)[0]
     if (fileData != "") {
       fileData += '[#]';
     }
+    if (!filtered.length) {
+      console.log(records)
+      if (records.IsExported == undefined)
+        delete records.IsExported
+    }
     Object.keys(records).forEach(function(value, key) {
-      fileData += records[value] + "|#"
+      if (key == records.length - 1) {
+        fileData += records[value]
+      } else {
+        fileData += records[value] + "|#"
+      }
     })
     if (data.length) {
       createDataString(data, callback)
@@ -103,12 +116,10 @@ app.post('/save/data', function(req, res, next) {
       callback(fileData)
     }
   }
-  createDataString(orignal_data['data'], function(response) {
-    let filtered = _.filter(structure, (filtered_data) => {
-     return filtered_data.name == orignal_data.name 
-   })
-    let file_path = filtered[0].filename ? `CustomerProductControl/${filtered[0].filename}` : `CustomerProductControl/${orignal_data.name}` 
-    fs.writeFile(file_path, response +"[#]", function(err) {
+  if(orignal_data['data'].length){
+    createDataString(orignal_data['data'], function(response) {
+
+    fs.writeFile(file_path, response + "[#]", function(err) {
       if (err) {
         console.log(err);
       } else {
@@ -116,9 +127,37 @@ app.post('/save/data', function(req, res, next) {
       }
     });
   })
+  }else{
+    res.json({message: "no data for imported"})
+  }
 })
 
-app.get('/track/:email', function(req, res, next){
+app.put('/forget/password', function(req, res, next) {
+  const transporter = mailer.createTransport({
+    host: 'smtp.ethereal.email',
+    port: 587,
+    auth: {
+      user: 'xinqs4wqf7sywvrw@ethereal.email',
+      pass: 'j7nW9fDXaDpqaBWkGY'
+    }
+  });
+
+  let mailOptions = {
+    from: '"Fred Foo 👻" <foo@blurdybloop.com>', // sender address
+    to: req.body.email, // list of receivers
+    subject: req.body.subject, // Subject line
+    text: '', // plain text body
+    html: req.body.html // html body
+  };
+  transporter.sendMail(mailOptions, (error, info) => {
+    if (error) {
+      console.log(error);
+    }
+    res.json({ response: info, messageView: mailer.getTestMessageUrl(info) });
+  });
+})
+
+app.get('/track/:email', function(req, res, next) {
   console.log(req.params.email)
 })
 
