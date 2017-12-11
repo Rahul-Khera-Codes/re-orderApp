@@ -8,6 +8,7 @@ import {LoginProvider} from '../../providers/login/login';
 import {ConsignmentProvider} from '../../providers/consignment/consignment';
 import {constantUserType} from './../../providers/config/config';
 import {ToastProvider} from './../../providers/toast/toast';
+import {ForgotPasswordPage} from './../forgot-password/forgot-password'
 @Component({
     selector: 'page-login',
     templateUrl: 'login.html',
@@ -27,6 +28,9 @@ export class LoginPage {
     }
 
     ionViewDidLoad() {
+    }
+    forgotPassword(email) {
+        this.navCtrl.push(ForgotPasswordPage, {email})
     }
     consignmentCheck(consignmentList) {
         if (consignmentList && consignmentList.length > 1) {

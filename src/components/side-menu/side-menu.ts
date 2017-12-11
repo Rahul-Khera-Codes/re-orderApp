@@ -10,6 +10,7 @@ import keys from 'lodash/keys';
 import {ToastProvider} from './../../providers/toast/toast';
 import filter from 'lodash/filter';
 import {ChangePassword} from '../../pages/changePassword/changePassword';
+import {ConsignmentProvider} from '../../providers/consignment/consignment';
 @Component({
     selector: 'side-menu',
     templateUrl: 'side-menu.html'
@@ -17,9 +18,11 @@ import {ChangePassword} from '../../pages/changePassword/changePassword';
 export class SideMenuComponent {
     spin: boolean = false;
     isclick: boolean = false;
-    constructor(private _toast: ToastProvider, private _apiProvider: ApiServiceProvider, private _local: LocalDbProvider, private _sqlService: SqlLiteProvider, private sqlitePorter: SQLitePorter, private _menuCtrl: MenuController, public _navController: NavController) {}
+    loginBy: string;
+    constructor(private _consignmentService: ConsignmentProvider, private _toast: ToastProvider, private _apiProvider: ApiServiceProvider, private _local: LocalDbProvider, private _sqlService: SqlLiteProvider, private sqlitePorter: SQLitePorter, private _menuCtrl: MenuController, public _navController: NavController) {}
     ngOnInit() {
         this._menuCtrl.enable(true);
+        this.loginBy = this._consignmentService.checkLoginBy();
     }
     importData() {
         if (!this.isclick) {

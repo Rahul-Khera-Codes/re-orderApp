@@ -2,6 +2,7 @@ import {Injectable} from '@angular/core';
 import {SQLiteObject} from '@ionic-native/sqlite';
 import {SqlLiteProvider} from '../sql-lite/sql-lite';
 import {LocalStorageProvider} from './../local-storage/local-storage';
+declare let md5: any;
 @Injectable()
 export class LoginProvider {
     DataBase: SQLiteObject;
@@ -13,8 +14,60 @@ export class LoginProvider {
         }
         this._localStorageProvider.setLocalStorageData('userDetails', userData)
     }
+    encryptPassword(pass) {
+        let hash = md5(pass);
+        return hash;
+    }
     checkLoginBy() {
         return this._localStorageProvider.getLocalStorageData('LoginBy')
+    }
+    checkWhichTableEmailExits(email) {
+        return new Promise((resolve, reject) => {
+            this.DataBase.executeSql(`SELECT * FROM Customer_Table WHERE EmailAddress='${email}'`, []).then((res) => {
+                if (res.rows.length) {
+                    resolve('Customer_Table');
+                }
+                else {
+                    this.DataBase.executeSql(`SELECT * FROM Contact_Table WHERE EmailAddress='${email}'`, []).then((res) => {
+                        if (res.rows.length) {
+                            resolve('Contact_Table')
+                        } else {
+                            reject('Wrong email');
+                        }
+                    })
+                }
+            })
+        })
+    }
+    updatePasswordWhenForgot(pass, email) {
+        return new Promise((resolve, reject) => {
+            this._sqlProvider.openDb().then((db: SQLiteObject) => {
+                this.DataBase = db;
+                this.checkWhichTableEmailExits(email).then((tableName) => {
+                    this.DataBase.executeSql(`UPDATE ${tableName} SET Password='${pass}' WHERE EmailAddress = '${email}'`, []).then((res) => {
+                        resolve(pass);
+                    }).catch(e => {
+                        reject(e);
+                    });
+                }, (err) => {
+                    reject(err)
+                })
+            })
+        })
+    }
+    updatePassword(tableName, pwd, email, newPwd) {
+        return new Promise((resolve, reject) => {
+            this._sqlProvider.openDb().then((db: SQLiteObject) => {
+                this.DataBase = db;
+                this.DataBase.executeSql(`UPDATE ${tableName} SET Password='${newPwd}'WHERE EmailAddress='${email}' AND Password='${pwd}'`, []).then((res) => {
+                    resolve(newPwd);
+                }).catch(e => {
+                    reject(e);
+                });
+            }, (err) => {
+                reject(err)
+            })
+        })
     }
     authUserCustomer(formDataEmail, formDataEmailPassword) {
         return new Promise((resolve, reject) => {
