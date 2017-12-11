@@ -4,8 +4,8 @@ import {StatusBar} from '@ionic-native/status-bar';
 import {SplashScreen} from '@ionic-native/splash-screen';
 import {LoginPage} from '../pages/login/login';
 import {SqlLiteProvider} from '../providers/sql-lite/sql-lite';
-import {ProgressDetailsPage} from './../pages/progress-details/progress-details';
 import {NavController} from 'ionic-angular';
+import {LocalDbProvider} from './../providers/local-db/local-db';
 
 @Component({
     templateUrl: 'app.html'
@@ -15,7 +15,7 @@ export class MyApp {
     isPageRedirect: boolean = false;
     @ViewChild('myNav') nav: NavController
 
-    constructor(public _sqlLiteservice: SqlLiteProvider, platform: Platform, statusBar: StatusBar, splashScreen: SplashScreen) {
+    constructor(public _local: LocalDbProvider, public _sqlLiteservice: SqlLiteProvider, platform: Platform, statusBar: StatusBar, splashScreen: SplashScreen) {
         platform.ready().then(() => {
             statusBar.styleDefault();
             splashScreen.hide();
@@ -23,14 +23,7 @@ export class MyApp {
         });
     }
     importData() {
-        this._sqlLiteservice.createSqlLiteDB().then((res) => {
-            if (res) {
-                this.nav.push(ProgressDetailsPage);
-                this._sqlLiteservice.createSqlLiteTable().then(() => {
-                    this._sqlLiteservice.manageSqlLiteData();
-                })
-            }
-        })
+//        this._local.callDBtoManage(this.nav);
     }
 }
 

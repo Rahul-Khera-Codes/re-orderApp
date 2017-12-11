@@ -1,8 +1,8 @@
 {
     "Contact_Table":
-            "CREATE TABLE IF NOT EXISTS Contact_Table(IDLocal INTEGER,IDWeb INTEGER,FirstName CHAR,LastName CHAR,EmailAddress CHAR,Password CHAR,CustomerIDLocal CHAR,CustomerIDWeb CHAR,JobIDForce CHAR,LastUpdatedDateTime CHAR)",
+            "CREATE TABLE IF NOT EXISTS Contact_Table(IDLocal INTEGER,IDWeb INTEGER,FirstName CHAR,LastName CHAR,EmailAddress CHAR,Password CHAR,CustomerIDLocal CHAR,CustomerIDWeb CHAR,JobIDForce CHAR,LastUpdatedDateTime CHAR,LoginBarcode CHAR)",
     "Customer_Table":
-            "CREATE TABLE IF NOT EXISTS Customer_Table(IDLocal INTEGER,IDWeb INTEGER,FirstName CHAR,LastName CHAR,EmailAddress CHAR,Password CHAR,CustomerAccountIDLocal CHAR,JobIDForce CHAR,LastUpdatedDateTime CHAR)",
+            "CREATE TABLE IF NOT EXISTS Customer_Table(IDLocal INTEGER,IDWeb INTEGER,FirstName CHAR,LastName CHAR,EmailAddress CHAR,Password CHAR,CustomerAccountIDLocal CHAR,JobIDForce CHAR,LastUpdatedDateTime CHAR,LoginBarcode CHAR)",
     "List_to_Contact":
             "CREATE TABLE IF NOT EXISTS List_to_Contact(IDLocal INTEGER,IDWeb INTEGER,ContactIDLocal INTEGER,ContactIDWeb INTEGER,ListIDLocal INTEGER,ListIDWeb INTEGER,IsActive INTEGER,IsDefault INTEGER)",
     "Product":
@@ -12,9 +12,9 @@
     "Product_Control_Line":
             "CREATE TABLE IF NOT EXISTS Product_Control_Line(IDLocal INTEGER,IDWeb INTEGER,ListIDLocal CHAR,ListIDWeb CHAR,ProductIDLocal INTEGER)",
     "Product_Control_List":
-            "CREATE TABLE IF NOT EXISTS Product_Control_List(IDLocal INTEGER,IDWeb INTEGER,Name CHAR,LastUpdatedDateTime CHAR,CustomerIDLocal INTEGER,CustomerIDWeb INTEGER)",
+            "CREATE TABLE IF NOT EXISTS Product_Control_List(IDLocal INTEGER,IDWeb INTEGER,Name CHAR,LastUpdatedDateTime CHAR,CustomerIDLocal INTEGER,CustomerIDWeb INTEGER,IsDefault BOOLEAN,ReLoginToSubmit BOOLEAN)",
     "Usage":
-            "CREATE TABLE IF NOT EXISTS Usage(IDLocal INTEGER,ListIDLocal INTEGER,CustomerIDLocal INTEGER,ContactIDLocal INTEGER,CreatedDateTime CHAR,JobID CHAR,Longitude CHAR,Latitude CHAR)",
+            "CREATE TABLE IF NOT EXISTS Usage(IDLocal INTEGER,ListIDLocal INTEGER,CustomerIDLocal INTEGER,ContactIDLocal INTEGER,CreatedDateTime CHAR,JobID CHAR,Longitude CHAR,Latitude CHAR,IsExported BOOLEAN)",
     "Usage_Line":
-            "CREATE TABLE IF NOT EXISTS Usage_Line(IDLocal INTEGER,UsageIDLocal INTEGER,ProductIDLocal INTEGER,Quantity INTEGER,CreatedDateTime CHAR)"
+            "CREATE TABLE IF NOT EXISTS Usage_Line(IDLocal INTEGER,UsageIDLocal INTEGER,ProductIDLocal INTEGER,Quantity INTEGER,CreatedDateTime CHAR,IsExported BOOLEAN )"
 }

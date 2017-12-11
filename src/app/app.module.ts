@@ -20,6 +20,9 @@ import {LocalStorageProvider} from '../providers/local-storage/local-storage';
 import {SideMenuComponent} from './../components/side-menu/side-menu';
 import {Geolocation} from '@ionic-native/geolocation';
 import {ProgressDetailsPage} from './../pages/progress-details/progress-details'
+import {ToastProvider} from '../providers/toast/toast';
+import {LocalDbProvider} from '../providers/local-db/local-db';
+import {ChangePassword} from '../pages/changePassword/changePassword';
 @NgModule({
     declarations: [
         MyApp,
@@ -27,7 +30,8 @@ import {ProgressDetailsPage} from './../pages/progress-details/progress-details'
         HomePage,
         ConsignmentInPage,
         SideMenuComponent,
-        ProgressDetailsPage
+        ProgressDetailsPage,
+        ChangePassword
     ],
     imports: [
         BrowserModule,
@@ -40,7 +44,8 @@ import {ProgressDetailsPage} from './../pages/progress-details/progress-details'
         HomePage,
         LoginPage,
         ConsignmentInPage,
-        ProgressDetailsPage
+        ProgressDetailsPage,
+        ChangePassword
     ],
     providers: [
         StatusBar,
@@ -55,6 +60,8 @@ import {ProgressDetailsPage} from './../pages/progress-details/progress-details'
         ConsignmentProvider,
         ProductProvider,
         LocalStorageProvider,
-        Geolocation]
+        Geolocation,
+        ToastProvider,
+        LocalDbProvider]
 })
 export class AppModule {}

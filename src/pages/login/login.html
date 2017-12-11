@@ -30,15 +30,18 @@
                     <ion-label item-end>Save Account Password</ion-label>
                     <ion-checkbox color="primary" checked="false"></ion-checkbox>
                 </ion-item>
+                <div text-center>
+                    <a padding-top >Forgot Password</a>
+                </div>
             </ion-list>
             <div padding>
                 <button ion-button color="primary" block [disabled]="!loginform.valid" >Sign In</button>
             </div>
             <div class="center" margin-top *ngIf="err">
-                <ion-badge  color="danger">{{err}}</ion-badge>
+                 <ion-badge  color="danger">{{err}}</ion-badge>
             </div>
             <div class="center" margin-top *ngIf="isConsignmentExist">
-                <ion-badge  color="danger">Consignment List not Exist</ion-badge>
+                 <ion-badge  color="danger">Consignment List not Exist</ion-badge>
             </div>
         </form> 
         <div *ngSwitchCase="'remote'">
@@ -46,18 +49,9 @@
             <div padding>
                 <button ion-button color="primary" block (click)="openBarCode()" >Sign In With Barcode</button>
             </div>
-            <ion-grid  *ngIf="barcodeData && barcodeData.format">
-                <ion-row>
-                    <ion-col col-4>Cancelled</ion-col>
-                    <ion-col col-4>Format</ion-col>
-                    <ion-col col-4>Text</ion-col>
-                </ion-row>
-                <ion-row>
-                    <ion-col col-4>{{barcodeData.cancelled}}</ion-col>
-                    <ion-col col-4>{{barcodeData.format}}</ion-col>
-                    <ion-col col-4>{{barcodeData.text}}</ion-col>
-                </ion-row>
-            </ion-grid>
+            <div class="center" margin-top *ngIf="barCodeErr">
+                 <ion-badge  color="danger">{{barCodeErr}}</ion-badge>
+            </div>
         </div>
     </div>
 </ion-content>

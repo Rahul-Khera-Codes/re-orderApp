@@ -13,4 +13,11 @@ export class ApiServiceProvider {
             return Observable.throw(error || 'Server error')
         });
     }
+    apiCallByPost(path, data): Observable<any> {
+        return this.http.post(path, data).map((res: Response) => {
+            return res;
+        }).catch((error: any) => {
+            return Observable.throw(error || 'Server error')
+        });
+    }
 }

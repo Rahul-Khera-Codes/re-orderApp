@@ -13,8 +13,12 @@
             <ion-label color="primary">Enter ID</ion-label>
             <ion-input placeholder="ID" [(ngModel)]="usageData['jobID']"></ion-input>
         </ion-item>
+        <!--        <ion-item>
+                    <ion-label>Save JobID</ion-label>
+                    <ion-checkbox [(ngModel)]="isRemember" ></ion-checkbox>
+                </ion-item>-->
         <ion-grid padding-top>
-            <ion-row>
+            <ion-row *ngIf="isManualLogin">
                 <ion-col col-6>
                     <button ion-button full color="secondary"  (click)="buttonClick()">Submit Id</button>
                 </ion-col>
@@ -22,18 +26,23 @@
                     <button ion-button  full  (click)="openBarCode()">Scan Id</button>
                 </ion-col>
             </ion-row>
+            <ion-row *ngIf="!isManualLogin">
+                <ion-col>
+                    <button ion-button  full  (click)="openBarCode()">Scan Id</button>
+                </ion-col>
+            </ion-row>
         </ion-grid>
-        <div *ngIf="(barcodeData && barcodeData.format) || myInputEnable">
+        <div *ngIf="isManualLogin &&(barcodeData && barcodeData.format) || myInputEnable">
             <ion-searchbar
                 [(ngModel)]="myInput"
                 [showCancelButton]="shouldShowCancel"
                 (ionInput)="searchProduct($event)"
                 (ionCancel)="onSearchCancel($event)">
             </ion-searchbar>
-            <div padding text-center *ngIf="products && products.length==0">
+            <div padding text-center *ngIf="products && products.length==0 || !isFound">
                  <ion-badge color="danger"> Not found </ion-badge>
             </div>
-            <ion-grid  *ngIf="products && products.length">
+            <ion-grid  *ngIf="isManualLogin && products && products.length && isManualLogin">
                 <ion-row text-uppercase>
                     <ion-col col-3>Sno.</ion-col>
                     <ion-col col-6>Produt Name</ion-col>
@@ -44,9 +53,32 @@
                     <ion-col col-6>{{product.Name}}</ion-col>
                     <ion-col col-3><input type="text" class="qtyBox" [(ngModel)]="product['qty']" (blur)="addQty(product.ID,product['qty'])"></ion-col>
                 </ion-row>
+                <ion-row>
+                    <ion-col>
+                        <button ion-button full margin-top color="secondary" (click)="addItemByBarcode()">Scan Product</button>
+                    </ion-col>
+                </ion-row>
+                <ion-row>
+                    <ion-col col-6>
+                        <button ion-button full margin-top  (click)="submitProduct()">Submit Product</button>
+                    </ion-col>
+                    <ion-col col-6>
+                        <button ion-button full margin-top  (click)="submitProductByScan()">Submit by Scan</button>
+                    </ion-col>
+                </ion-row>
             </ion-grid>
-            <button ion-button full margin-top  (click)="addItemByBarcode()">Scan Product</button>
-            <button ion-button full margin-top  (click)="submitProduct()">Submit Product</button>
         </div>
     </ion-list>
 </ion-content>
+<ion-footer >
+    <ion-grid *ngIf="!isManualLogin">    
+        <ion-row>
+            <ion-col col-6>
+                <button color="secondary" ion-button full margin-top  (click)="addProductByBarcode()">Scan Product</button>
+            </ion-col>
+            <ion-col col-6>
+                <button ion-button full margin-top  (click)="submitProductByScan()">Submit by Scan</button>
+            </ion-col>
+        </ion-row>
+    </ion-grid>
+</ion-footer>

@@ -27,7 +27,6 @@ export class SqlLiteProvider {
                     resolve(db);
                 })
                 .catch(e => reject(e));
-
         });
     }
     openDb() {
@@ -39,6 +38,15 @@ export class SqlLiteProvider {
             }
         });
     }
+    dropTable(name) {
+        return new Promise((resolve, reject) => {
+            this.db.executeSql(`DROP TABLE IF EXISTS ${this.db[name]}`, []).then(() => {
+                console.log('Executed SQL drop')
+                resolve(true);
+            })
+                .catch(e => reject(e))
+        })
+    }
     createIDLocal() {
         return UUID.UUID();
     }
@@ -49,7 +57,7 @@ export class SqlLiteProvider {
                 let count = 0;
                 forEach(res, (value, key) => {
                     count++;
-                    this.db.executeSql(`${value}`, []).then(() => console.log('Executed SQL create'))
+                    this.db.executeSql(`${value}`, []).then(() => {})
                         .catch(e => console.log(e)).then(() => {
                             if (count == findLength.length) {
                                 resolve(true);
@@ -57,7 +65,6 @@ export class SqlLiteProvider {
                         });
                 })
             })
-
         })
     }
     insertSqlLiteData(tableName, valueTable) {
@@ -107,11 +114,34 @@ export class SqlLiteProvider {
         this.tablesEvent.emit({query: query, tableName: tableName})
     }
     progressBar(tableName, NoOfTotalTables, error?) {
-        this.progressDataEvent.emit({"tableName": tableName, NoOfTotalTables: NoOfTotalTables});
+        this.progressDataEvent.emit({"tableName": tableName, NoOfTotalTables: NoOfTotalTables, error: error});
     }
+    updateUsageAndUsageLineData(tableName, data) {
+        return new Promise((resolve, reject) => {
+            let manageData = (dataForUpdate, callback) => {
+                let first_data = dataForUpdate.splice(0, 1)[0];
+                this.db.executeSql(`UPDATE ${tableName} SET IsExported=1 WHERE IDLocal='${first_data.IDLocal}'`, []).then((res) => {
+                }).catch(e => {
+                    console.log(e);
+                    reject(e);
+                }).then(() => {
+                    if (dataForUpdate.length) {
+                        manageData(dataForUpdate, callback);
+                    } else {
+                        callback(true)
+                    }
+                })
+            }
+            if (data && data.length) {
+                manageData(data, (response) => {
+                    resolve(tableName);
+                })
+            }
+        });
 
+    }
     manageSqlLiteData() {
-        this._apiProvider.apiCall("assets/jsonData/demo.json").subscribe(res => {
+        this._apiProvider.apiCall("http://5.9.144.226:3031/fetch/data").subscribe(res => {
             let totalTable = clone(res['data']);
             if (res['data'] && res['data'].length) {
                 let manageData = (data, callback) => {
@@ -181,7 +211,7 @@ export class SqlLiteProvider {
                 })
             }
         }, (error) => {
-            this.progressBar("", 0, error);
+            this.progressBar("", 0, "error");
         })
     }
 }
