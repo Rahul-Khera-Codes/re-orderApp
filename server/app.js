@@ -6,7 +6,7 @@ let fs = require('fs');
 let _ = require('lodash');
 let app = express();
 let structure = require('./structure');
-let mailer = require('nodemailer')
+let mailer = require('nodemailer');
 
 app.server = http.createServer(app);
 
@@ -134,16 +134,17 @@ app.post('/save/data', function(req, res, next) {
 
 app.put('/forget/password', function(req, res, next) {
   const transporter = mailer.createTransport({
-    host: 'smtp.ethereal.email',
+    host: 'smtp.gmail.com',
     port: 587,
+    secure: false, // upgrade later with STARTTLS
     auth: {
-      user: 'xinqs4wqf7sywvrw@ethereal.email',
-      pass: 'j7nW9fDXaDpqaBWkGY'
+        user: 'testhr69@gmail.com',
+        pass: 'java@123'
     }
   });
 
   let mailOptions = {
-    from: '"Fred Foo 👻" <foo@blurdybloop.com>', // sender address
+    from: 'testhr69@gmail.com', // sender address
     to: req.body.email, // list of receivers
     subject: req.body.subject, // Subject line
     text: '', // plain text body
@@ -153,7 +154,7 @@ app.put('/forget/password', function(req, res, next) {
     if (error) {
       console.log(error);
     }
-    res.json({ response: info, messageView: mailer.getTestMessageUrl(info) });
+    res.json({ response: info });
   });
 })
 
