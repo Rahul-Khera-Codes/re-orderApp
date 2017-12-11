@@ -1,4 +1,3 @@
-import {HttpClient} from '@angular/common/http';
 import {Injectable} from '@angular/core';
 import {SQLite, SQLiteObject} from '@ionic-native/sqlite';
 import {ApiServiceProvider} from '../api-service/api-service';
@@ -15,7 +14,7 @@ export class SqlLiteProvider {
     @Output()
     progressDataEvent = new EventEmitter();
     tablesEvent = new EventEmitter();
-    constructor(private _apiProvider: ApiServiceProvider, public http: HttpClient, private sqlite: SQLite) {}
+    constructor(private _apiProvider: ApiServiceProvider, private sqlite: SQLite) {}
     createSqlLiteDB() {
         return new Promise((resolve, reject) => {
             let createData: any = {};
