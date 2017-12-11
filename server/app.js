@@ -135,8 +135,7 @@ app.post('/save/data', function(req, res, next) {
 app.put('/forget/password', function(req, res, next) {
   const transporter = mailer.createTransport({
     host: 'smtp.gmail.com',
-    port: 587,
-    secure: false, // upgrade later with STARTTLS
+    port: 465,
     auth: {
         user: 'testhr69@gmail.com',
         pass: 'java@123'
