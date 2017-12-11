@@ -13,6 +13,9 @@ export class LoginProvider {
         }
         this._localStorageProvider.setLocalStorageData('userDetails', userData)
     }
+    checkLoginBy() {
+        return this._localStorageProvider.getLocalStorageData('LoginBy')
+    }
     authUserCustomer(formDataEmail, formDataEmailPassword) {
         return new Promise((resolve, reject) => {
             this._sqlProvider.openDb().then((db: SQLiteObject) => {
@@ -21,6 +24,7 @@ export class LoginProvider {
                     if (res.rows.length) {
                         this.convertLoginResTojson(res);
                         this._localStorageProvider.setLocalStorageData('userType', "customer");
+                        this._localStorageProvider.setLocalStorageData('LoginBy', "manual");
                         resolve(res);
                     } else {
                         resolve(this.authUserContact(formDataEmail, formDataEmailPassword));
@@ -35,6 +39,38 @@ export class LoginProvider {
                 if (res.rows.length) {
                     this.convertLoginResTojson(res)
                     this._localStorageProvider.setLocalStorageData('userType', "contact");
+                    this._localStorageProvider.setLocalStorageData('LoginBy', "manual");
+                    resolve(res);
+                } else {
+                    reject("user not exist");
+                }
+            }).catch(e => reject(e));
+        })
+    }
+    authUserCustomerByBarCode(barCode) {
+        return new Promise((resolve, reject) => {
+            this._sqlProvider.openDb().then((db: SQLiteObject) => {
+                this.DataBase = db;
+                this.DataBase.executeSql(`SELECT * FROM Customer_Table WHERE LoginBarcode='${barCode}'`, []).then((res) => {
+                    if (res.rows.length) {
+                        this.convertLoginResTojson(res);
+                        this._localStorageProvider.setLocalStorageData('userType', "customer");
+                        this._localStorageProvider.setLocalStorageData('LoginBy', "barCode");
+                        resolve(res);
+                    } else {
+                        resolve(this.authUserContactByBarCode(barCode));
+                    }
+                }).catch(e => reject(e));
+            })
+        })
+    }
+    authUserContactByBarCode(barCode) {
+        return new Promise((resolve, reject) => {
+            this.DataBase.executeSql(`SELECT * FROM Contact_Table WHERE LoginBarcode='${barCode}'`, []).then((res) => {
+                if (res.rows.length) {
+                    this.convertLoginResTojson(res);
+                    this._localStorageProvider.setLocalStorageData('userType', "contact");
+                    this._localStorageProvider.setLocalStorageData('LoginBy', "barCode");
                     resolve(res);
                 } else {
                     reject("user not exist");
