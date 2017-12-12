@@ -1,10 +1,4 @@
 page-consignment-in {
-    .qtyBox{
-        width: 100%;
-        margin: 1px;
-        background: #e8e8e8;
-        border: .5px solid #c1c1c1;
-    }
     .name{
         color:#d65a5a !important;
     }
@@ -25,10 +19,14 @@ page-consignment-in {
         right: 10px;
     }
     .qty{
-        padding: 6px 16%;
-        font-size: 19px;
+        min-width: 50px;
+        padding: 6px 45%;
+        font-size: 20px;
         display: inline-block;
 
+    }
+    .padTop5{
+        padding-top: 5px !important;
     }
     .min-height30{
         color: #616161;
@@ -175,10 +173,6 @@ page-consignment-in {
     }
     /*@media screen and (orientation: landscape) {*/
     .landscape{
-        .qty{
-            padding: 9px 15%;
-            font-size: 16px;
-        }
         .columnForGrid75{
             width: 100%;
         }
@@ -186,33 +180,27 @@ page-consignment-in {
             width:100%
         }
         img{
-            max-height: 100px;
+            max-height: 150px;
             max-width: 100%;
+            padding-top: 20px;
         }
         .iconShow{
             top: 0;
             position: absolute;
         }
-        .columnForGrid50{
-            -webkit-flex: 0 0 100%;
-            -ms-flex: 0 0 100%;
-            flex: 0 0 100%;
-            max-width: 100%;
-        }
         .card1 {
             margin: 10px 0px 0px 0px ;
             width: 100%; 
             border-radius: 2px;
-            font-size: 1.4rem;
+            min-height: 106px;
             background: #fff;
-            box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.1), 0 0px 0px -2px rgba(0, 0, 0, 0.2), 0 1px 5px 0 rgba(0, 0, 0, 0);
         }
         ion-card img {
             height: 100% !important;
         }
         .imgBox{
             display: table-cell;
-            height: 100px;
+            height: 130px;
 
         }
         .column {
@@ -220,7 +208,7 @@ page-consignment-in {
             -ms-flex: 0 0 50%;
             flex: 0 0 50%;
             max-width: 50%;
-            border:1px solid #EFEFEF;
+            border-bottom:1px solid #EFEFEF;
         }
         .font013{
             font-size: 13px !important;
@@ -244,11 +232,11 @@ page-consignment-in {
         .margin10{
             margin: 10px;
         }
-        .Grid50{
-            -webkit-flex: 0 50%;
-            -ms-flex: 0 0 50%;
-            flex: 0 0 50%;
-            max-width: 50%;   
+        .col100{
+            -webkit-flex: 0 100%;
+            -ms-flex: 0 0 100%;
+            flex: 0 0 100%;
+            max-width: 100%;   
         }
         .padTop5{
             padding-top: 5px;

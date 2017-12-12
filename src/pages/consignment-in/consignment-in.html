@@ -37,7 +37,7 @@
         </div>
         <div class="center" padding-top>
             <img [ngClass]="{'dispalyMode':true,'active':displayMode == 'Landscape'}" (click)="displayMode = 'Landscape'"src="assets/imgs/column.jpg" alt=""/>
-            <img [ngClass]="{'dispalyMode':true,'active':displayMode == 'Portrait'}" (click)="displayMode = 'Portrait'" src="assets/imgs/list.jpg" alt=""/>
+                <img [ngClass]="{'dispalyMode':true,'active':displayMode == 'Portrait'}" (click)="displayMode = 'Portrait'" src="assets/imgs/list.jpg" alt=""/>
         </div>
 
     </div>
@@ -57,17 +57,17 @@
                     <div class="column cursorPointer" >
                         <div class="cardForPortrait">
                             <div class="row"> 
-                                <div class="columnForGrid50 relative">
-                                    <span *ngIf="displayMode == 'Landscape'" class=" heart potrateWishListIco ">
+                                <div class="columnForGrid50 col100 relative">
+                                    <span class=" heart potrateWishListIco ">
                                         <ion-icon name="heart" class="heart imgIco" [ngClass]="{'lightRed':true}"></ion-icon>
                                     </span>
-                                    <div class="imgBox" (tap)="gotoProduct()">
+                                    <div class="imgBox center">
                                         <img class="center" src="assets/imgs/output.jpg"/>
                                     </div>
                                 </div>
-                                <div class="columnForGrid50" padding>
+                                <div class="columnForGrid50 col100 no-padding-top" padding>
                                     <ion-card-content class="margin10 relative" >
-                                        <div class="row rowForLandscape" (tap)="gotoProduct()">
+                                        <div class="row rowForLandscape">
                                             <div [ngClass]="{'columnForGrid100':displayMode == 'Landscape' ,'columnForGrid75':displayMode == 'Portrait' }" >
                                                 <div text-capitalize class="font16 name cartTitle" >
                                                     Aluminiam Protection Tape 48mm<!--{{product.Name}}-->
@@ -93,35 +93,43 @@
                                 </div>  
                                 <div class="row">
                                     <div class="columnForGrid50 no-padding-top" padding >
-                                        <div class="border">
-                                            <button no-margin float-left color="gray" class="radiusLeft" ion-button icon-only >
-                                                <ion-icon name="add" color="light"></ion-icon>
-                                            </button>
-                                            <span class="qty">  1  </span>
-                                            <button no-margin color="gray" class="radiusRight" float-right ion-button icon-only >
-                                                <ion-icon name="remove" color="light"></ion-icon>
-                                            </button>
-                                        </div>
+                                        <ion-row class="border">
+                                            <ion-col col-4 no-padding>
+                                                <button no-margin float-left color="gray" class="radiusLeft" ion-button icon-only >
+                                                    <ion-icon name="add" color="light"></ion-icon>
+                                                </button>
+                                            </ion-col>
+                                            <ion-col col-4 no-padding>
+                                                <span class="qty">  1  </span>
+                                            </ion-col>
+                                            <ion-col col-4 no-padding>
+                                                <button no-margin color="gray" class="radiusRight" float-right ion-button icon-only >
+                                                    <ion-icon name="remove" color="light"></ion-icon>
+                                                </button>
+                                            </ion-col>
+                                        </ion-row>
                                     </div>
-                                    <div class="columnForGrid50 no-padding-top" padding >
+                                    <div class="columnForGrid50 padTop5" padding >
                                         <button no-margin ion-button full class="radius" color="red">ADD TO CART &nbsp; <ion-icon name="cart"></ion-icon></button>
                                     </div>
                                 </div>
                             </div>
                         </div>
+                    </div>
+                    <div class="column cursorPointer" >
                         <div class="cardForPortrait">
                             <div class="row"> 
-                                <div class="columnForGrid50 centerLandscape relative">
-                                    <span *ngIf="displayMode == 'Landscape'" class=" heart potrateWishListIco ">
+                                <div class="columnForGrid50 col100 centerLandscape relative">
+                                    <span  class=" heart potrateWishListIco ">
                                         <ion-icon name="heart" class="heart imgIco" [ngClass]="{'lightRed':true}"></ion-icon>
                                     </span>
-                                    <div class="imgBox" (tap)="gotoProduct()">
+                                    <div class="imgBox center">
                                         <img class="center" src="assets/imgs/output.jpg"/>
                                     </div>
                                 </div>
-                                <div class="columnForGrid50" padding>
+                                <div class="columnForGrid50 col100 no-padding-top" padding>
                                     <ion-card-content class="margin10 relative" >
-                                        <div class="row rowForLandscape" (tap)="gotoProduct()">
+                                        <div class="row rowForLandscape">
                                             <div [ngClass]="{'columnForGrid100':displayMode == 'Landscape' ,'columnForGrid75':displayMode == 'Portrait' }" >
                                                 <div text-capitalize class="font16 name cartTitle" >
                                                     Aluminiam Protection Tape 48mm<!--{{product.Name}}-->
@@ -147,17 +155,23 @@
                                 </div>  
                                 <div class="row">
                                     <div class="columnForGrid50 no-padding-top" padding >
-                                        <div class="border">
-                                            <button no-margin float-left color="gray" class="radiusLeft" ion-button icon-only >
-                                                <ion-icon name="add" color="light"></ion-icon>
-                                            </button>
-                                            <span class="qty">  1  </span>
-                                            <button no-margin color="gray" class="radiusRight" float-right ion-button icon-only >
-                                                <ion-icon name="remove" color="light"></ion-icon>
-                                            </button>
-                                        </div>
+                                        <ion-row class="border">
+                                            <ion-col col-4 no-padding>
+                                                <button no-margin float-left color="gray" class="radiusLeft" ion-button icon-only >
+                                                    <ion-icon name="add" color="light"></ion-icon>
+                                                </button>
+                                            </ion-col>
+                                            <ion-col col-4 no-padding>
+                                                <span class="qty">  1  </span>
+                                            </ion-col>
+                                            <ion-col col-4 no-padding>
+                                                <button no-margin color="gray" class="radiusRight" float-right ion-button icon-only >
+                                                    <ion-icon name="remove" color="light"></ion-icon>
+                                                </button>
+                                            </ion-col>
+                                        </ion-row>
                                     </div>
-                                    <div class="columnForGrid50 no-padding-top" padding >
+                                    <div class="columnForGrid50 padTop5" padding >
                                         <button no-margin ion-button full class="radius" color="red">ADD TO CART &nbsp; <ion-icon name="cart"></ion-icon></button>
                                     </div>
                                 </div>
