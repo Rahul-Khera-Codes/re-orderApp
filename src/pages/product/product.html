@@ -1,0 +1,118 @@
+<ion-header>
+  <ion-navbar color="black" class='relative'>
+    <button ion-button icon-only menuToggle>
+      <ion-icon name="menu" color='yellow'></ion-icon>
+    </button>
+    <img src="assets/imgs/bst.jpg" alt="" class='headerLogo' />
+    <button ion-button icon-only color='black'>
+      <ion-icon name="search" color='red'></ion-icon>
+    </button>
+    <div float-right>
+      <button ion-button icon-only color='black'>
+        <ion-icon name="heart" color='red'></ion-icon>
+      </button>
+      <button ion-button icon-only color='black'>
+        <ion-icon name="cart" color='primary'></ion-icon>
+      </button>
+    </div>
+  </ion-navbar>
+</ion-header>
+<side-menu></side-menu>
+
+<ion-content *ngIf="productData">
+  <div class="product-image-container" padding>
+    <ion-icon name="heart" class="heart"></ion-icon>
+    <img class="active" src="./assets/imgs/product.jpg" alt="{{productData.name}}" />
+    <ion-grid class="product-image-thumb">
+      <ion-row>
+        <ion-col col-4>
+          <img src="./assets/imgs/product-thumb.jpg" alt="{{productData.name}}" />
+        </ion-col>
+        <ion-col col-4>
+          <img src="./assets/imgs/product-thumb.jpg" alt="{{productData.name}}" />
+        </ion-col>
+        <ion-col col-4>
+          <img src="./assets/imgs/product-thumb.jpg" alt="{{productData.name}}" />
+        </ion-col>
+        <ion-col col-4>
+          <img src="./assets/imgs/product-thumb.jpg" alt="{{productData.name}}" />
+        </ion-col>
+        <ion-col col-4>
+          <img src="./assets/imgs/product-thumb.jpg" alt="{{productData.name}}" />
+        </ion-col>
+        <ion-col col-4>
+          <img src="./assets/imgs/product-thumb.jpg" alt="{{productData.name}}" />
+        </ion-col>
+        <ion-col col-4>
+          <img src="./assets/imgs/product-thumb.jpg" alt="{{productData.name}}" />
+        </ion-col>
+        <ion-col col-4>
+          <img src="./assets/imgs/product-thumb.jpg" alt="{{productData.name}}" />
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </div>
+  <div class="product-details" padding>
+    <h1 class="product-title">{{productData.name}}</h1>
+    <p class="sku">PART# P102176</p>
+    <p>PRICE INCL. GST.</p>
+    <h1 class="price">1+ $12.36 / EACH</h1>
+    <p class="stock">AVAILABILITY:
+      <span class="in-stock">IN STOCK</span>
+    </p>
+    <ion-grid class="qty-grid">
+      <ion-row>
+        <ion-col col-3>
+          <span class="quantity">QTY:</span>
+        </ion-col>
+        <ion-col col-6>
+          <div class="border">
+            <button no-margin float-left color="gray" class="radiusLeft" ion-button icon-only>
+              <ion-icon name="add" color="light"></ion-icon>
+            </button>
+            <span class="qty"> 1 </span>
+            <button no-margin color="gray" class="radiusRight" float-right ion-button icon-only>
+              <ion-icon name="remove" color="light"></ion-icon>
+            </button>
+          </div>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+    <ion-grid>
+      <ion-row class="shipping">
+        <ion-col col-3>
+          <span>SHIPPING EXTRA</span>
+        </ion-col>
+        <ion-col col-6>
+          <img src="./assets/imgs/cart.png" />
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+    <button ion-button color="danger" block>ADD TO CART &nbsp;
+      <ion-icon name="cart"></ion-icon>
+    </button>
+    <ion-grid class="product-controls">
+      <ion-row>
+        <ion-col col-3>
+          <img src="./assets/imgs/print.png">
+          <span>PRINT</span>
+        </ion-col>
+        <ion-col col-3>
+          <img src="./assets/imgs/danger.png">
+          <span>DANGEROUS GOODS</span>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </div>
+  <div class="product-description">
+    <h2>DESCRIPTION</h2>
+    <ul>
+      <li>DESCRIPTION 1</li>
+      <li>DESCRIPTION 2</li>
+      <li>DESCRIPTION 3</li>
+      <li>DESCRIPTION 4</li>
+      <li>DESCRIPTION 5</li>
+      <li>DESCRIPTION 6</li>
+    </ul>
+  </div>
+</ion-content>
