@@ -13,7 +13,7 @@ import {MobilePage} from '../pages/mobile/mobile';
     templateUrl: 'app.html'
 })
 export class MyApp {
-    rootPage: any = MobilePage;
+    rootPage: any = WishListPage;
     isPageRedirect: boolean = false;
     @ViewChild('myNav') nav: NavController
 
