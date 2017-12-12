@@ -1,0 +1,77 @@
+page-mobile {
+    img {
+        max-height: 250px;
+    }
+    .card-background-page {
+          ion-card {
+            position: relative;
+            text-align: center;
+          }
+          .title {
+            position: absolute;
+            bottom: 0px;
+            font-size: 2.0em;
+            width: 100%;
+            font-weight: bold;
+            color: #fff;
+            padding: 8px;
+            background: #3686ea;
+            opacity: 0.8;
+          }
+    }
+    .arrow {
+        text-align: center;
+        .icon {
+            font-size: 3em;
+            font-weight: bold;
+            color: #ec0054;
+        }
+    }
+    .main-title{
+        text-align: center;
+        color: #ec0054;
+        margin-left: 2em;
+        margin-right: 2em; 
+    }
+    .subtitle{
+        text-align: center;
+        color: #eeea1a;
+        font-size: 3em;
+    }
+    .services {
+        padding-bottom: 1em; 
+        .service-title {
+            text-align: center;
+            color: #ec0054;
+        }
+    }
+
+    .offers {
+          ion-card {
+            position: relative;
+            text-align: center;
+            margin-bottom: 0px;
+          }
+          .offer-title {
+            position: absolute;
+            top: 25%;
+            left: 10%;
+            font-size: 2.5em;
+            width: 100%;
+            font-weight: bold;
+            color: #fff;
+            text-align: left;
+          }
+          .offer-subtitle {
+            position: absolute;
+            top: 55%;
+            left: 10%;
+            font-size: 3.5em;
+            width: 100%;
+            font-weight: bold;
+            color: #fff;
+            text-align: left;
+          }
+        
+        }
+}

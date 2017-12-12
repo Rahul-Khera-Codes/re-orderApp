@@ -26,7 +26,7 @@ import {ChangePassword} from '../pages/changePassword/changePassword';
 import {ForgotPasswordPage} from '../pages/forgot-password/forgot-password';
 import {ProductPage} from '../pages/product/product';
 import {WishListPage} from '../pages/wish-list/wish-list';
-
+import {MobilePage} from '../pages/mobile/mobile';
 @NgModule({
     declarations: [
         MyApp,
@@ -38,7 +38,8 @@ import {WishListPage} from '../pages/wish-list/wish-list';
         ChangePassword,
         ForgotPasswordPage,
         ProductPage,
-        WishListPage
+        WishListPage,
+        MobilePage
     ],
     imports: [
         BrowserModule,
@@ -55,7 +56,8 @@ import {WishListPage} from '../pages/wish-list/wish-list';
         ChangePassword,
         ForgotPasswordPage,
         ProductPage,
-        WishListPage
+        WishListPage,
+        MobilePage
     ],
     providers: [
         StatusBar,
