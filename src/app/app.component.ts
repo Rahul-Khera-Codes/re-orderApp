@@ -7,12 +7,13 @@ import {SqlLiteProvider} from '../providers/sql-lite/sql-lite';
 import {NavController} from 'ionic-angular';
 import {LocalDbProvider} from './../providers/local-db/local-db';
 import {ConsignmentInPage} from '../pages/consignment-in/consignment-in';
+import {ProductPage} from '../pages/product/product';
 
 @Component({
     templateUrl: 'app.html'
 })
 export class MyApp {
-    rootPage: any = ConsignmentInPage;
+    rootPage: any = ProductPage;
     isPageRedirect: boolean = false;
     @ViewChild('myNav') nav: NavController
 
