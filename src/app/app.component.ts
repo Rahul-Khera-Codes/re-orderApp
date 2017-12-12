@@ -6,12 +6,13 @@ import {LoginPage} from '../pages/login/login';
 import {SqlLiteProvider} from '../providers/sql-lite/sql-lite';
 import {NavController} from 'ionic-angular';
 import {LocalDbProvider} from './../providers/local-db/local-db';
+import {ConsignmentInPage} from '../pages/consignment-in/consignment-in';
 
 @Component({
     templateUrl: 'app.html'
 })
 export class MyApp {
-    rootPage: any = LoginPage;
+    rootPage: any = ConsignmentInPage;
     isPageRedirect: boolean = false;
     @ViewChild('myNav') nav: NavController
 
@@ -23,7 +24,7 @@ export class MyApp {
         });
     }
     importData() {
-        this._local.callDBtoManage(this.nav);
+//        this._local.callDBtoManage(this.nav);
     }
 }
 

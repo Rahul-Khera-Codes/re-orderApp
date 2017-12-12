@@ -1,14 +1,47 @@
 
 <ion-header>
-    <ion-navbar color="primary">
-        <ion-title></ion-title>
+    <ion-navbar color="black" class='relative'>
+        <button ion-button icon-only menuToggle>
+            <ion-icon name="menu" color='yellow'></ion-icon>
+        </button>
+        <img src="assets/imgs/bst.jpg" alt="" class='headerLogo'/>
+        <button ion-button icon-only color='black'>
+            <ion-icon name="search" color='red'></ion-icon>
+        </button>
+        <div float-right>
+            <button  ion-button icon-only color='black'>
+                <ion-icon name="heart" color='red'></ion-icon>
+            </button>
+            <button  ion-button icon-only color='black'>
+                <ion-icon name="cart" color='primary'></ion-icon>
+            </button>
+        </div>
     </ion-navbar>
 </ion-header>
-
 <side-menu></side-menu>
 
-<ion-content padding>
-    <ion-list>
+<ion-content>
+    <div class="borderForMode">
+        <div class="center" padding-top>
+            <label>SORT BY &nbsp;</label>
+            <select class="selectList95 min-height30">
+                <option disabled selected>Position</option>
+                <option>1</option>
+            </select>
+            &nbsp;&nbsp;
+            <label>SHOW &nbsp;</label>
+            <select class="min-height30 selectList50">
+                <option>1</option>
+                <option>2</option>
+            </select>
+        </div>
+        <div class="center" padding-top>
+            <img [ngClass]="{'dispalyMode':true,'active':displayMode == 'Landscape'}" (click)="displayMode = 'Landscape'"src="assets/imgs/column.jpg" alt=""/>
+            <img [ngClass]="{'dispalyMode':true,'active':displayMode == 'Portrait'}" (click)="displayMode = 'Portrait'" src="assets/imgs/list.jpg" alt=""/>
+        </div>
+
+    </div>
+    <ion-list padding>
         <ion-item>
             <ion-label color="primary">Enter ID</ion-label>
             <ion-input placeholder="ID" [(ngModel)]="usageData['jobID']"></ion-input>
@@ -17,6 +50,131 @@
                     <ion-label>Save JobID</ion-label>
                     <ion-checkbox [(ngModel)]="isRemember" ></ion-checkbox>
                 </ion-item>-->
+
+        <ion-grid   [ngClass]="{'portrait': displayMode == 'Portrait', 'landscape': displayMode == 'Landscape'}" no-padding>
+            <div class="card1">   
+                <div class="rowForLandscape" wrap>
+                    <div class="column cursorPointer" >
+                        <div class="cardForPortrait">
+                            <div class="row"> 
+                                <div class="columnForGrid50 relative">
+                                    <span *ngIf="displayMode == 'Landscape'" class=" heart potrateWishListIco ">
+                                        <ion-icon name="heart" class="heart imgIco" [ngClass]="{'lightRed':true}"></ion-icon>
+                                    </span>
+                                    <div class="imgBox" (tap)="gotoProduct()">
+                                        <img class="center" src="assets/imgs/output.jpg"/>
+                                    </div>
+                                </div>
+                                <div class="columnForGrid50" padding>
+                                    <ion-card-content class="margin10 relative" >
+                                        <div class="row rowForLandscape" (tap)="gotoProduct()">
+                                            <div [ngClass]="{'columnForGrid100':displayMode == 'Landscape' ,'columnForGrid75':displayMode == 'Portrait' }" >
+                                                <div text-capitalize class="font16 name cartTitle" >
+                                                    Aluminiam Protection Tape 48mm<!--{{product.Name}}-->
+                                                </div>    
+                                            </div>
+                                        </div>
+                                        <div class="row rowForLandscape" >
+                                            <div class="columnForGrid100 price">
+                                                Price Incl GST
+                                            </div>
+                                        </div>
+                                        <div class="row rowForLandscape" >
+                                            <div class="columnForGrid100 amount">
+                                                1+ $12/Each
+                                            </div>
+                                        </div>
+                                        <div class="row rowForLandscape" >
+                                            <div class="columnForGrid100 amount">
+                                                10+ $10/Each
+                                            </div>
+                                        </div>
+                                    </ion-card-content>
+                                </div>  
+                                <div class="row">
+                                    <div class="columnForGrid50 no-padding-top" padding >
+                                        <div class="border">
+                                            <button no-margin float-left color="gray" class="radiusLeft" ion-button icon-only >
+                                                <ion-icon name="add" color="light"></ion-icon>
+                                            </button>
+                                            <span class="qty">  1  </span>
+                                            <button no-margin color="gray" class="radiusRight" float-right ion-button icon-only >
+                                                <ion-icon name="remove" color="light"></ion-icon>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="columnForGrid50 no-padding-top" padding >
+                                        <button no-margin ion-button full class="radius" color="red">ADD TO CART &nbsp; <ion-icon name="cart"></ion-icon></button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="cardForPortrait">
+                            <div class="row"> 
+                                <div class="columnForGrid50 centerLandscape relative">
+                                    <span *ngIf="displayMode == 'Landscape'" class=" heart potrateWishListIco ">
+                                        <ion-icon name="heart" class="heart imgIco" [ngClass]="{'lightRed':true}"></ion-icon>
+                                    </span>
+                                    <div class="imgBox" (tap)="gotoProduct()">
+                                        <img class="center" src="assets/imgs/output.jpg"/>
+                                    </div>
+                                </div>
+                                <div class="columnForGrid50" padding>
+                                    <ion-card-content class="margin10 relative" >
+                                        <div class="row rowForLandscape" (tap)="gotoProduct()">
+                                            <div [ngClass]="{'columnForGrid100':displayMode == 'Landscape' ,'columnForGrid75':displayMode == 'Portrait' }" >
+                                                <div text-capitalize class="font16 name cartTitle" >
+                                                    Aluminiam Protection Tape 48mm<!--{{product.Name}}-->
+                                                </div>    
+                                            </div>
+                                        </div>
+                                        <div class="row rowForLandscape" >
+                                            <div class="columnForGrid100 price">
+                                                Price Incl GST
+                                            </div>
+                                        </div>
+                                        <div class="row rowForLandscape" >
+                                            <div class="columnForGrid100 amount">
+                                                1+ $12/Each
+                                            </div>
+                                        </div>
+                                        <div class="row rowForLandscape" >
+                                            <div class="columnForGrid100 amount">
+                                                10+ $10/Each
+                                            </div>
+                                        </div>
+                                    </ion-card-content>
+                                </div>  
+                                <div class="row">
+                                    <div class="columnForGrid50 no-padding-top" padding >
+                                        <div class="border">
+                                            <button no-margin float-left color="gray" class="radiusLeft" ion-button icon-only >
+                                                <ion-icon name="add" color="light"></ion-icon>
+                                            </button>
+                                            <span class="qty">  1  </span>
+                                            <button no-margin color="gray" class="radiusRight" float-right ion-button icon-only >
+                                                <ion-icon name="remove" color="light"></ion-icon>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="columnForGrid50 no-padding-top" padding >
+                                        <button no-margin ion-button full class="radius" color="red">ADD TO CART &nbsp; <ion-icon name="cart"></ion-icon></button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </ion-grid>
+
+
+
+
+
+
+
+
         <ion-grid padding-top>
             <ion-row *ngIf="isManualLogin">
                 <ion-col col-6>

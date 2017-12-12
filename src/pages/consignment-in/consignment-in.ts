@@ -31,6 +31,7 @@ export class ConsignmentInPage implements OnInit {
     productControlLineData: any;
     usageLineDataStore = [];
     isFound: boolean = true;
+    displayMode = 'Landscape'
     usageData = {
         "jobID": "",
         "latitude": 0,

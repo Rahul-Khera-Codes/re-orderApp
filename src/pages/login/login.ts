@@ -48,6 +48,7 @@ export class LoginPage {
         this._consignmentProvider.checkUserType().then((userType) => {
             if (userType == constantUserType['customer']) {
                 this._consignmentProvider.queryToProductControlList().then((consignmentList) => {
+                    console.log("consignmentList",consignmentList);
                     this.consignmentCheck(consignmentList['list']);
                 })
             } else {
