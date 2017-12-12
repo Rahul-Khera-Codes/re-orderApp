@@ -70,23 +70,7 @@ page-consignment-in {
     .radiusRight{
         border-radius: 0px 4px 4px 0px;
     }
-    .border{
-        border: 1px solid gray;
-        border-radius: 6px;
-    }
-    .headerLogo{
-        position: absolute;
-        top: 6px;
-        left: 40%;
-    }
-    .relative{
-        position: relative;
-    }
 
-    .redColor{
-        color:#488aff;
-        font-weight: bold;
-    }
 
     /*@media screen and (orientation: portrait) {*/  
     ion-grid{padding-top: 0px;} 
@@ -268,6 +252,23 @@ page-consignment-in {
 }
 img{
     margin: 0 auto;
+}
+.border{
+    border: 1px solid gray;
+    border-radius: 6px;
+}
+.headerLogo{
+    position: absolute;
+    top: 6px;
+    left: 40%;
+}
+.relative{
+    position: relative;
+}
+
+.redColor{
+    color:#488aff;
+    font-weight: bold;
 }
 
 

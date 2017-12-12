@@ -25,6 +25,8 @@ import {LocalDbProvider} from '../providers/local-db/local-db';
 import {ChangePassword} from '../pages/changePassword/changePassword';
 import {ForgotPasswordPage} from '../pages/forgot-password/forgot-password';
 import {ProductPage} from '../pages/product/product';
+import {WishListPage} from '../pages/wish-list/wish-list';
+
 @NgModule({
     declarations: [
         MyApp,
@@ -35,7 +37,8 @@ import {ProductPage} from '../pages/product/product';
         ProgressDetailsPage,
         ChangePassword,
         ForgotPasswordPage,
-        ProductPage
+        ProductPage,
+        WishListPage
     ],
     imports: [
         BrowserModule,
@@ -51,7 +54,8 @@ import {ProductPage} from '../pages/product/product';
         ProgressDetailsPage,
         ChangePassword,
         ForgotPasswordPage,
-        ProductPage
+        ProductPage,
+        WishListPage
     ],
     providers: [
         StatusBar,
