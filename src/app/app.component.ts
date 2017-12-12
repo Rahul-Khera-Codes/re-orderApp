@@ -8,12 +8,12 @@ import {NavController} from 'ionic-angular';
 import {LocalDbProvider} from './../providers/local-db/local-db';
 import {WishListPage} from '../pages/wish-list/wish-list';
 import {ProductPage} from '../pages/product/product';
-
+import {MobilePage} from '../pages/mobile/mobile';
 @Component({
     templateUrl: 'app.html'
 })
 export class MyApp {
-    rootPage: any = WishListPage;
+    rootPage: any = MobilePage;
     isPageRedirect: boolean = false;
     @ViewChild('myNav') nav: NavController
 
