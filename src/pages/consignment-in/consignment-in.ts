@@ -1,5 +1,5 @@
-import {Component, OnInit} from '@angular/core';
-import {NavController, NavParams} from 'ionic-angular';
+import {Component, OnInit, ViewChild} from '@angular/core';
+import {NavController, NavParams, ModalController} from 'ionic-angular';
 import {BarcodeScanner} from '@ionic-native/barcode-scanner';
 import {AlertController} from 'ionic-angular';
 import {ProductProvider} from './../../providers/product/product';
@@ -13,12 +13,16 @@ import {constantUserType} from './../../providers/config/config';
 import {LocalStorageProvider} from './../../providers/local-storage/local-storage';
 import {constantLoginBy} from './../../providers/config/config';
 import {ToastProvider} from './../../providers/toast/toast';
+import {Searchbar} from 'ionic-angular';
+import {MenuController} from 'ionic-angular';
+import {LoginPage} from './../login/login';
 
 @Component({
     selector: 'page-consignment-in',
     templateUrl: 'consignment-in.html'
 })
 export class ConsignmentInPage implements OnInit {
+    @ViewChild("searchbar") searchbar: Searchbar;
     barcodeData: object;
     err: string;
     myInput;
@@ -31,6 +35,7 @@ export class ConsignmentInPage implements OnInit {
     productControlLineData: any;
     usageLineDataStore = [];
     isFound: boolean = true;
+    qty = 0;
     displayMode = 'Landscape'
     usageData = {
         "jobID": "",
@@ -43,16 +48,24 @@ export class ConsignmentInPage implements OnInit {
         "customerIDLocal": -1,
         "IsExported": 0
     }
+    searchBar: boolean = false;
     isManualLogin = false;
-    constructor(private _toast: ToastProvider, private _localStorage: LocalStorageProvider, private _consignmentProvider: ConsignmentProvider, private geolocation: Geolocation, private _productProvider: ProductProvider, public alertCtrl: AlertController, private barcodeScanner: BarcodeScanner, public navCtrl: NavController, public navParams: NavParams) {}
+    default: boolean = false;
+    constructor(public modalCtrl: ModalController, public _menuCtrl: MenuController, private _toast: ToastProvider, private _localStorage: LocalStorageProvider, private _consignmentProvider: ConsignmentProvider, private geolocation: Geolocation, private _productProvider: ProductProvider, public alertCtrl: AlertController, private barcodeScanner: BarcodeScanner, public navCtrl: NavController, public navParams: NavParams) {}
     ngOnInit() {
+        this.checkLoginBy();
         this.selectedConsignment = this.navParams.get('selectedConsignment');
+        this.default = this.navParams.get('default');
         if (this.selectedConsignment) {
             this._productProvider.queryToProductControlLine(this.selectedConsignment.IDWeb, this.selectedConsignment.IDLocal).then((productControlLineData) => {
                 this.productControlLineData = productControlLineData;
                 this._productProvider.getProductDetailsByQueryProduct(productControlLineData).then((productDetails) => {
+                    let quantity = 0;
+                    if (!this.isManualLogin) {
+                        quantity = 1;
+                    }
                     forEach(productDetails, (value) => {
-                        value['qty'] = 1;
+                        value['qty'] = quantity;
                     })
                     this.products = productDetails;
                     this.productsRef = productDetails;
@@ -62,7 +75,19 @@ export class ConsignmentInPage implements OnInit {
             })
         }
         this.getLocation();
-        this.checkLoginBy();
+
+    }
+    openMenu() {
+        this._menuCtrl.open();
+    }
+    gotoSearch() {
+        setTimeout(() => {
+            this.searchbar.setFocus();
+        }, 200);
+        this.searchBar = true;
+    }
+    dismiss() {
+        this.searchBar = false;
     }
     checkLoginBy() {
         if (this._consignmentProvider.checkLoginBy() == constantLoginBy.manual) {
@@ -71,6 +96,7 @@ export class ConsignmentInPage implements OnInit {
             this.isManualLogin = false;
         }
     }
+
     getLocation() {
         this.geolocation.getCurrentPosition().then((resp) => {
             this.usageData['latitude'] = resp.coords.latitude;
@@ -79,7 +105,23 @@ export class ConsignmentInPage implements OnInit {
             console.log(error);
         });
     }
+    remove(productData) {
+        if (productData['qty'] > 0) {
+            productData['qty']--;
+            if (productData['qty'] == 0) {
+                this.isDataExistINList(productData.ID, productData['qty'], true);
+            } else {
+                this.isDataExistINList(productData.ID, productData['qty']);
+            }
+        } else {
+            return false;
+        }
 
+    }
+    add(productData) {
+        productData['qty']++;
+        this.isDataExistINList(productData.ID, productData['qty']);
+    }
     ionViewDidLoad() {
     }
     buttonClick() {
@@ -141,23 +183,42 @@ export class ConsignmentInPage implements OnInit {
         })
     }
     submit() {
-        this._productProvider.queryToUsage(this.usageData).then((usageRes) => {
-            this._productProvider.queryToUsageLine(this.usageLineDataStore).then((res) => {
-                this._toast.presentToast("Successfully Submited", 3000);
-                this.usageLineDataStore = [];
-                this.usageData = {
-                    "jobID": "",
-                    "latitude": 0,
-                    "longitude": 0,
-                    "currentData": "",
-                    "listIDLocal": "",
-                    "IDLocal": "",
-                    "contactIDLocal": -1,
-                    "customerIDLocal": -1,
-                    "IsExported": 0
+        if (this.selectedConsignment['ReLoginToSubmit'] && this.selectedConsignment['ReLoginToSubmit'] == "true") {
+            let profileModal = this.modalCtrl.create(LoginPage, {relogin: true, email: this.userData()['EmailAddress']});
+            profileModal.onDidDismiss(data => {
+                if (data['login']) {
+                    this.submitSubFunction();
                 }
+            });
+            profileModal.present();
+        } else {
+            this.submitSubFunction();
+        }
+    }
+
+    submitSubFunction() {
+        if (this.usageData && this.usageData['IDLocal']) {
+            this._productProvider.queryToUsage(this.usageData).then((usageRes) => {
+                this._productProvider.queryToUsageLine(this.usageLineDataStore).then((res) => {
+                    this._toast.presentToast("Successfully Submited", 3000);
+                    this.usageLineDataStore = [];
+                    this.usageData = {
+                        "jobID": "",
+                        "latitude": 0,
+                        "longitude": 0,
+                        "currentData": "",
+                        "listIDLocal": "",
+                        "IDLocal": "",
+                        "contactIDLocal": -1,
+                        "customerIDLocal": -1,
+                        "IsExported": 0
+                    }
+                })
             })
-        })
+
+        } else {
+            this._toast.presentToast("Nothing to submit", 3000);
+        }
     }
     submitProduct() {
         this.submit();
@@ -194,8 +255,14 @@ export class ConsignmentInPage implements OnInit {
         })
     }
     addItemByBarcode() {
+        let cancel = false;
+        let filterBarcodeData;
         this.barcodeScanner.scan().then((barcodeData) => {
-            let filterBarcodeData = this.checkBarCodeOnproduct(barcodeData);
+            filterBarcodeData = this.checkBarCodeOnproduct(barcodeData);
+        }, (err) => {
+            //            this.err = err;
+            // An error occurred
+        }).then(() => {
             if (filterBarcodeData && filterBarcodeData.length) {
                 let prompt = this.alertCtrl.create({
                     title: 'Quantity',
@@ -212,6 +279,7 @@ export class ConsignmentInPage implements OnInit {
                             text: 'Cancel',
                             handler: data => {
                                 console.log('Cancel clicked');
+                                cancel = true;
                             }
                         },
                         {
@@ -222,6 +290,7 @@ export class ConsignmentInPage implements OnInit {
                                 } else {
                                     if (filterBarcodeData && filterBarcodeData.length) {
                                         filterBarcodeData[0]['qty'] = dataOfQty.qty;
+                                        this.isDataExistINList(filterBarcodeData[0].ID, filterBarcodeData[0].qty)
                                     }
                                 }
                             }
@@ -229,15 +298,11 @@ export class ConsignmentInPage implements OnInit {
                     ]
                 });
                 prompt.present();
-                this.isDataExistINList(filterBarcodeData[0].productID, filterBarcodeData[0].qty)
             } else {
                 this._toast.presentToast("Product Not Found", 3000);
                 this.isFound = false;
             }
-        }, (err) => {
-            this.err = err;
-            // An error occurred
-        });
+        })
     }
     searchProduct(ev: any) {
         this.products = this.productsRef;
@@ -248,19 +313,29 @@ export class ConsignmentInPage implements OnInit {
             })
         }
     }
-    isDataExistINList(productID, qty) {
+    isDataExistINList(productID, qty, isPop?) {
         let data = {};
         data['productID'] = productID;
-        let index = findIndex(this.usageLineDataStore, data)
+        let index = findIndex(this.usageLineDataStore, data);
         if (index == -1) {
-            this.addQty(productID, qty);
+            if (isPop) {
+
+            } else {
+                this.addQty(productID, qty);
+            }
         } else {
             if (this.isManualLogin) {
-                this.usageLineDataStore[index].qty = qty;
+                if (isPop) {
+                    this.usageLineDataStore.splice(index, 1);
+                    this._toast.presentToast("Item Deleted", 3000);
+                } else {
+                    this.usageLineDataStore[index].qty = qty;
+                    this._toast.presentToast("Product Quantity Updated", 3000);
+                }
             } else {
                 this.usageLineDataStore[index].qty += qty;
+                this._toast.presentToast("Product Quantity Updated", 3000);
             }
-            this._toast.presentToast("Product Quentity Updated", 3000);
         }
     }
     addProductByBarcode() {

@@ -16,7 +16,7 @@ export class LocalStorageProvider {
     removeLocalStorageData(storageName) {
         localStorage.removeItem(storageName);
     }
-    resetLocalStorageData(storageName) {
+    resetLocalStorageData() {
         localStorage.clear();
     }
 }

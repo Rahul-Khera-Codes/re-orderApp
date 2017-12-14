@@ -24,9 +24,6 @@ import {ToastProvider} from '../providers/toast/toast';
 import {LocalDbProvider} from '../providers/local-db/local-db';
 import {ChangePassword} from '../pages/changePassword/changePassword';
 import {ForgotPasswordPage} from '../pages/forgot-password/forgot-password';
-import {ProductPage} from '../pages/product/product';
-import {WishListPage} from '../pages/wish-list/wish-list';
-import {MobilePage} from '../pages/mobile/mobile';
 @NgModule({
     declarations: [
         MyApp,
@@ -36,10 +33,7 @@ import {MobilePage} from '../pages/mobile/mobile';
         SideMenuComponent,
         ProgressDetailsPage,
         ChangePassword,
-        ForgotPasswordPage,
-        ProductPage,
-        WishListPage,
-        MobilePage
+        ForgotPasswordPage
     ],
     imports: [
         BrowserModule,
@@ -54,10 +48,7 @@ import {MobilePage} from '../pages/mobile/mobile';
         ConsignmentInPage,
         ProgressDetailsPage,
         ChangePassword,
-        ForgotPasswordPage,
-        ProductPage,
-        WishListPage,
-        MobilePage
+        ForgotPasswordPage
     ],
     providers: [
         StatusBar,

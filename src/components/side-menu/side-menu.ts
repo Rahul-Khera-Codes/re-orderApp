@@ -11,6 +11,8 @@ import {ToastProvider} from './../../providers/toast/toast';
 import filter from 'lodash/filter';
 import {ChangePassword} from '../../pages/changePassword/changePassword';
 import {ConsignmentProvider} from '../../providers/consignment/consignment';
+import {LocalStorageProvider} from './../../providers/local-storage/local-storage';
+import {LoginPage} from '../../pages/login/login';
 @Component({
     selector: 'side-menu',
     templateUrl: 'side-menu.html'
@@ -19,7 +21,7 @@ export class SideMenuComponent {
     spin: boolean = false;
     isclick: boolean = false;
     loginBy: string;
-    constructor(private _consignmentService: ConsignmentProvider, private _toast: ToastProvider, private _apiProvider: ApiServiceProvider, private _local: LocalDbProvider, private _sqlService: SqlLiteProvider, private sqlitePorter: SQLitePorter, private _menuCtrl: MenuController, public _navController: NavController) {}
+    constructor(private _storage: LocalStorageProvider, private _consignmentService: ConsignmentProvider, private _toast: ToastProvider, private _apiProvider: ApiServiceProvider, private _local: LocalDbProvider, private _sqlService: SqlLiteProvider, private sqlitePorter: SQLitePorter, private _menuCtrl: MenuController, public _navController: NavController) {}
     ngOnInit() {
         this._menuCtrl.enable(true);
         this.loginBy = this._consignmentService.checkLoginBy();
@@ -31,6 +33,10 @@ export class SideMenuComponent {
     }
     checkIsExported(tableData) {
         return filter(tableData, {"IsExported": 0});
+    }
+    logout() {
+        this._storage.resetLocalStorageData();
+        this._navController.setRoot(LoginPage);
     }
     exportData() {
         if (!this.isclick) {

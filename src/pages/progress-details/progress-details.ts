@@ -18,7 +18,6 @@ export class ProgressDetailsPage {
         let base = 0;
         this.reference = this._sqlLiteProvider.progressDataEvent.subscribe((progressData) => {
             this.progress = progressData;
-            console.log(progressData);
             if (this.progress && this.progress['error']) {
                 setTimeout(() => {
                     this.navCtrl.pop();
