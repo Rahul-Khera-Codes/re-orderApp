@@ -31,9 +31,6 @@ export class SideMenuComponent {
             this._local.callDBtoManage(this._navController);
         }
     }
-    checkIsExported(tableData) {
-        return filter(tableData, {"IsExported": 0});
-    }
     logout() {
         this._storage.resetLocalStorageData();
         this._navController.setRoot(LoginPage);
@@ -45,6 +42,7 @@ export class SideMenuComponent {
             this._sqlService.openDb().then((db: SQLiteObject) => {
                 this.sqlitePorter.exportDbToJson(db)
                     .then((res) => {
+                         this.spin = false;
                         let exportData = res['data']['inserts'];
                         let key = keys(exportData);
                         let manageExportData = (data, callback) => {
@@ -53,10 +51,10 @@ export class SideMenuComponent {
                             sendData['name'] = first_key;
                             //                            sendData['data'] = exportData[first_key];
                             if (sendData['name'] == ConstantTableName.usage || sendData['name'] == ConstantTableName.usageLine) {
-                                let exportDataFinal = this.checkIsExported(exportData[first_key])
+                                let exportDataFinal = exportData[first_key];
                                 sendData['data'] = exportDataFinal;
                                 this._apiProvider.apiCallByPost('http://5.9.144.226:3031/save/data', sendData).subscribe(res => {
-                                    this._sqlService.updateUsageAndUsageLineData(sendData['name'], exportDataFinal).then((res) => {
+                                    this._sqlService.deleteRecord(sendData['name']).then((res) => {
                                     })
                                     if (data.length) {
                                         manageExportData(data, callback);

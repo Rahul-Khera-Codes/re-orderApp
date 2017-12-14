@@ -36,7 +36,7 @@
         </div>
     </div>
     <ion-list padding>
-        <ion-item>
+        <ion-item *ngIf="isManualLogin">
             <ion-label color="primary">Job ID</ion-label>
             <ion-input placeholder="ID" [(ngModel)]="usageData['jobID']"></ion-input>
         </ion-item>
@@ -133,7 +133,7 @@
             </div>
         </ion-grid>
         <ion-grid padding-top>    
-            <ion-row *ngIf="!isManualLogin">
+            <ion-row *ngIf="!isManualLogin && myInputEnable">
                 <ion-col col-6>
                     <button class="no-margin radius" color="gray" ion-button full margin-top  (click)="addProductByBarcode()">Scan Product</button>
                 </ion-col>

@@ -45,8 +45,7 @@ export class ConsignmentInPage implements OnInit {
         "listIDLocal": "",
         "IDLocal": "",
         "contactIDLocal": -1,
-        "customerIDLocal": -1,
-        "IsExported": 0
+        "customerIDLocal": -1
     }
     searchBar: boolean = false;
     isManualLogin = false;
@@ -147,8 +146,7 @@ export class ConsignmentInPage implements OnInit {
             "IDLocal": "",
             "productID": "",
             "usageIDLocal": "",
-            "createdDateTime": "",
-            "IsExported": 0
+            "createdDateTime": ""
         }
         return new Promise((resolve, reject) => {
             this._consignmentProvider.checkUserType().then((userType) => {
@@ -210,8 +208,7 @@ export class ConsignmentInPage implements OnInit {
                         "listIDLocal": "",
                         "IDLocal": "",
                         "contactIDLocal": -1,
-                        "customerIDLocal": -1,
-                        "IsExported": 0
+                        "customerIDLocal": -1
                     }
                 })
             })
@@ -225,9 +222,9 @@ export class ConsignmentInPage implements OnInit {
     }
     submitProductByScan() {
         this.barcodeScanner.scan().then((barcodeData) => {
-            if (barcodeData.text == "ok") {
+//            if (barcodeData.text == "ok") {
                 this.submit();
-            }
+//            }
         }, (err) => {
             this.err = err;
         });
@@ -342,7 +339,7 @@ export class ConsignmentInPage implements OnInit {
         this.barcodeScanner.scan().then((barcodeData) => {
             let filterBarcodeData = this.checkBarCodeOnproduct(barcodeData);
             if (filterBarcodeData && filterBarcodeData.length) {
-                this.isDataExistINList(filterBarcodeData[0].productID, 1);
+                this.isDataExistINList(filterBarcodeData[0].ID, 1);
             } else {
                 this._toast.presentToast("Product Not Found", 3000);
                 this.isFound = false;

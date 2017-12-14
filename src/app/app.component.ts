@@ -22,7 +22,7 @@ export class MyApp {
         });
     }
     importData() {
-//        this._local.callDBtoManage(this.nav);
+        this._local.callDBtoManage(this.nav);
     }
 }
 

@@ -12,7 +12,7 @@ export class LocalDbProvider {
         this._sqlLiteservice.createSqlLiteDB().then((res) => {
             if (res) {
                 this._sqlLiteservice.createSqlLiteTable().then(() => {
-                    this._sqlLiteservice.manageSqlLiteData();
+//                    this._sqlLiteservice.manageSqlLiteData();
                 })
             }
         })
