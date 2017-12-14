@@ -50,6 +50,7 @@ export class ConsignmentInPage implements OnInit {
     searchBar: boolean = false;
     isManualLogin = false;
     default: boolean = false;
+    isLogin: boolean = false;
     constructor(public modalCtrl: ModalController, public _menuCtrl: MenuController, private _toast: ToastProvider, private _localStorage: LocalStorageProvider, private _consignmentProvider: ConsignmentProvider, private geolocation: Geolocation, private _productProvider: ProductProvider, public alertCtrl: AlertController, private barcodeScanner: BarcodeScanner, public navCtrl: NavController, public navParams: NavParams) {}
     ngOnInit() {
         this.checkLoginBy();
@@ -181,10 +182,11 @@ export class ConsignmentInPage implements OnInit {
         })
     }
     submit() {
-        if (this.selectedConsignment['ReLoginToSubmit'] && this.selectedConsignment['ReLoginToSubmit'] == "true") {
+        if (this.isLogin || this.selectedConsignment['ReLoginToSubmit'] && this.selectedConsignment['ReLoginToSubmit'] == "true") {
             let profileModal = this.modalCtrl.create(LoginPage, {relogin: true, email: this.userData()['EmailAddress']});
             profileModal.onDidDismiss(data => {
                 if (data['login']) {
+                    this.isLogin = data['login'];
                     this.submitSubFunction();
                 }
             });
@@ -222,9 +224,9 @@ export class ConsignmentInPage implements OnInit {
     }
     submitProductByScan() {
         this.barcodeScanner.scan().then((barcodeData) => {
-//            if (barcodeData.text == "ok") {
-                this.submit();
-//            }
+            //            if (barcodeData.text == "ok") {
+            this.submit();
+            //            }
         }, (err) => {
             this.err = err;
         });
