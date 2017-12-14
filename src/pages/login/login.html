@@ -1,7 +1,18 @@
 <ion-header>
-    <ion-navbar no-border-bottom color="primary">
-        <ion-title>Login</ion-title>
+    <ion-navbar color="black" class='relative' *ngIf="!relogin">
+        <img src="assets/imgs/bst.jpg" alt="" class='headerLogo'/>
     </ion-navbar>
+    <ion-toolbar *ngIf="relogin">
+        <ion-title>
+            Filter by
+        </ion-title>
+        <ion-buttons start>
+            <button ion-button (click)="dismiss()">
+                    <span ion-text color="primary" showWhen="ios">Cancel</span>
+                <ion-icon name="md-close" showWhen="android,windows,core"></ion-icon>
+            </button>
+        </ion-buttons>
+    </ion-toolbar>
     <div padding style="background: #f8f8f8;">
         <ion-segment [(ngModel)]="login">
             <ion-segment-button value="custom">
@@ -35,7 +46,7 @@
                 </div>
             </ion-list>
             <div padding>
-                <button ion-button color="primary" block [disabled]="!loginform.valid" >Sign In</button>
+                <button ion-button color="red" class="radius" block [disabled]="!loginform.valid" >Sign In</button>
             </div>
             <div class="center" margin-top *ngIf="err">
                  <ion-badge  color="danger">{{err}}</ion-badge>
@@ -47,10 +58,13 @@
         <div *ngSwitchCase="'remote'">
             <img class="paddingBarCode" src="assets/imgs/br.png" alt=""/>
             <div padding>
-                <button ion-button color="primary" block (click)="openBarCode()" >Sign In With Barcode</button>
+                <button ion-button color="red" class="radius" block (click)="openBarCode()" >Sign In With Barcode</button>
             </div>
             <div class="center" margin-top *ngIf="barCodeErr">
                  <ion-badge  color="danger">{{barCodeErr}}</ion-badge>
+            </div>
+            <div class="center" margin-top *ngIf="isConsignmentExist">
+                 <ion-badge  color="danger">Consignment List not Exist</ion-badge>
             </div>
         </div>
     </div>

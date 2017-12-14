@@ -6,7 +6,6 @@ import {LoginPage} from '../pages/login/login';
 import {SqlLiteProvider} from '../providers/sql-lite/sql-lite';
 import {NavController} from 'ionic-angular';
 import {LocalDbProvider} from './../providers/local-db/local-db';
-
 @Component({
     templateUrl: 'app.html'
 })

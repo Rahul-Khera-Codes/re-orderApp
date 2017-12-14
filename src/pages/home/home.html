@@ -1,11 +1,9 @@
 <ion-header>
-    <ion-navbar color="primary">
-        <ion-title>
-            Home Page
-        </ion-title>
-        <button ion-button icon-only menuToggle  *ngIf="!searchBar">
-                <ion-icon name="menu"></ion-icon>
+    <ion-navbar color="black" class='relative'>
+        <button ion-button icon-only menuToggle *ngIf="!searchBar">
+                <ion-icon name="menu" color='yellow'></ion-icon>
         </button>
+        <img src="assets/imgs/bst.jpg" alt="" class='headerLogo'/>
     </ion-navbar>
 </ion-header>
 <side-menu></side-menu>

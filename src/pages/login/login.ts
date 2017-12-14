@@ -1,5 +1,5 @@
 import {Component} from '@angular/core';
-import {NavController, NavParams} from 'ionic-angular';
+import {NavController, NavParams, ViewController} from 'ionic-angular';
 import {FormGroup, FormBuilder, Validators, FormControl} from '@angular/forms';
 import {BarcodeScanner} from '@ionic-native/barcode-scanner';
 import {HomePage} from '../home/home';
@@ -20,13 +20,20 @@ export class LoginPage {
     err: string;
     barCodeErr: string;
     isConsignmentExist: boolean = false;
-    constructor(private _toast: ToastProvider, private _consignmentProvider: ConsignmentProvider, private _login: LoginProvider, private barcodeScanner: BarcodeScanner, public navCtrl: NavController, public navParams: NavParams, private formBuilder: FormBuilder) {
+    relogin = false;
+    preUserEmail: string;
+    constructor(public viewCtrl: ViewController, private _toast: ToastProvider, private _consignmentProvider: ConsignmentProvider, private _login: LoginProvider, private barcodeScanner: BarcodeScanner, public navCtrl: NavController, public navParams: NavParams, private formBuilder: FormBuilder) {
+        this.relogin = this.navParams.get('relogin');
+        this.preUserEmail = this.navParams.get('email');
         this.loginform = this.formBuilder.group({
             password: ['', Validators.compose([Validators.required, Validators.minLength(6)])],
             email: ['', Validators.compose([Validators.maxLength(50), Validators.required])],
         });
     }
-
+    dismiss() {
+        let data = {'login': 'false'};
+        this.viewCtrl.dismiss(data);
+    }
     ionViewDidLoad() {
     }
     forgotPassword(email) {
@@ -38,7 +45,7 @@ export class LoginPage {
             this.navCtrl.setRoot(HomePage, {"consignmentList": consignmentList});
         } else if (consignmentList && consignmentList.length < 1 && consignmentList.length != 0) {
             this.isConsignmentExist = false;
-            this.navCtrl.setRoot(ConsignmentInPage, {"selectedConsignment": consignmentList[0]});
+            this.navCtrl.setRoot(ConsignmentInPage, {"selectedConsignment": consignmentList[0], "default": true});
         } else {
             this._toast.presentToast("Consignment List Not Exist", 2000);
             this.isConsignmentExist = true;
@@ -63,8 +70,13 @@ export class LoginPage {
         this._login.authUserCustomer(formData.email, formData.password).then((response: any) => {
             this.err = null;
             if (response && response.rows.length) {
+                if (formData.email == this.preUserEmail) {
+                    let data = {'login': 'true'};
+                    this.viewCtrl.dismiss(data);
+                } else {
+                    this.getConsignmentAndCheckUserType();
+                }
                 this._toast.presentToast("Login Successful", 2000);
-                this.getConsignmentAndCheckUserType();
             }
         }, (err) => {
             this._toast.presentToast("Invalid Login", 2000);
@@ -77,14 +89,19 @@ export class LoginPage {
             this._login.authUserCustomerByBarCode(barcodeData.text).then((response: any) => {
                 this.barCodeErr = null;
                 if (response && response.rows.length) {
-                    this.getConsignmentAndCheckUserType();
+                    if (response.rows.item(0).EmailAddress == this.preUserEmail) {
+                        let data = {'login': 'true'};
+                        this.viewCtrl.dismiss(data);
+                    } else {
+                        this.getConsignmentAndCheckUserType();
+                    }
+                    this._toast.presentToast("Login Successful", 2000);
                 }
             }, (err) => {
                 console.log(err)
                 this.barCodeErr = err;
             })
         }, (err) => {
-            console.log("err", err)
             this.barCodeErr = err;
             // An error occurred
         });

@@ -28,8 +28,10 @@ export class ForgotPasswordPage {
     }
     forgot(value: any) {
         this.spin = true;
-        value['password'] = this._login.encryptPassword(Math.random());
+        let pwd=Math.random();
+        value['password'] = this._login.encryptPassword(pwd);
         this._login.updatePasswordWhenForgot(value['password'], value['email']).then((res) => {
+            value['password'] = pwd;
             this._apiProvider.apiCallByPut("http://5.9.144.226:3031/forget/password", value).subscribe(res => {
                 this._toast.presentToast("please check your mail id to reset your password", 2000);
             })

@@ -82,9 +82,9 @@ export class ConsignmentProvider {
                     resolve({list: this.consignmentList});
                 });
             } else {
-                this.DB.executeSql(`SELECT * FROM Product_Control_List WHERE ${IDToBeCheck}=${this.checkIdIfNegative(userdata[0].IDWeb, userdata[0].IDLocal)['value']} AND IsDefault=true`, []).then((res) => {
+                this.DB.executeSql(`SELECT * FROM Product_Control_List WHERE ${IDToBeCheck}=${this.checkIdIfNegative(userdata[0].IDWeb, userdata[0].IDLocal)['value']} AND IsDefault="true"`, []).then((res) => {
                     if (res && res.rows.length) {
-                        this.createList(res);
+                        this.consignmentList = this.createList(res);
                     }
                 }).catch(e => console.log(e)).then(() => {
                     resolve({list: this.consignmentList});
@@ -111,7 +111,7 @@ export class ConsignmentProvider {
                     resolve(listToContact);
                 }).catch(e => console.log(e));
             } else {
-                this.DB.executeSql(`SELECT * FROM List_to_Contact WHERE ${IDToBeCheck}=${this.checkIdIfNegative(userdata[0].IDWeb, userdata[0].IDLocal)['value']} AND IsDefault=true`, []).then((res) => {
+                this.DB.executeSql(`SELECT * FROM List_to_Contact WHERE ${IDToBeCheck}=${this.checkIdIfNegative(userdata[0].IDWeb, userdata[0].IDLocal)['value']} AND IsDefault="true"`, []).then((res) => {
                     if (res.rows.length) {
                         listToContact = this.createList(res);
                     }

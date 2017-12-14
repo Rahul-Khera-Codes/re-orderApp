@@ -11,6 +11,8 @@ import {ToastProvider} from './../../providers/toast/toast';
 import filter from 'lodash/filter';
 import {ChangePassword} from '../../pages/changePassword/changePassword';
 import {ConsignmentProvider} from '../../providers/consignment/consignment';
+import {LocalStorageProvider} from './../../providers/local-storage/local-storage';
+import {LoginPage} from '../../pages/login/login';
 @Component({
     selector: 'side-menu',
     templateUrl: 'side-menu.html'
@@ -19,7 +21,7 @@ export class SideMenuComponent {
     spin: boolean = false;
     isclick: boolean = false;
     loginBy: string;
-    constructor(private _consignmentService: ConsignmentProvider, private _toast: ToastProvider, private _apiProvider: ApiServiceProvider, private _local: LocalDbProvider, private _sqlService: SqlLiteProvider, private sqlitePorter: SQLitePorter, private _menuCtrl: MenuController, public _navController: NavController) {}
+    constructor(private _storage: LocalStorageProvider, private _consignmentService: ConsignmentProvider, private _toast: ToastProvider, private _apiProvider: ApiServiceProvider, private _local: LocalDbProvider, private _sqlService: SqlLiteProvider, private sqlitePorter: SQLitePorter, private _menuCtrl: MenuController, public _navController: NavController) {}
     ngOnInit() {
         this._menuCtrl.enable(true);
         this.loginBy = this._consignmentService.checkLoginBy();
@@ -29,8 +31,9 @@ export class SideMenuComponent {
             this._local.callDBtoManage(this._navController);
         }
     }
-    checkIsExported(tableData) {
-        return filter(tableData, {"IsExported": 0});
+    logout() {
+        this._storage.resetLocalStorageData();
+        this._navController.setRoot(LoginPage);
     }
     exportData() {
         if (!this.isclick) {
@@ -39,6 +42,7 @@ export class SideMenuComponent {
             this._sqlService.openDb().then((db: SQLiteObject) => {
                 this.sqlitePorter.exportDbToJson(db)
                     .then((res) => {
+                         this.spin = false;
                         let exportData = res['data']['inserts'];
                         let key = keys(exportData);
                         let manageExportData = (data, callback) => {
@@ -47,10 +51,10 @@ export class SideMenuComponent {
                             sendData['name'] = first_key;
                             //                            sendData['data'] = exportData[first_key];
                             if (sendData['name'] == ConstantTableName.usage || sendData['name'] == ConstantTableName.usageLine) {
-                                let exportDataFinal = this.checkIsExported(exportData[first_key])
+                                let exportDataFinal = exportData[first_key];
                                 sendData['data'] = exportDataFinal;
                                 this._apiProvider.apiCallByPost('http://5.9.144.226:3031/save/data', sendData).subscribe(res => {
-                                    this._sqlService.updateUsageAndUsageLineData(sendData['name'], exportDataFinal).then((res) => {
+                                    this._sqlService.deleteRecord(sendData['name']).then((res) => {
                                     })
                                     if (data.length) {
                                         manageExportData(data, callback);

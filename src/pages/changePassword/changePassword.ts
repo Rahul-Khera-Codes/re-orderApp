@@ -16,6 +16,7 @@ export class ChangePassword implements OnInit {
 
     ngOnInit() {
         this.user = new FormGroup({
+            oldPassword: new FormControl('', [Validators.required]),
             password: new FormControl('', [Validators.required]),
             re_password: new FormControl('', [Validators.required, this.equalto('password')])
         });
@@ -35,17 +36,16 @@ export class ChangePassword implements OnInit {
     }
 
     onSubmit(user) {
-        console.log(user)
-        let userData = this._consignmentService.getUserData();
+        let userData = this._consignmentService.getUserData()[0];
         this._consignmentService.checkUserType().then((loginWith) => {
             if (loginWith == "customer") {
-                this._loginService.updatePassword("Customer_Table", user.value.password, userData.email, user.value.re_password).then((res) => {
+                this._loginService.updatePassword("Customer_Table", user.value.oldPassword, userData.EmailAddress, user.value.re_password).then((res) => {
                     this._toast.presentToast("Password Change Successfully", 2000);
                 }, (err) => {
                     this._toast.presentToast("Wrong Password", 2000);
                 })
             } else {
-                this._loginService.updatePassword("Contact_Table", user.value.password, userData.email, user.value.re_password).then((res) => {
+                this._loginService.updatePassword("Contact_Table", user.value.oldPassword, userData.EmailAddress, user.value.re_password).then((res) => {
                     this._toast.presentToast("Password Change Successfully", 2000);
                 }, (err) => {
                     this._toast.presentToast("Wrong Password", 2000);

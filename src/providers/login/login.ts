@@ -21,6 +21,10 @@ export class LoginProvider {
     checkLoginBy() {
         return this._localStorageProvider.getLocalStorageData('LoginBy')
     }
+    getCurentTimeDate() {
+        let today = new Date();
+        return (today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate() + " " + today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds());
+    }
     checkWhichTableEmailExits(email) {
         return new Promise((resolve, reject) => {
             this.DataBase.executeSql(`SELECT * FROM Customer_Table WHERE EmailAddress='${email}'`, []).then((res) => {
@@ -44,7 +48,7 @@ export class LoginProvider {
             this._sqlProvider.openDb().then((db: SQLiteObject) => {
                 this.DataBase = db;
                 this.checkWhichTableEmailExits(email).then((tableName) => {
-                    this.DataBase.executeSql(`UPDATE ${tableName} SET Password='${pass}' WHERE EmailAddress = '${email}'`, []).then((res) => {
+                    this.DataBase.executeSql(`UPDATE ${tableName} SET Password='${pass}' , LastUpdatedDateTime='${this.getCurentTimeDate()}' WHERE EmailAddress = '${email}'`, []).then((res) => {
                         resolve(pass);
                     }).catch(e => {
                         reject(e);
@@ -59,8 +63,13 @@ export class LoginProvider {
         return new Promise((resolve, reject) => {
             this._sqlProvider.openDb().then((db: SQLiteObject) => {
                 this.DataBase = db;
-                this.DataBase.executeSql(`UPDATE ${tableName} SET Password='${newPwd}'WHERE EmailAddress='${email}' AND Password='${pwd}'`, []).then((res) => {
-                    resolve(newPwd);
+                this.DataBase.executeSql(`UPDATE ${tableName} SET Password='${this.encryptPassword(newPwd)}' , LastUpdatedDateTime='${this.getCurentTimeDate()}' WHERE EmailAddress='${email}' AND Password='${this.encryptPassword(pwd)}'`, []).then((res) => {
+                    if (res.rowsAffected) {
+                        resolve(newPwd);
+                    } else {
+                        reject("Wrong Password");
+                    }
+
                 }).catch(e => {
                     reject(e);
                 });
