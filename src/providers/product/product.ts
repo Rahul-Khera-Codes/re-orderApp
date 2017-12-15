@@ -19,7 +19,7 @@ export class ProductProvider {
         return new Promise((resolve, reject) => {
             let productControlLineData = [];
             this.openDB().then(() => {
-                this.DB.executeSql(`SELECT * FROM Product_Control_Line WHERE ${this.checkWhichIDHaveData(selectedConsignmentIDWeb, selectedConsignmentIDLocal)['name']}=${this.checkWhichIDHaveData(selectedConsignmentIDWeb, selectedConsignmentIDLocal)['value']}`, []).then((res) => {
+                this.DB.executeSql(`SELECT * FROM Product_Control_Line WHERE ${this.checkWhichIDHaveData(selectedConsignmentIDWeb, selectedConsignmentIDLocal)['name']} = ${this.checkWhichIDHaveData(selectedConsignmentIDWeb, selectedConsignmentIDLocal)['value'] * 1}`, []).then((res) => {
                     if (res.rows.length) {
                         for (let i = 0; i < res.rows.length; i++) {
                             productControlLineData.push((res.rows.item(i)));

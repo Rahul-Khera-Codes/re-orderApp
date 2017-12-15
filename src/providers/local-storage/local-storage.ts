@@ -17,6 +17,8 @@ export class LocalStorageProvider {
         localStorage.removeItem(storageName);
     }
     resetLocalStorageData() {
+        let info = localStorage.getItem('userInfo');
         localStorage.clear();
+        localStorage.setItem('userInfo', info);
     }
 }

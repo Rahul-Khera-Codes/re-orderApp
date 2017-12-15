@@ -44,7 +44,6 @@ export class SqlLiteProvider {
             this.sqlitePorter.exportDbToJson(this.db)
                 .then((res) => {
                     this.localDBdata = res['data']['inserts'];
-                    console.log("this", this.localDBdata);
                     resolve(true);
                 }, (err) => {reject(err)})
         })
@@ -123,9 +122,10 @@ export class SqlLiteProvider {
                 });
         });
     }
-    checkDataExistInTable(value) {
+    checkDataExistInTable(tableName) {
+        console.log(tableName)
         return new Promise((resolve, reject) => {
-            this.db.executeSql(`SELECT * from ${value.name}`, []).then((data) => resolve(data.rows.length))
+            this.db.executeSql(`SELECT * from ${tableName}`, []).then((data) => resolve(data.rows.length))
                 .catch(e => console.log(e));
         })
     }
@@ -135,15 +135,43 @@ export class SqlLiteProvider {
     progressBar(tableName, NoOfTotalTables, error?) {
         this.progressDataEvent.emit({"tableName": tableName, NoOfTotalTables: NoOfTotalTables, error: error});
     }
-    manageSqlLiteData() {
-        this._apiProvider.apiCall("http://5.9.144.226:3031/fetch/data").subscribe(res => {
+    checkApiType(type, data?) {
+        return new Promise((resolve, reject) => {
+            if (type == "login") {
+                this._apiProvider.apiCall("http://5.9.144.226:3031/get/loginDetails").subscribe(res => {
+                    resolve(this.manageSqlLiteData(res));
+                }, (error) => {
+                    this.progressBar("", 0, "error");
+                    reject(true);
+                })
+            } else {
+                this._apiProvider.apiCallByPost("http://5.9.144.226:3031/get/userData", data).subscribe(res => {
+                    resolve(this.manageSqlLiteData(res));
+                }, (error) => {
+                    reject(true);
+                })
+            }
+        })
+    }
+    compareDateAndTime(tableName, row) {
+        let filterData = filter(this.localDBdata[tableName], {IDWeb: row['IDWeb']})[0];
+        let localTime = new Date(filterData['LastUpdatedDateTime']);
+        let remoteTime = new Date(row['LastUpdatedDateTime']);
+        if (filterData && filterData['LastUpdatedDateTime'] && remoteTime < localTime) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+    manageSqlLiteData(res) {
+        return new Promise((resolve, reject) => {
             let totalTable = clone(res['data']);
             if (res['data'] && res['data'].length) {
                 let manageData = (data, callback) => {
                     let RefData = data;
                     let first_data = RefData.splice(0, 1)[0];
                     if (first_data && first_data.type == "table") {
-                        this.checkDataExistInTable(first_data).then((isExist) => {
+                        this.checkDataExistInTable(first_data.name).then((isExist) => {
                             if (isExist && (first_data.name == "Customer_Table" || first_data.name == "Contact_Table" || first_data.name == "Product_Control_List" || first_data.name == "Product_Control_Line" || first_data.name == "List_to_Contact")) {
                                 insertOrUpdate(first_data, (response) => {
                                     if (RefData.length) {
@@ -205,21 +233,11 @@ export class SqlLiteProvider {
                 }
 
                 manageData(res['data'], (response) => {
+                    resolve(true);
                 })
             }
-        }, (error) => {
-            this.progressBar("", 0, "error");
-        })
+        });
     }
 
-    compareDateAndTime(tableName, row) {
-        let filterData = filter(this.localDBdata[tableName], {IDWeb: row['IDWeb']})[0];
-        let localTime = new Date(filterData['LastUpdatedDateTime']);
-        let remoteTime = new Date(row['LastUpdatedDateTime']);
-        if (filterData && filterData['LastUpdatedDateTime'] && remoteTime < localTime) {
-            return false;
-        } else {
-            return true;
-        }
-    }
+
 }

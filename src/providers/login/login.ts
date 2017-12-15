@@ -87,7 +87,23 @@ export class LoginProvider {
                         this.convertLoginResTojson(res);
                         this._localStorageProvider.setLocalStorageData('userType', "customer");
                         this._localStorageProvider.setLocalStorageData('LoginBy', "manual");
-                        resolve(res);
+                        let data = {};
+                        data['tableName'] = "Customer_Table";
+                        data['IDWeb'] = res.rows.item(0).IDWeb;
+                        data['IDLocal'] = res.rows.item(0).IDLocal;
+                        data['barCode'] = false;
+                        this._sqlProvider.checkApiType("xyz", data).then(() => {
+                            resolve(res);
+                        }, (err) => {
+                            this._sqlProvider.checkDataExistInTable("Product Control List").then((tableLength) => {
+                                if (tableLength) {
+                                    res['err'] = "synchronization failed";
+                                    resolve(res);
+                                } else {
+                                    reject("synchronization failed");
+                                }
+                            })
+                        })
                     } else {
                         resolve(this.authUserContact(formDataEmail, formDataEmailPassword));
                     }
@@ -102,7 +118,23 @@ export class LoginProvider {
                     this.convertLoginResTojson(res)
                     this._localStorageProvider.setLocalStorageData('userType', "contact");
                     this._localStorageProvider.setLocalStorageData('LoginBy', "manual");
-                    resolve(res);
+                    let data = {};
+                    data['tableName'] = "Contact_Table";
+                    data['IDWeb'] = res.rows.item(0).IDWeb;
+                    data['IDLocal'] = res.rows.item(0).IDLocal;
+                    data['barCode'] = false;
+                    this._sqlProvider.checkApiType("xyz", data).then(() => {
+                        resolve(res);
+                    }, (err) => {
+                        this._sqlProvider.checkDataExistInTable("Product Control List").then((tableLength) => {
+                            if (tableLength) {
+                                res['err'] = "synchronization failed";
+                                resolve(res);
+                            } else {
+                                reject("synchronization failed");
+                            }
+                        })
+                    })
                 } else {
                     reject("user not exist");
                 }
@@ -118,7 +150,23 @@ export class LoginProvider {
                         this.convertLoginResTojson(res);
                         this._localStorageProvider.setLocalStorageData('userType', "customer");
                         this._localStorageProvider.setLocalStorageData('LoginBy', "barCode");
-                        resolve(res);
+                        let data = {};
+                        data['tableName'] = "Customer_Table";
+                        data['IDWeb'] = res.rows.item(0).IDWeb;
+                        data['IDLocal'] = res.rows.item(0).IDLocal;
+                        data['barCode'] = true;
+                        this._sqlProvider.checkApiType("xyz", data).then(() => {
+                            resolve(res);
+                        }, (err) => {
+                            this._sqlProvider.checkDataExistInTable("Product Control List").then((tableLength) => {
+                                if (tableLength) {
+                                    res['err'] = "synchronization failed";
+                                    resolve(res);
+                                } else {
+                                    reject("synchronization failed");
+                                }
+                            })
+                        })
                     } else {
                         resolve(this.authUserContactByBarCode(barCode));
                     }
@@ -133,7 +181,23 @@ export class LoginProvider {
                     this.convertLoginResTojson(res);
                     this._localStorageProvider.setLocalStorageData('userType', "contact");
                     this._localStorageProvider.setLocalStorageData('LoginBy', "barCode");
-                    resolve(res);
+                    let data = {};
+                    data['tableName'] = "Contact_Table";
+                    data['IDWeb'] = res.rows.item(0).IDWeb;
+                    data['IDLocal'] = res.rows.item(0).IDLocal;
+                    data['barCode'] = true;
+                    this._sqlProvider.checkApiType("xyz", data).then(() => {
+                        resolve(res);
+                    }, (err) => {
+                        this._sqlProvider.checkDataExistInTable("Product Control List").then((tableLength) => {
+                            if (tableLength) {
+                                res['err'] = "synchronization failed";
+                                resolve(res);
+                            } else {
+                                reject("synchronization failed");
+                            }
+                        })
+                    })
                 } else {
                     reject("user not exist");
                 }

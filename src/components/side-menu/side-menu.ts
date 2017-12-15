@@ -54,8 +54,8 @@ export class SideMenuComponent {
                                 let exportDataFinal = exportData[first_key];
                                 sendData['data'] = exportDataFinal;
                                 this._apiProvider.apiCallByPost('http://5.9.144.226:3031/save/data', sendData).subscribe(res => {
-                                    this._sqlService.deleteRecord(sendData['name']).then((res) => {
-                                    })
+//                                    this._sqlService.deleteRecord(sendData['name']).then((res) => {
+//                                    })
                                     if (data.length) {
                                         manageExportData(data, callback);
                                     } else {
