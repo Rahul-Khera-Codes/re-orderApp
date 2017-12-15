@@ -176,7 +176,7 @@ app.post('/get/userData', function(req, res, next) {
             }
           }
         })
-      } else if () {
+      } else {
         let list = _.filter(Product_Control_List.data, (filtered_data) => { return parseInt(filtered_data.IDLocal) == contact_data.ListIDLocal });
         _.forEach(list, (val, key) => {
           if (product_list_contact.indexOf(val) < 0) {
