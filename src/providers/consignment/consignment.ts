@@ -40,7 +40,7 @@ export class ConsignmentProvider {
         })
     }
     checkIdIfNegative(userdataIDWeb, userdataIDLocal) {
-        let idForConditionCheck = {}
+        let idForConditionCheck = {};
         if (userdataIDWeb != -1) {
             idForConditionCheck['name'] = constantidType['idWeb'];
             idForConditionCheck['value'] = userdataIDWeb;
@@ -136,7 +136,7 @@ export class ConsignmentProvider {
             let j;
             let Product_Control_ListComplete = false;
             for (let i = 0; i < listToContact.length; i++) {
-                this.DB.executeSql(`SELECT * FROM Product_Control_List WHERE ${this.IDCheckListToContact(listToContact[i].IDWeb, listToContact[i].IDLocal)['name']}=${this.IDCheckListToContact(listToContact[i].IDWeb, listToContact[i].IDLocal)['value']}`, []).then((res) => {
+                this.DB.executeSql(`SELECT * FROM Product_Control_List WHERE ${this.IDCheckListToContact(listToContact[i].ListIDWeb, listToContact[i].ListIDLocal)['name']}=${this.IDCheckListToContact(listToContact[i].ListIDWeb, listToContact[i].ListIDLocal)['value']}`, []).then((res) => {
                     if (res && res.rows.length) {
                         for (j = 0; j < res.rows.length; j++) {
                             if (res.rows.item(j)) {

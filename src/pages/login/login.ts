@@ -8,7 +8,8 @@ import {LoginProvider} from '../../providers/login/login';
 import {ConsignmentProvider} from '../../providers/consignment/consignment';
 import {constantUserType} from './../../providers/config/config';
 import {ToastProvider} from './../../providers/toast/toast';
-import {ForgotPasswordPage} from './../forgot-password/forgot-password'
+import {ForgotPasswordPage} from './../forgot-password/forgot-password';
+import {LocalStorageProvider} from '../../providers/local-storage/local-storage';
 @Component({
     selector: 'page-login',
     templateUrl: 'login.html',
@@ -22,13 +23,25 @@ export class LoginPage {
     isConsignmentExist: boolean = false;
     relogin = false;
     preUserEmail: string;
-    constructor(public viewCtrl: ViewController, private _toast: ToastProvider, private _consignmentProvider: ConsignmentProvider, private _login: LoginProvider, private barcodeScanner: BarcodeScanner, public navCtrl: NavController, public navParams: NavParams, private formBuilder: FormBuilder) {
+    spin = false;
+    isRemember: boolean = false;
+    constructor(public _storage: LocalStorageProvider, public viewCtrl: ViewController, private _toast: ToastProvider, private _consignmentProvider: ConsignmentProvider, private _login: LoginProvider, private barcodeScanner: BarcodeScanner, public navCtrl: NavController, public navParams: NavParams, private formBuilder: FormBuilder) {
         this.relogin = this.navParams.get('relogin');
         this.preUserEmail = this.navParams.get('email');
+        let userInfo = null;
+        if (this._storage.getLocalStorageData('userInfo')) {
+            userInfo = JSON.parse(this._storage.getLocalStorageData('userInfo'));
+            this.isRemember = true;
+        }
         this.loginform = this.formBuilder.group({
-            password: ['', Validators.compose([Validators.required, Validators.minLength(6)])],
-            email: ['', Validators.compose([Validators.maxLength(50), Validators.required])],
+            password: [userInfo ? userInfo['password'] : '', Validators.compose([Validators.required, Validators.minLength(6)])],
+            email: [userInfo ? userInfo['email'] : '', Validators.compose([Validators.maxLength(50), Validators.required])],
         });
+    }
+    rememberMe() {
+        if (!this.isRemember) {
+            this._storage.removeLocalStorageData('userInfo');
+        }
     }
     dismiss() {
         let data = {'login': 'false'};
@@ -67,8 +80,17 @@ export class LoginPage {
         });
     }
     signin(formData) {
+        if (this.isRemember) {
+            this._storage.setLocalStorageData('userInfo', formData);
+        }
+        this.spin = true;
         this._login.authUserCustomer(formData.email, formData.password).then((response: any) => {
             this.err = null;
+            this.spin = false;
+            if (response && response['err']) {
+                this._toast.presentToast(response['err'], 2000);
+                this.err = response['err'];
+            }
             if (response && response.rows.length) {
                 if (formData.email == this.preUserEmail) {
                     let data = {'login': 'true'};
@@ -79,7 +101,8 @@ export class LoginPage {
                 this._toast.presentToast("Login Successful", 2000);
             }
         }, (err) => {
-            this._toast.presentToast("Invalid Login", 2000);
+            this.spin = false;
+            this._toast.presentToast(err, 2000);
             this.err = err;
         })
     }

@@ -11,7 +11,7 @@ export class LocalDbProvider {
             if (res) {
                 this._sqlLiteservice.createSqlLiteTable().then(() => {
                     this._sqlLiteservice.getAllTableDataFromLocal().then(() => {
-                        this._sqlLiteservice.manageSqlLiteData();
+                        this._sqlLiteservice.checkApiType("login").then((res)=>{console.log(res)})
                     })
                 })
             }
