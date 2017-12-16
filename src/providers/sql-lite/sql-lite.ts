@@ -30,7 +30,6 @@ export class SqlLiteProvider {
                     resolve(db);
                 })
                 .catch(e => {
-                    alert(e + 'create connection')
                     reject(e)
                 });
         });
@@ -40,7 +39,6 @@ export class SqlLiteProvider {
             if (this.db) {
                 resolve(this.db);
             } else {
-                alert("err open db")
                 resolve(this.createSqlLiteDB());
             }
         });
@@ -102,7 +100,7 @@ export class SqlLiteProvider {
                 forEach(res, (value, key) => {
                     count++;
                     this.db.executeSql(`${value}`, []).then(() => {})
-                        .catch(e => alert(e)).then(() => {
+                        .catch(e => console.log(e)).then(() => {
                             if (count == findLength.length) {
                                 resolve(true);
                             }
@@ -112,7 +110,6 @@ export class SqlLiteProvider {
         })
     }
     insertSqlLiteData(tableName, valueTable) {
-        alert('insert')
         return new Promise((resolve, reject) => {
             let insertData: string = "";
             forEach(valueTable, (record, key) => {
@@ -127,7 +124,6 @@ export class SqlLiteProvider {
                 resolve(tableName);
             })
                 .catch(e => {
-                    alert(e + 'insert');
                     console.log(e)
                     reject(e);
                 });
@@ -191,7 +187,6 @@ export class SqlLiteProvider {
         }
     }
     manageSqlLiteData(res) {
-        alert("manageSqlLiteData")
         return new Promise((resolve, reject) => {
             let totalTable = clone(res['data']);
             if (res['data'] && res['data'].length) {
@@ -201,7 +196,6 @@ export class SqlLiteProvider {
                     if (first_data && first_data.type == "table") {
                         this.checkDataExistInTable(first_data.name).then((isExist) => {
                             if (isExist && (first_data.name == "Customer_Table" || first_data.name == "Contact_Table" || first_data.name == "Product_Control_List" || first_data.name == "Product_Control_Line" || first_data.name == "List_to_Contact")) {
-                                alert(insertOrUpdate)
                                 insertOrUpdate(first_data, (response) => {
                                     if (RefData.length) {
                                         this.progressBar(first_data['name'], totalTable.length);
@@ -213,7 +207,6 @@ export class SqlLiteProvider {
                                     }
                                 })
                             } else {
-                                alert("first")
                                 insert(first_data, (response) => {
                                     if (RefData.length) {
                                         this.progressBar(first_data['name'], totalTable.length);
