@@ -62,7 +62,7 @@ export class SqlLiteProvider {
     }
     successFn = function (json) {
         return new Promise((resolve, reject) => {
-            console.log(json);
+            alert(json)
             this.localDBdata = json['data']['inserts'];
             resolve(true);
         })
@@ -112,6 +112,7 @@ export class SqlLiteProvider {
     }
     insertSqlLiteData(tableName, valueTable) {
         return new Promise((resolve, reject) => {
+            alert(tableName)
             let insertData: string = "";
             forEach(valueTable, (record, key) => {
                 if (key == constantidType.idLocal && record == -1) {
