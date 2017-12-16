@@ -18,7 +18,7 @@ export class SqlLiteProvider {
     progressDataEvent = new EventEmitter();
     tablesEvent = new EventEmitter();
     localDBdata: any;
-    constructor(private sqlitePorter: SQLitePorter, private _apiProvider: ApiServiceProvider, private sqlite: SQLite) {}
+    constructor( private _apiProvider: ApiServiceProvider, private sqlite: SQLite) {}
     createSqlLiteDB() {
         return new Promise((resolve, reject) => {
             let createData: any = {};
@@ -69,6 +69,7 @@ export class SqlLiteProvider {
     }
     errFn = function (err) {
         return new Promise((resolve, reject) => {
+            alert("table")
             reject(err);
         })
     }
