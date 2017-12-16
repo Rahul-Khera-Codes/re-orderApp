@@ -27,7 +27,10 @@ export class SqlLiteProvider {
                     this.db = db;
                     resolve(db);
                 })
-                .catch(e => reject(e));
+                .catch(e => {
+                    alert(e + 'create connection')
+                    reject(e)
+                });
         });
     }
     openDb() {
@@ -47,7 +50,7 @@ export class SqlLiteProvider {
                     this.localDBdata = res['data']['inserts'];
                     resolve(true);
                 }, (err) => {
-                    alert(err)
+                    alert(err + 'get table')
                     reject(err)
                 })
         })
@@ -105,7 +108,7 @@ export class SqlLiteProvider {
                 resolve(tableName);
             })
                 .catch(e => {
-                    alert(e);
+                    alert(e + 'insert');
                     console.log(e)
                     reject(e);
                 });
@@ -192,7 +195,7 @@ export class SqlLiteProvider {
                                     }
                                 })
                             } else {
-                            alert("first")
+                                alert("first")
                                 insert(first_data, (response) => {
                                     if (RefData.length) {
                                         this.progressBar(first_data['name'], totalTable.length);
