@@ -273,7 +273,7 @@ app.post('/save/data', function(req, res, next) {
   let filtered = _.filter(structure, (filtered_data) => {
     return filtered_data.name == orignal_data.name
   })
-  let file_path = filtered.length ? `CustomerProductControl/${filtered[0].filename}.txt` : `CustomerProductControl/${orignal_data.name}.txt`
+  let file_path = filtered.length ? `CustomerProductControl/${filtered[0].filename}.txt` : `CustomerProductControl/${orignal_data.name + new Date()}.txt`
 
   function createDataString(data, callback) {
     let records = data.splice(0, 1)[0]
@@ -305,7 +305,7 @@ app.post('/save/data', function(req, res, next) {
         if (err) {
           console.log(err);
         } else {
-          res.json("file is saved")
+          res.json({ message: "file is saved" })
         }
       });
     })
