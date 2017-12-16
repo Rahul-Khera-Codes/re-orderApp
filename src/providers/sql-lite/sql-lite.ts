@@ -9,6 +9,8 @@ import {constantidType} from './../config/config';
 import {UUID} from 'angular2-uuid';
 import {SQLitePorter} from '@ionic-native/sqlite-porter';
 import filter from 'lodash/filter';
+declare var cordova: any
+
 @Injectable()
 export class SqlLiteProvider {
     db: SQLiteObject;
@@ -39,13 +41,41 @@ export class SqlLiteProvider {
             }
         });
     }
+    //    getAllTableDataFromLocal() {
+    //        return new Promise((resolve, reject) => {
+    //            this.sqlitePorter.exportDbToJson(this.db)
+    //                .then((res) => {
+    //                    this.localDBdata = res['data']['inserts'];
+    //                    resolve(true);
+    //                }, (err) => {reject(err)})
+    //        })
+    //    }
     getAllTableDataFromLocal() {
         return new Promise((resolve, reject) => {
+<<<<<<< Updated upstream
             this.sqlitePorter.exportDbToJson(this.db)
                 .then((res) => {
                     this.localDBdata = res['data']['inserts'];
                     resolve(true);
                 }, (err) => {reject(err)})
+=======
+            cordova.plugins.sqlitePorter.exportDbToJson(this.db, {
+                successFn: resolve(this.successFn),
+                errorFn: reject(this.errFn)
+            });
+        })
+    }
+    successFn = function (json) {
+        return new Promise((resolve, reject) => {
+            console.log(json);
+            this.localDBdata = json['data']['inserts'];
+            resolve(true);
+        })
+    }
+    errFn = function (err) {
+        return new Promise((resolve, reject) => {
+            reject(err);
+>>>>>>> Stashed changes
         })
     }
     dropTable(name) {
@@ -123,7 +153,6 @@ export class SqlLiteProvider {
         });
     }
     checkDataExistInTable(tableName) {
-        console.log(tableName)
         return new Promise((resolve, reject) => {
             this.db.executeSql(`SELECT * from ${tableName}`, []).then((data) => resolve(data.rows.length))
                 .catch(e => console.log(e));
