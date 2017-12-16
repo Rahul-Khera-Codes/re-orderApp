@@ -104,7 +104,7 @@ export class SideMenuComponent {
                     if (data.length) {
                         manageExportData(data, callback);
                     } else {
-                        callback(true)
+                        callback(res)
                     }
                 }, (error) => {
                     this._toast.presentToast("Error Occur", 2000);
@@ -115,7 +115,7 @@ export class SideMenuComponent {
                 if (data.length) {
                     manageExportData(data, callback);
                 } else {
-                    callback(true)
+                    callback({'message': 'export done'})
                 }
             }
         }
@@ -123,6 +123,7 @@ export class SideMenuComponent {
             this._ngZone.run(() => {
                 this.isclick = false;
                 this.spin = false;
+                this._toast.presentToast(response['message'], 3000);
             })
         })
     }
