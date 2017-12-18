@@ -9,6 +9,7 @@ import {constantidType} from './../config/config';
 import {UUID} from 'angular2-uuid';
 import {SQLitePorter} from '@ionic-native/sqlite-porter';
 import filter from 'lodash/filter';
+import {Platform} from 'ionic-angular';
 declare var cordova: any
 
 @Injectable()
@@ -18,7 +19,7 @@ export class SqlLiteProvider {
     progressDataEvent = new EventEmitter();
     tablesEvent = new EventEmitter();
     localDBdata: any;
-    constructor(private sqlitePorter: SQLitePorter, private _apiProvider: ApiServiceProvider, private sqlite: SQLite) {}
+    constructor(private platform: Platform, private sqlitePorter: SQLitePorter, private _apiProvider: ApiServiceProvider, private sqlite: SQLite) {}
     createSqlLiteDB() {
         return new Promise((resolve, reject) => {
             let createData: any = {};
@@ -54,10 +55,14 @@ export class SqlLiteProvider {
     //    }
     getAllTableDataFromLocal() {
         return new Promise((resolve, reject) => {
-            cordova.plugins.sqlitePorter.exportDbToJson(this.db, {
-                successFn: resolve(this.successFn),
-                errorFn: reject(this.errFn)
-            });
+            if (this.platform.is('cordova')) {
+                cordova.plugins.sqlitePorter.exportDbToJson(this.db, {
+                    successFn: resolve(this.successFn),
+                    errorFn: reject(this.errFn)
+                });
+            } else {
+                alert("cordova not")
+            }
         })
     }
     successFn = function (json) {
