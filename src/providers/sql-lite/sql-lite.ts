@@ -101,7 +101,7 @@ export class SqlLiteProvider {
                 forEach(res, (value, key) => {
                     count++;
                     this.db.executeSql(`${value}`, []).then(() => {})
-                        .catch(e => console.log(e)).then(() => {
+                        .catch(e => alert(e)).then(() => {
                             if (count == findLength.length) {
                                 resolve(true);
                             }
@@ -122,9 +122,11 @@ export class SqlLiteProvider {
             insertData = insertData.slice(0, -1);
             this.db.executeSql(`insert into ${tableName} VALUES (${insertData})`, []).then(() => {
                 this.getCurrentTableProcessDetails("Insert", tableName);
+                alert(tableName)
                 resolve(tableName);
             })
                 .catch(e => {
+                    alert(e)
                     console.log(e)
                     reject(e);
                 });
@@ -193,6 +195,7 @@ export class SqlLiteProvider {
             if (res['data'] && res['data'].length) {
                 let manageData = (data, callback) => {
                     let RefData = data;
+                    alert(data)
                     let first_data = RefData.splice(0, 1)[0];
                     if (first_data && first_data.type == "table") {
                         this.checkDataExistInTable(first_data.name).then((isExist) => {
