@@ -18,7 +18,7 @@ export class SqlLiteProvider {
     progressDataEvent = new EventEmitter();
     tablesEvent = new EventEmitter();
     localDBdata: any;
-    constructor( private _apiProvider: ApiServiceProvider, private sqlite: SQLite) {}
+    constructor(private sqlitePorter: SQLitePorter, private _apiProvider: ApiServiceProvider, private sqlite: SQLite) {}
     createSqlLiteDB() {
         return new Promise((resolve, reject) => {
             let createData: any = {};
@@ -62,14 +62,14 @@ export class SqlLiteProvider {
     }
     successFn = function (json) {
         return new Promise((resolve, reject) => {
-            alert(json)
+            alert(json);
             this.localDBdata = json['data']['inserts'];
             resolve(true);
         })
     }
     errFn = function (err) {
         return new Promise((resolve, reject) => {
-            alert("table")
+            alert("err");
             reject(err);
         })
     }
@@ -112,7 +112,6 @@ export class SqlLiteProvider {
     }
     insertSqlLiteData(tableName, valueTable) {
         return new Promise((resolve, reject) => {
-            alert(tableName)
             let insertData: string = "";
             forEach(valueTable, (record, key) => {
                 if (key == constantidType.idLocal && record == -1) {
