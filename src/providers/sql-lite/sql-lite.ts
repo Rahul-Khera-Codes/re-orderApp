@@ -12,6 +12,7 @@ import filter from 'lodash/filter';
 import {Platform} from 'ionic-angular';
 declare let cordova: any;
 declare let window: any;
+declare let sqlitePorter: any;
 @Injectable()
 export class SqlLiteProvider {
     db: SQLiteObject;
@@ -60,7 +61,8 @@ export class SqlLiteProvider {
                 alert("cordova")
                 alert(JSON.stringify(cordova.plugins))
                 alert(JSON.stringify(window.sqlitePorter))
-                window.sqlitePorter.exportDbToJson(this.db, {
+                alert(JSON.stringify(sqlitePorter))
+                sqlitePorter.exportDbToJson(this.db, {
                     successFn: resolve(this.successFn),
                     errorFn: reject(this.errFn)
                 });
