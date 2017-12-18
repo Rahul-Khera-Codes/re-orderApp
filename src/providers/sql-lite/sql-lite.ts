@@ -10,8 +10,8 @@ import {UUID} from 'angular2-uuid';
 import {SQLitePorter} from '@ionic-native/sqlite-porter';
 import filter from 'lodash/filter';
 import {Platform} from 'ionic-angular';
-declare var cordova: any
-
+declare let cordova: any;
+declare let window: any;
 @Injectable()
 export class SqlLiteProvider {
     db: SQLiteObject;
@@ -59,8 +59,8 @@ export class SqlLiteProvider {
             if (this.platform.is('cordova')) {
                 alert("cordova")
                 alert(JSON.stringify(cordova.plugins))
-                alert(JSON.stringify(cordova.plugins.sqlitePorter))
-                cordova.plugins.sqlitePorter.exportDbToJson(this.db, {
+                alert(JSON.stringify(window.sqlitePorter))
+                window.sqlitePorter.exportDbToJson(this.db, {
                     successFn: resolve(this.successFn),
                     errorFn: reject(this.errFn)
                 });
