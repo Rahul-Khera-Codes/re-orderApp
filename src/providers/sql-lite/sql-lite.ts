@@ -62,7 +62,6 @@ export class SqlLiteProvider {
     }
     successFn = function (json) {
         return new Promise((resolve, reject) => {
-            console.log(json);
             this.localDBdata = json['data']['inserts'];
             resolve(true);
         })
@@ -75,7 +74,6 @@ export class SqlLiteProvider {
     dropTable(name) {
         return new Promise((resolve, reject) => {
             this.db.executeSql(`DROP TABLE IF EXISTS ${name}`, []).then(() => {
-                console.log('Executed SQL drop')
                 resolve(true);
             })
                 .catch(e => reject(e))
@@ -124,7 +122,6 @@ export class SqlLiteProvider {
                 resolve(tableName);
             })
                 .catch(e => {
-                    console.log(e)
                     reject(e);
                 });
         });
@@ -141,7 +138,6 @@ export class SqlLiteProvider {
                 resolve(tableName);
             })
                 .catch(e => {
-                    console.log(e);
                     reject(e);
                 });
         });
