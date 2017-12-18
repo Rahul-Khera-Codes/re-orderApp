@@ -9,10 +9,8 @@ import {constantidType} from './../config/config';
 import {UUID} from 'angular2-uuid';
 import {SQLitePorter} from '@ionic-native/sqlite-porter';
 import filter from 'lodash/filter';
-import {Platform} from 'ionic-angular';
-declare let cordova: any;
-declare let window: any;
-declare let sqlitePorter: any;
+declare var cordova: any
+
 @Injectable()
 export class SqlLiteProvider {
     db: SQLiteObject;
@@ -20,7 +18,7 @@ export class SqlLiteProvider {
     progressDataEvent = new EventEmitter();
     tablesEvent = new EventEmitter();
     localDBdata: any;
-    constructor(private platform: Platform, private sqlitePorter: SQLitePorter, private _apiProvider: ApiServiceProvider, private sqlite: SQLite) {}
+    constructor(private sqlitePorter: SQLitePorter, private _apiProvider: ApiServiceProvider, private sqlite: SQLite) {}
     createSqlLiteDB() {
         return new Promise((resolve, reject) => {
             let createData: any = {};
@@ -29,7 +27,6 @@ export class SqlLiteProvider {
             this.sqlite.create(createData)
                 .then((db: SQLiteObject) => {
                     this.db = db;
-                    alert("db")
                     resolve(db);
                 })
                 .catch(e => {
@@ -57,37 +54,26 @@ export class SqlLiteProvider {
     //    }
     getAllTableDataFromLocal() {
         return new Promise((resolve, reject) => {
-            if (this.platform.is('cordova')) {
-                alert("cordova")
-                alert(JSON.stringify(cordova.plugins))
-                alert(JSON.stringify(window.sqlitePorter))
-                alert(JSON.stringify(sqlitePorter))
-                sqlitePorter.exportDbToJson(this.db, {
-                    successFn: resolve(this.successFn),
-                    errorFn: reject(this.errFn)
-                });
-            } else {
-                alert("cordova not")
-            }
+            cordova.plugins.sqlitePorter.exportDbToJson(this.db, {
+                successFn: resolve(this.successFn),
+                errorFn: reject(this.errFn)
+            });
         })
     }
     successFn = function (json) {
         return new Promise((resolve, reject) => {
             this.localDBdata = json['data']['inserts'];
-            alert(json);
             resolve(true);
         })
     }
     errFn = function (err) {
         return new Promise((resolve, reject) => {
-            alert("err");
             reject(err);
         })
     }
     dropTable(name) {
         return new Promise((resolve, reject) => {
             this.db.executeSql(`DROP TABLE IF EXISTS ${name}`, []).then(() => {
-                console.log('Executed SQL drop')
                 resolve(true);
             })
                 .catch(e => reject(e))
@@ -112,7 +98,7 @@ export class SqlLiteProvider {
                 forEach(res, (value, key) => {
                     count++;
                     this.db.executeSql(`${value}`, []).then(() => {})
-                        .catch(e => alert(e)).then(() => {
+                        .catch(e => console.log(e)).then(() => {
                             if (count == findLength.length) {
                                 resolve(true);
                             }
@@ -133,12 +119,9 @@ export class SqlLiteProvider {
             insertData = insertData.slice(0, -1);
             this.db.executeSql(`insert into ${tableName} VALUES (${insertData})`, []).then(() => {
                 this.getCurrentTableProcessDetails("Insert", tableName);
-                alert(tableName)
                 resolve(tableName);
             })
                 .catch(e => {
-                    alert(e)
-                    console.log(e)
                     reject(e);
                 });
         });
@@ -155,7 +138,6 @@ export class SqlLiteProvider {
                 resolve(tableName);
             })
                 .catch(e => {
-                    console.log(e);
                     reject(e);
                 });
         });
@@ -163,7 +145,7 @@ export class SqlLiteProvider {
     checkDataExistInTable(tableName) {
         return new Promise((resolve, reject) => {
             this.db.executeSql(`SELECT * from ${tableName}`, []).then((data) => resolve(data.rows.length))
-                .catch(e => alert(e + "checkTable"));
+                .catch(e => console.log(e));
         })
     }
     getCurrentTableProcessDetails(query, tableName) {
@@ -176,10 +158,8 @@ export class SqlLiteProvider {
         return new Promise((resolve, reject) => {
             if (type == "login") {
                 this._apiProvider.apiCall("http://5.9.144.226:3031/get/loginDetails").subscribe(res => {
-                    alert(res + "first")
                     resolve(this.manageSqlLiteData(res));
                 }, (error) => {
-                    alert("not got res")
                     this.progressBar("", 0, "error");
                     reject(true);
                 })
@@ -205,11 +185,9 @@ export class SqlLiteProvider {
     manageSqlLiteData(res) {
         return new Promise((resolve, reject) => {
             let totalTable = clone(res['data']);
-            alert(res + "totalTable")
             if (res['data'] && res['data'].length) {
                 let manageData = (data, callback) => {
                     let RefData = data;
-                    alert(data + "manageSqlLiteData")
                     let first_data = RefData.splice(0, 1)[0];
                     if (first_data && first_data.type == "table") {
                         this.checkDataExistInTable(first_data.name).then((isExist) => {
