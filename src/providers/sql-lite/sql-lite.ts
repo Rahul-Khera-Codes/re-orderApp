@@ -28,6 +28,7 @@ export class SqlLiteProvider {
             this.sqlite.create(createData)
                 .then((db: SQLiteObject) => {
                     this.db = db;
+                    alert("db")
                     resolve(db);
                 })
                 .catch(e => {
@@ -56,6 +57,7 @@ export class SqlLiteProvider {
     getAllTableDataFromLocal() {
         return new Promise((resolve, reject) => {
             if (this.platform.is('cordova')) {
+                alert("cordova")
                 cordova.plugins.sqlitePorter.exportDbToJson(this.db, {
                     successFn: resolve(this.successFn),
                     errorFn: reject(this.errFn)
@@ -105,7 +107,7 @@ export class SqlLiteProvider {
                 let count = 0;
                 forEach(res, (value, key) => {
                     count++;
-                    this.db.executeSql(`${value}`, []).then(() => {})
+                    this.db.executeSql(`${value}`, []).then(() => {alert("table create")})
                         .catch(e => alert(e)).then(() => {
                             if (count == findLength.length) {
                                 resolve(true);
@@ -157,7 +159,7 @@ export class SqlLiteProvider {
     checkDataExistInTable(tableName) {
         return new Promise((resolve, reject) => {
             this.db.executeSql(`SELECT * from ${tableName}`, []).then((data) => resolve(data.rows.length))
-                .catch(e => console.log(e));
+                .catch(e => alert(e + "checkTable"));
         })
     }
     getCurrentTableProcessDetails(query, tableName) {
@@ -170,8 +172,10 @@ export class SqlLiteProvider {
         return new Promise((resolve, reject) => {
             if (type == "login") {
                 this._apiProvider.apiCall("http://5.9.144.226:3031/get/loginDetails").subscribe(res => {
+                    alert(res + "first")
                     resolve(this.manageSqlLiteData(res));
                 }, (error) => {
+                alert("not got res")
                     this.progressBar("", 0, "error");
                     reject(true);
                 })
@@ -200,7 +204,7 @@ export class SqlLiteProvider {
             if (res['data'] && res['data'].length) {
                 let manageData = (data, callback) => {
                     let RefData = data;
-                    alert(data)
+                    alert(data+"manageSqlLiteData")
                     let first_data = RefData.splice(0, 1)[0];
                     if (first_data && first_data.type == "table") {
                         this.checkDataExistInTable(first_data.name).then((isExist) => {
