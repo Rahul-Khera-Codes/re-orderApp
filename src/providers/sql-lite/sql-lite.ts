@@ -69,8 +69,8 @@ export class SqlLiteProvider {
     }
     successFn = function (json) {
         return new Promise((resolve, reject) => {
-            alert(json);
             this.localDBdata = json['data']['inserts'];
+            alert(json);
             resolve(true);
         })
     }
@@ -175,7 +175,7 @@ export class SqlLiteProvider {
                     alert(res + "first")
                     resolve(this.manageSqlLiteData(res));
                 }, (error) => {
-                alert("not got res")
+                    alert("not got res")
                     this.progressBar("", 0, "error");
                     reject(true);
                 })
@@ -201,10 +201,11 @@ export class SqlLiteProvider {
     manageSqlLiteData(res) {
         return new Promise((resolve, reject) => {
             let totalTable = clone(res['data']);
+            alert(res+"totalTable")
             if (res['data'] && res['data'].length) {
                 let manageData = (data, callback) => {
                     let RefData = data;
-                    alert(data+"manageSqlLiteData")
+                    alert(data + "manageSqlLiteData")
                     let first_data = RefData.splice(0, 1)[0];
                     if (first_data && first_data.type == "table") {
                         this.checkDataExistInTable(first_data.name).then((isExist) => {
