@@ -58,6 +58,8 @@ export class SqlLiteProvider {
         return new Promise((resolve, reject) => {
             if (this.platform.is('cordova')) {
                 alert("cordova")
+                alert(JSON.stringify(cordova.plugins))
+                alert(JSON.stringify(cordova.plugins.sqlitePorter))
                 cordova.plugins.sqlitePorter.exportDbToJson(this.db, {
                     successFn: resolve(this.successFn),
                     errorFn: reject(this.errFn)
@@ -107,7 +109,7 @@ export class SqlLiteProvider {
                 let count = 0;
                 forEach(res, (value, key) => {
                     count++;
-                    this.db.executeSql(`${value}`, []).then(() => {alert("table create")})
+                    this.db.executeSql(`${value}`, []).then(() => {})
                         .catch(e => alert(e)).then(() => {
                             if (count == findLength.length) {
                                 resolve(true);
@@ -201,7 +203,7 @@ export class SqlLiteProvider {
     manageSqlLiteData(res) {
         return new Promise((resolve, reject) => {
             let totalTable = clone(res['data']);
-            alert(res+"totalTable")
+            alert(res + "totalTable")
             if (res['data'] && res['data'].length) {
                 let manageData = (data, callback) => {
                     let RefData = data;
