@@ -90,16 +90,16 @@
 
                                             <ion-row class="border">
                                                 <ion-col col-4 no-padding>
-                                                    <button no-margin float-left color="gray" class="radiusLeft" ion-button icon-only (click)="add(product)">
-                                                            <ion-icon name="add" color="light"></ion-icon>
+                                                    <button no-margin color="gray" float-left class="radiusLeft"  ion-button icon-only (click)="remove(product)">
+                                                            <ion-icon name="remove" color="light"></ion-icon>
                                                     </button>
                                                 </ion-col>
                                                 <ion-col col-4 no-padding>
                                                     <span class="qty">  {{product['qty']}}  </span>
                                                 </ion-col>
                                                 <ion-col col-4 no-padding>
-                                                    <button no-margin color="gray" class="radiusRight" float-right ion-button icon-only (click)="remove(product)">
-                                                            <ion-icon name="remove" color="light"></ion-icon>
+                                                    <button no-margin  color="gray" class="radiusRight" float-right ion-button icon-only (click)="add(product)">
+                                                            <ion-icon name="add" color="light"></ion-icon>
                                                     </button>
                                                 </ion-col>
                                             </ion-row>
@@ -110,16 +110,16 @@
                                     <div class="columnForGrid50 no-padding-top" padding *ngIf="displayMode == 'Landscape'">
                                          <ion-row class="border">
                                             <ion-col col-4 no-padding>
-                                                <button no-margin float-left color="gray" class="radiusLeft" ion-button icon-only (click)="add(product)">
-                                                        <ion-icon name="add" color="light" ></ion-icon>
+                                                <button no-margin float-left color="gray" class="radiusLeft"  ion-button icon-only (click)="remove(product)" >
+                                                        <ion-icon name="remove" color="light" ></ion-icon>
                                                 </button>
                                             </ion-col>
                                             <ion-col col-4 no-padding>
                                                 <span class="qty">  {{product['qty']}}  </span>
                                             </ion-col>
                                             <ion-col col-4 no-padding>
-                                                <button no-margin color="gray" class="radiusRight" float-right ion-button icon-only (click)="remove(product)" >
-                                                        <ion-icon name="remove" color="light" ></ion-icon>
+                                                <button no-margin  color="gray" class="radiusRight" float-right ion-button icon-only (click)="add(product)">
+                                                        <ion-icon name="add" color="light" ></ion-icon>
                                                 </button>
                                             </ion-col>
                                         </ion-row>

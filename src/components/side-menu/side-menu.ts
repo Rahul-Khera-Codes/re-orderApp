@@ -12,7 +12,6 @@ import {ChangePassword} from '../../pages/changePassword/changePassword';
 import {ConsignmentProvider} from '../../providers/consignment/consignment';
 import {LocalStorageProvider} from './../../providers/local-storage/local-storage';
 import {LoginPage} from '../../pages/login/login';
-declare var cordova: any;
 import {NgZone} from '@angular/core';
 
 
@@ -43,90 +42,57 @@ export class SideMenuComponent {
             this.isclick = true;
             this.spin = true;
             this._sqlService.openDb().then((db: SQLiteObject) => {
-                cordova.plugins.sqlitePorter.exportDbToJson(db, {
-                    successFn: this.successFn
-                });
-                //                this.sqlitePorter.exportDbToJson(db)
-                //                    .then((res) => {
-                //                        this.spin = false;
-                //                        let exportData = res['data']['inserts'];
-                //                        let key = keys(exportData);
-                //                        let manageExportData = (data, callback) => {
-                //                            let first_key = data.splice(0, 1)[0];
-                //                            let sendData = {};
-                //                            sendData['name'] = first_key;
-                //                            //                            sendData['data'] = exportData[first_key];
-                //                            if (sendData['name'] == ConstantTableName.usage || sendData['name'] == ConstantTableName.usageLine) {
-                //                                let exportDataFinal = exportData[first_key];
-                //                                sendData['data'] = exportDataFinal;
-                //                                this._apiProvider.apiCallByPost('http://5.9.144.226:3031/save/data', sendData).subscribe(res => {
-                ////                                    this._sqlService.deleteRecord(sendData['name']).then((res) => {
-                ////                                    })
-                //                                    if (data.length) {
-                //                                        manageExportData(data, callback);
-                //                                    } else {
-                //                                        this.isclick = false;
-                //                                        this.spin = false;
-                //                                        callback(true)
-                //                                    }
-                //                                }, (error) => {
-                //                                    this._toast.presentToast("Error Occur", 2000);
-                //                                    this.spin = false;
-                //                                    this.isclick = false;
-                //                                })
-                //                            } else {
-                //                                if (data.length) {
-                //                                    manageExportData(data, callback);
-                //                                } else {
-                //                                    callback(true)
-                //                                }
-                //                            }
-                //                        }
-                //                        manageExportData(key, (response) => {
-                //                        })
-                //                    }).catch(e => console.error(e));
+                this.sqlitePorter.exportDbToJson(db)
+                    .then((res) => {
+                        console.log(res)
+                        let exportData = res['data']['inserts'];
+                        let key = keys(exportData);
+                        let manageExportData = (data, callback) => {
+                            let first_key = data.splice(0, 1)[0];
+                            let sendData = {};
+                            sendData['name'] = first_key;
+                            console.log(sendData)
+                            //                            sendData['data'] = exportData[first_key];
+                            if (sendData['name'] == ConstantTableName.usage || sendData['name'] == ConstantTableName.usageLine) {
+                                let exportDataFinal = exportData[first_key];
+                                sendData['data'] = exportDataFinal;
+                                console.log(sendData)
+                                this._apiProvider.apiCallByPost('http://5.9.144.226:3031/save/data', sendData).subscribe(res => {
+                                    //                                    this._sqlService.deleteRecord(sendData['name']).then((res) => {
+                                    //                                    })
+                                    if (data.length) {
+                                        manageExportData(data, callback);
+                                    } else {
+                                        callback(true)
+                                    }
+                                }, (error) => {
+                                    this._toast.presentToast("Error Occur", 2000);
+                                    this._ngZone.run(() => {
+                                        this.isclick = false;
+                                        this.spin = false;
+                                    })
+                                })
+                            } else {
+                                if (data.length) {
+                                    manageExportData(data, callback);
+                                } else {
+                                    callback(true)
+                                }
+                            }
+                        }
+                        manageExportData(key, (response) => {
+                            this._ngZone.run(() => {
+                                this._toast.presentToast("Export Done", 2000);
+                                this.isclick = false;
+                                this.spin = false;
+                            })
+                        })
+                    }).catch(e => console.error(e));
             })
 
         }
     }
 
-    successFn = (res) => {
-        let exportData = res['data']['inserts'];
-        let key = keys(exportData);
-        let manageExportData = (data, callback) => {
-            let first_key = data.splice(0, 1)[0];
-            let sendData = {};
-            sendData['name'] = first_key;
-            if (sendData['name'] == ConstantTableName.usage || sendData['name'] == ConstantTableName.usageLine) {
-                let exportDataFinal = exportData[first_key];
-                sendData['data'] = exportDataFinal;
-                this._apiProvider.apiCallByPost('http://5.9.144.226:3031/save/data', sendData).subscribe(res => {
-                    if (data.length) {
-                        manageExportData(data, callback);
-                    } else {
-                        callback(res)
-                    }
-                }, (error) => {
-                    this._toast.presentToast("Error Occur", 2000);
-                    this.spin = false;
-                    this.isclick = false;
-                })
-            } else {
-                if (data.length) {
-                    manageExportData(data, callback);
-                } else {
-                    callback({'message': 'export done'})
-                }
-            }
-        }
-        manageExportData(key, (response) => {
-            this._ngZone.run(() => {
-                this.isclick = false;
-                this.spin = false;
-                this._toast.presentToast(response['message'], 3000);
-            })
-        })
-    }
     gotoChangePassword() {
         this._navController.push(ChangePassword);
     }

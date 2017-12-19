@@ -30,7 +30,6 @@ export class LoginPage {
         this.preUserEmail = this.navParams.get('email');
         let userInfo = null;
         if (this._storage.getLocalStorageData('userInfo') && this._storage.getLocalStorageData('userInfo') !="null" && this._storage.getLocalStorageData('userInfo').length) {
-           console.log("userInfo",this._storage.getLocalStorageData('userInfo'))
              userInfo = JSON.parse(this._storage.getLocalStorageData('userInfo'));
             this.isRemember = true;
         }
