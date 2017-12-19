@@ -8,11 +8,13 @@ import {ApiServiceProvider} from './../../providers/api-service/api-service';
 import {ConstantTableName} from './../../providers/config/config';
 import keys from 'lodash/keys';
 import {ToastProvider} from './../../providers/toast/toast';
-import filter from 'lodash/filter';
 import {ChangePassword} from '../../pages/changePassword/changePassword';
 import {ConsignmentProvider} from '../../providers/consignment/consignment';
 import {LocalStorageProvider} from './../../providers/local-storage/local-storage';
 import {LoginPage} from '../../pages/login/login';
+import {NgZone} from '@angular/core';
+
+
 @Component({
     selector: 'side-menu',
     templateUrl: 'side-menu.html'
@@ -21,7 +23,7 @@ export class SideMenuComponent {
     spin: boolean = false;
     isclick: boolean = false;
     loginBy: string;
-    constructor(private _storage: LocalStorageProvider, private _consignmentService: ConsignmentProvider, private _toast: ToastProvider, private _apiProvider: ApiServiceProvider, private _local: LocalDbProvider, private _sqlService: SqlLiteProvider, private sqlitePorter: SQLitePorter, private _menuCtrl: MenuController, public _navController: NavController) {}
+    constructor(private _ngZone: NgZone, private _storage: LocalStorageProvider, private _consignmentService: ConsignmentProvider, private _toast: ToastProvider, private _apiProvider: ApiServiceProvider, private _local: LocalDbProvider, private _sqlService: SqlLiteProvider, private sqlitePorter: SQLitePorter, private _menuCtrl: MenuController, public _navController: NavController) { }
     ngOnInit() {
         this._menuCtrl.enable(true);
         this.loginBy = this._consignmentService.checkLoginBy();
@@ -42,7 +44,7 @@ export class SideMenuComponent {
             this._sqlService.openDb().then((db: SQLiteObject) => {
                 this.sqlitePorter.exportDbToJson(db)
                     .then((res) => {
-                         this.spin = false;
+                        this.spin = false;
                         let exportData = res['data']['inserts'];
                         let key = keys(exportData);
                         let manageExportData = (data, callback) => {
@@ -54,19 +56,19 @@ export class SideMenuComponent {
                                 let exportDataFinal = exportData[first_key];
                                 sendData['data'] = exportDataFinal;
                                 this._apiProvider.apiCallByPost('http://5.9.144.226:3031/save/data', sendData).subscribe(res => {
-//                                    this._sqlService.deleteRecord(sendData['name']).then((res) => {
-//                                    })
+                                    //                                    this._sqlService.deleteRecord(sendData['name']).then((res) => {
+                                    //                                    })
                                     if (data.length) {
                                         manageExportData(data, callback);
                                     } else {
-                                        this.isclick = false;
-                                        this.spin = false;
                                         callback(true)
                                     }
                                 }, (error) => {
                                     this._toast.presentToast("Error Occur", 2000);
-                                    this.spin = false;
-                                    this.isclick = false;
+                                    this._ngZone.run(() => {
+                                        this.isclick = false;
+                                        this.spin = false;
+                                    })
                                 })
                             } else {
                                 if (data.length) {
@@ -77,12 +79,17 @@ export class SideMenuComponent {
                             }
                         }
                         manageExportData(key, (response) => {
+                            this._ngZone.run(() => {
+                                this.isclick = false;
+                                this.spin = false;
+                            })
                         })
                     }).catch(e => console.error(e));
             })
 
         }
     }
+
     gotoChangePassword() {
         this._navController.push(ChangePassword);
     }

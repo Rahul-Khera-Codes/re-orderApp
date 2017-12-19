@@ -9,6 +9,7 @@ import {constantidType} from './../config/config';
 import {UUID} from 'angular2-uuid';
 import {SQLitePorter} from '@ionic-native/sqlite-porter';
 import filter from 'lodash/filter';
+
 @Injectable()
 export class SqlLiteProvider {
     db: SQLiteObject;
@@ -16,7 +17,7 @@ export class SqlLiteProvider {
     progressDataEvent = new EventEmitter();
     tablesEvent = new EventEmitter();
     localDBdata: any;
-    constructor(private sqlitePorter: SQLitePorter, private _apiProvider: ApiServiceProvider, private sqlite: SQLite) {}
+    constructor(private sqlitePorter: SQLitePorter, private _apiProvider: ApiServiceProvider, private sqlite: SQLite) { }
     createSqlLiteDB() {
         return new Promise((resolve, reject) => {
             let createData: any = {};
@@ -28,7 +29,7 @@ export class SqlLiteProvider {
                     resolve(db);
                 })
                 .catch(e => {
-                    alert(e + 'create connection')
+                    console.log(e)
                     reject(e)
                 });
         });
@@ -38,27 +39,24 @@ export class SqlLiteProvider {
             if (this.db) {
                 resolve(this.db);
             } else {
-                alert("err open db")
                 resolve(this.createSqlLiteDB());
             }
         });
     }
     getAllTableDataFromLocal() {
         return new Promise((resolve, reject) => {
-            this.sqlitePorter.exportDbToJson(this.db)
-                .then((res) => {
-                    this.localDBdata = res['data']['inserts'];
+           this.sqlitePorter.exportDbToJson(this.db)
+               .then((res) => {
+                   this.localDBdata = res['data']['inserts'];
                     resolve(true);
-                }, (err) => {
-                    alert(err + 'get table')
-                    reject(err)
-                })
+               }, (err) => {
+                   reject(err)
+               })
         })
     }
     dropTable(name) {
         return new Promise((resolve, reject) => {
             this.db.executeSql(`DROP TABLE IF EXISTS ${name}`, []).then(() => {
-                console.log('Executed SQL drop')
                 resolve(true);
             })
                 .catch(e => reject(e))
@@ -82,8 +80,8 @@ export class SqlLiteProvider {
                 let count = 0;
                 forEach(res, (value, key) => {
                     count++;
-                    this.db.executeSql(`${value}`, []).then(() => {})
-                        .catch(e => alert(e)).then(() => {
+                    this.db.executeSql(`${value}`, []).then(() => { })
+                        .catch(e => console.log(e)).then(() => {
                             if (count == findLength.length) {
                                 resolve(true);
                             }
@@ -93,23 +91,28 @@ export class SqlLiteProvider {
         })
     }
     insertSqlLiteData(tableName, valueTable) {
-        alert('insert')
         return new Promise((resolve, reject) => {
-            let insertData: string = "";
+            let insertData: string='';
+            console.log("valueTable",valueTable)
             forEach(valueTable, (record, key) => {
-                if (key == constantidType.idLocal && record == -1) {
+                if(record === ""){
+                    record=null;
+                }
+                else{
+                 if (key == constantidType.idLocal && record == -1) {
                     record = this.createIDLocal();
+                    }
                 }
                 insertData = insertData + '"' + record + '"' + "" + ",";
             })
             insertData = insertData.slice(0, -1);
             this.db.executeSql(`insert into ${tableName} VALUES (${insertData})`, []).then(() => {
                 this.getCurrentTableProcessDetails("Insert", tableName);
+                console.log(tableName , "insert record")
                 resolve(tableName);
             })
                 .catch(e => {
-                    alert(e + 'insert');
-                    console.log(e)
+                    console.log("insert table data",e);
                     reject(e);
                 });
         });
@@ -126,23 +129,21 @@ export class SqlLiteProvider {
                 resolve(tableName);
             })
                 .catch(e => {
-                    console.log(e);
                     reject(e);
                 });
         });
     }
     checkDataExistInTable(tableName) {
-        console.log(tableName)
         return new Promise((resolve, reject) => {
             this.db.executeSql(`SELECT * from ${tableName}`, []).then((data) => resolve(data.rows.length))
                 .catch(e => console.log(e));
         })
     }
     getCurrentTableProcessDetails(query, tableName) {
-        this.tablesEvent.emit({query: query, tableName: tableName})
+        this.tablesEvent.emit({ query: query, tableName: tableName })
     }
     progressBar(tableName, NoOfTotalTables, error?) {
-        this.progressDataEvent.emit({"tableName": tableName, NoOfTotalTables: NoOfTotalTables, error: error});
+        this.progressDataEvent.emit({ "tableName": tableName, NoOfTotalTables: NoOfTotalTables, error: error });
     }
     checkApiType(type, data?) {
         return new Promise((resolve, reject) => {
@@ -163,7 +164,7 @@ export class SqlLiteProvider {
         })
     }
     compareDateAndTime(tableName, row) {
-        let filterData = filter(this.localDBdata[tableName], {IDWeb: row['IDWeb']})[0];
+        let filterData = filter(this.localDBdata[tableName], { IDWeb: row['IDWeb'] })[0];
         let localTime = new Date(filterData['LastUpdatedDateTime']);
         let remoteTime = new Date(row['LastUpdatedDateTime']);
         if (filterData && filterData['LastUpdatedDateTime'] && remoteTime < localTime) {
@@ -173,7 +174,7 @@ export class SqlLiteProvider {
         }
     }
     manageSqlLiteData(res) {
-        alert("manageSqlLiteData")
+        console.log("manageSqlLiteData",res);
         return new Promise((resolve, reject) => {
             let totalTable = clone(res['data']);
             if (res['data'] && res['data'].length) {
@@ -183,7 +184,6 @@ export class SqlLiteProvider {
                     if (first_data && first_data.type == "table") {
                         this.checkDataExistInTable(first_data.name).then((isExist) => {
                             if (isExist && (first_data.name == "Customer_Table" || first_data.name == "Contact_Table" || first_data.name == "Product_Control_List" || first_data.name == "Product_Control_Line" || first_data.name == "List_to_Contact")) {
-                                alert(insertOrUpdate)
                                 insertOrUpdate(first_data, (response) => {
                                     if (RefData.length) {
                                         this.progressBar(first_data['name'], totalTable.length);
@@ -195,7 +195,6 @@ export class SqlLiteProvider {
                                     }
                                 })
                             } else {
-                                alert("first")
                                 insert(first_data, (response) => {
                                     if (RefData.length) {
                                         this.progressBar(first_data['name'], totalTable.length);
@@ -218,7 +217,7 @@ export class SqlLiteProvider {
                         } else {
                             callback(true);
                         }
-                    });
+                    },(err)=>{console.log(err)})
                 }
 
                 let insertOrUpdate = (data, callback) => {
@@ -232,15 +231,15 @@ export class SqlLiteProvider {
                             }
                         });
                     } else {
-                        if (this.compareDateAndTime(data.name, first_row)) {
-                            this.updateSqlLiteData(data.name, first_row).then(() => {
-                                if (data['data'].length) {
-                                    insertOrUpdate(data, callback)
-                                } else {
-                                    callback(true)
-                                }
-                            });
-                        }
+                                               if (this.compareDateAndTime(data.name, first_row)) {
+                                                   this.updateSqlLiteData(data.name, first_row).then(() => {
+                                                       if (data['data'].length) {
+                                                           insertOrUpdate(data, callback)
+                                                       } else {
+                                                           callback(true)
+                                                       }
+                                                   });
+                                               }
                     }
                 }
 
