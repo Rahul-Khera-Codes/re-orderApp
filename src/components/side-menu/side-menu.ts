@@ -44,19 +44,16 @@ export class SideMenuComponent {
             this._sqlService.openDb().then((db: SQLiteObject) => {
                 this.sqlitePorter.exportDbToJson(db)
                     .then((res) => {
-                        console.log(res)
                         let exportData = res['data']['inserts'];
                         let key = keys(exportData);
                         let manageExportData = (data, callback) => {
                             let first_key = data.splice(0, 1)[0];
                             let sendData = {};
                             sendData['name'] = first_key;
-                            console.log(sendData)
                             //                            sendData['data'] = exportData[first_key];
                             if (sendData['name'] == ConstantTableName.usage || sendData['name'] == ConstantTableName.usageLine) {
                                 let exportDataFinal = exportData[first_key];
                                 sendData['data'] = exportDataFinal;
-                                console.log(sendData)
                                 this._apiProvider.apiCallByPost('http://5.9.144.226:3031/save/data', sendData).subscribe(res => {
                                     //                                    this._sqlService.deleteRecord(sendData['name']).then((res) => {
                                     //                                    })
