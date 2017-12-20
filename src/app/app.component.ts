@@ -40,9 +40,8 @@ export class MyApp {
     }
     importData() {
         if (!this.isclick) {
-            this.myNav.push(ProgressDetailsPage).then(() => {
-                this._local.callDBtoManage();
-            })
+            this._local.callDBtoManage();
+            this.myNav.push(ProgressDetailsPage);
         }
     }
     logout() {
