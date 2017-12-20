@@ -17,7 +17,6 @@ import {ChangePassword} from './../pages/changePassword/changePassword';
 import {ConsignmentProvider} from './../providers/consignment/consignment';
 import {LocalStorageProvider} from './../providers/local-storage/local-storage';
 import {NgZone} from '@angular/core';
-import {ProgressDetailsPage} from './../pages/progress-details/progress-details';
 
 @Component({
     templateUrl: 'app.html'
@@ -40,8 +39,7 @@ export class MyApp {
     }
     importData() {
         if (!this.isclick) {
-            this._local.callDBtoManage();
-            this.myNav.push(ProgressDetailsPage);
+            this._local.callDBtoManage(this.myNav);
         }
     }
     logout() {
