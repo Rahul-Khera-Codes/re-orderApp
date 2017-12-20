@@ -4,7 +4,7 @@ import {StatusBar} from '@ionic-native/status-bar';
 import {SplashScreen} from '@ionic-native/splash-screen';
 import {LoginPage} from '../pages/login/login';
 import {SqlLiteProvider} from '../providers/sql-lite/sql-lite';
-import {NavController} from 'ionic-angular';
+import {Nav} from 'ionic-angular';
 import {LocalDbProvider} from './../providers/local-db/local-db';
 import {MenuController} from 'ionic-angular';
 import {SQLitePorter} from '@ionic-native/sqlite-porter';
@@ -23,28 +23,26 @@ import {ProgressDetailsPage} from './../pages/progress-details/progress-details'
     templateUrl: 'app.html'
 })
 export class MyApp {
+    @ViewChild(Nav) myNav: Nav
     rootPage: any = LoginPage;
     isPageRedirect: boolean = false;
     spin: boolean = false;
     isclick: boolean = false;
     loginBy: string;
-    @ViewChild('Nav') myNav: NavController
-
-    constructor(private _ngZone: NgZone, private _storage: LocalStorageProvider, private _consignmentService: ConsignmentProvider, private _toast: ToastProvider, private _apiProvider: ApiServiceProvider,private _sqlService: SqlLiteProvider, private sqlitePorter: SQLitePorter, private _menuCtrl: MenuController,public _local: LocalDbProvider, public _sqlLiteservice: SqlLiteProvider, platform: Platform, statusBar: StatusBar, splashScreen: SplashScreen) {
-        console.log("entery")
+    constructor(private _ngZone: NgZone, private _storage: LocalStorageProvider, private _consignmentService: ConsignmentProvider, private _toast: ToastProvider, private _apiProvider: ApiServiceProvider, private _sqlService: SqlLiteProvider, private sqlitePorter: SQLitePorter, private _menuCtrl: MenuController, public _local: LocalDbProvider, public _sqlLiteservice: SqlLiteProvider, platform: Platform, statusBar: StatusBar, splashScreen: SplashScreen) {
         platform.ready().then(() => {
             statusBar.styleDefault();
             splashScreen.hide();
             this.importData();
             this._menuCtrl.enable(true);
-            this.loginBy=this._consignmentService.checkLoginBy();
+            this.loginBy = this._consignmentService.checkLoginBy();
         });
     }
-        importData() {
+    importData() {
         if (!this.isclick) {
-                        this.myNav.push(ProgressDetailsPage).then(()=>{
-                            this._local.callDBtoManage();     
-                        })
+            this.myNav.push(ProgressDetailsPage).then(() => {
+                this._local.callDBtoManage();
+            })
         }
     }
     logout() {

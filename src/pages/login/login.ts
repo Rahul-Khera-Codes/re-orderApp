@@ -29,8 +29,8 @@ export class LoginPage {
         this.relogin = this.navParams.get('relogin');
         this.preUserEmail = this.navParams.get('email');
         let userInfo = null;
-        if (this._storage.getLocalStorageData('userInfo') && this._storage.getLocalStorageData('userInfo') !="null" && this._storage.getLocalStorageData('userInfo').length) {
-             userInfo = JSON.parse(this._storage.getLocalStorageData('userInfo'));
+        if (this._storage.getLocalStorageData('userInfo') && this._storage.getLocalStorageData('userInfo') != "null" && this._storage.getLocalStorageData('userInfo').length) {
+            userInfo = JSON.parse(this._storage.getLocalStorageData('userInfo'));
             this.isRemember = true;
         }
         this.loginform = this.formBuilder.group({
@@ -125,7 +125,7 @@ export class LoginPage {
                 this.barCodeErr = err;
             })
         }, (err) => {
-            this.barCodeErr = err;
+            //            this.barCodeErr = err;
             // An error occurred
         });
     }
