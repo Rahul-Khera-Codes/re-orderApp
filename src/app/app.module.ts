@@ -17,7 +17,6 @@ import {LoginProvider} from '../providers/login/login';
 import {ConsignmentProvider} from '../providers/consignment/consignment';
 import {ProductProvider} from '../providers/product/product';
 import {LocalStorageProvider} from '../providers/local-storage/local-storage';
-import {SideMenuComponent} from './../components/side-menu/side-menu';
 import {Geolocation} from '@ionic-native/geolocation';
 import {ProgressDetailsPage} from './../pages/progress-details/progress-details'
 import {ToastProvider} from '../providers/toast/toast';
@@ -30,7 +29,6 @@ import {ForgotPasswordPage} from '../pages/forgot-password/forgot-password';
         LoginPage,
         HomePage,
         ConsignmentInPage,
-        SideMenuComponent,
         ProgressDetailsPage,
         ChangePassword,
         ForgotPasswordPage

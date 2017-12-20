@@ -1,17 +1,16 @@
 <ion-header>
-    <ion-navbar color="black" class='relative'>
-        <button ion-button icon-only menuToggle *ngIf="!searchBar">
+    <ion-navbar color="black" >
+        <button ion-button icon-only menuToggle >
                 <ion-icon name="menu" color='yellow'></ion-icon>
         </button>
         <img src="assets/imgs/bst.jpg" alt="" class='headerLogo'/>
     </ion-navbar>
 </ion-header>
-<side-menu></side-menu>
 <ion-content padding>
     <ion-list>
         <button ion-item *ngFor="let list of consignmentList" (click)="itemSelected(list)">
                 {{ list.Name }}
-                <ion-icon item-end name="md-arrow-dropright"></ion-icon>
+                <ion-icon hideWhen="ios" item-end name="md-arrow-dropright"></ion-icon>
         </button>
     </ion-list>
 </ion-content>
