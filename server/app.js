@@ -35,7 +35,7 @@ function createStructure(data, callback) {
       let j = 0;
       let a = {};
       _.forEach(val.structure, (data_value, key_value) => {
-        a[key_value] = (filtered_data[j++] != undefined ? parseInt(filtered_data[j - 1].replace(/\"/g, "")) : (data_value == "BOOLEAN" ? false : ""));
+        a[key_value] = (filtered_data[j++] != undefined ? filtered_data[j - 1].replace(/\"/g, "") : (data_value == "BOOLEAN" ? false : ""));
       })
       table_data.push(a);
       if (filtered_key == filtered[0].data.length - 1) {
