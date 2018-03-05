@@ -511,7 +511,7 @@ app.get('/track/:email', function(req, res, next) {
 
 
 
-app.get('/get/userData', function(req, res, next) {
+app.post('/get/userData', function(req, res, next) {
   let email = /*req.body.email || null*/ "ron@bstgroup.com.au"
   let password = /*req.body.password || null*/ "abc@123"
   let table = "Customer_Table"
