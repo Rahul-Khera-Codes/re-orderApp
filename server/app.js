@@ -35,7 +35,7 @@ function createStructure(data, callback) {
       let j = 0;
       let a = {};
       _.forEach(val.structure, (data_value, key_value) => {
-        a[key_value] = (filtered_data[j++] != undefined ? filtered_data[j - 1].replace(/\"/g, "") : (data_value == "BOOLEAN" ? false : ""));
+        a[key_value] = (filtered_data[j++] != undefined ? filtered_data[j - 1].replace(/\"/g, "").trim() : (data_value == "BOOLEAN" ? false : ""));
       })
       table_data.push(a);
       if (filtered_key == filtered[0].data.length - 1) {
@@ -511,13 +511,13 @@ app.get('/track/:email', function(req, res, next) {
 
 
 
-app.post('/get/userData', function(req, res, next) {
-  let email = req.body.email || null
-  let password = req.body.password || null
+app.get('/get/userData', function(req, res, next) {
+  let email = /*req.body.email || null*/ "ron@bstgroup.com.au"
+  let password = /*req.body.password || null*/ "abc@123"
   let table = "Customer_Table"
   let barCode = req.body.barCode || null;
-  console.log(req.body)
   request('http://localhost:3031/get/loginDetails', function(error, response, body) {
+    console.log(body)
     if (email) {
       let findTable = _.filter(JSON.parse(body).data, (filtered_data) => { return filtered_data.name == table })[0];
       let loggedInUser = _.filter(findTable.data, (filtered_data) => { return (filtered_data.EmailAddress == email && filtered_data.Password == password) })[0];
