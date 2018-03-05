@@ -512,8 +512,8 @@ app.get('/track/:email', function(req, res, next) {
 
 
 app.post('/get/userData', function(req, res, next) {
-  let email = /*req.body.email || null*/ "ron@bstgroup.com.au"
-  let password = /*req.body.password || null*/ "abc@123"
+  let email = req.body.email || null
+  let password = req.body.password || null
   let table = "Customer_Table"
   let barCode = req.body.barCode || null;
   request('http://localhost:3031/get/loginDetails', function(error, response, body) {
