@@ -20,7 +20,7 @@ export class ProgressDetailsPage {
             this.progress = progressData;
             if (this.progress && this.progress['error']) {
                 setTimeout(() => {
-                    this.navCtrl.pop();
+                    this.navCtrl.pop({animate:false});
                 }, 3000)
             }
             this.count++;
@@ -32,7 +32,7 @@ export class ProgressDetailsPage {
                 this.base += base;
             }
             if ((this.progress['NoOfTotalTables'] - 1) == this.count) {
-                this.navCtrl.pop();
+                this.navCtrl.pop({animate:false});
             }
         })
         this.setCurrentTableProcessDetails();

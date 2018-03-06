@@ -5,97 +5,99 @@ import {SplashScreen} from '@ionic-native/splash-screen';
 import {LoginPage} from '../pages/login/login';
 import {SqlLiteProvider} from '../providers/sql-lite/sql-lite';
 import {Nav} from 'ionic-angular';
-import {LocalDbProvider} from './../providers/local-db/local-db';
 import {MenuController} from 'ionic-angular';
 import {SQLitePorter} from '@ionic-native/sqlite-porter';
-import {SQLiteObject} from '@ionic-native/sqlite';
 import {ApiServiceProvider} from './../providers/api-service/api-service';
-import {ConstantTableName} from './../providers/config/config';
-import keys from 'lodash/keys';
+import {EventProvider} from './../providers/event/event';
 import {ToastProvider} from './../providers/toast/toast';
 import {ChangePassword} from './../pages/changePassword/changePassword';
 import {ConsignmentProvider} from './../providers/consignment/consignment';
 import {LocalStorageProvider} from './../providers/local-storage/local-storage';
 import {NgZone} from '@angular/core';
-
+import {constantLoginBy} from './../providers/config/config';
+import {ExportDataProvider} from './../providers/export-data/export-data';
+import {Network} from '@ionic-native/network';
+import {IsLoginEventHandlerProvider} from './../providers/is-login-event-handler/is-login-event-handler'
 @Component({
     templateUrl: 'app.html'
 })
 export class MyApp {
-    @ViewChild(Nav) myNav: Nav
+    @ViewChild(Nav) myNav: Nav;
     rootPage: any = LoginPage;
     isPageRedirect: boolean = false;
     spin: boolean = false;
     isclick: boolean = false;
     loginBy: string;
-    constructor(private _ngZone: NgZone, private _storage: LocalStorageProvider, private _consignmentService: ConsignmentProvider, private _toast: ToastProvider, private _apiProvider: ApiServiceProvider, private _sqlService: SqlLiteProvider, private sqlitePorter: SQLitePorter, private _menuCtrl: MenuController, public _local: LocalDbProvider, public _sqlLiteservice: SqlLiteProvider, platform: Platform, statusBar: StatusBar, splashScreen: SplashScreen) {
+    displayMode = 'Landscape';
+    landscape: boolean = true;
+    exportErr: boolean | null | string = null;
+    menuDisplay: boolean = false;
+    constructor(private _event: EventProvider, private _isLogin: IsLoginEventHandlerProvider, private network: Network, public _export: ExportDataProvider, private _consignmentProvider: ConsignmentProvider, private _ngZone: NgZone, private _storage: LocalStorageProvider, private _consignmentService: ConsignmentProvider, private _toast: ToastProvider, private _apiProvider: ApiServiceProvider, private _sqlService: SqlLiteProvider, private sqlitePorter: SQLitePorter, private _menuCtrl: MenuController, public _sqlLiteservice: SqlLiteProvider, platform: Platform, statusBar: StatusBar, splashScreen: SplashScreen) {
+        localStorage.setItem("displayMode", 'Landscape');
+        this._apiProvider.apiInProcess.subscribe(isDone => {
+            if (isDone) {
+                this.exportErr = true;
+            } else {
+                this.exportErr = false;
+            }
+        })
+        this._isLogin.isLogin.subscribe(data => {
+            if (data) {
+                this.menuDisplay = true;
+            }
+        })
         platform.ready().then(() => {
             statusBar.styleDefault();
             splashScreen.hide();
-            this.importData();
             this._menuCtrl.enable(true);
             this.loginBy = this._consignmentService.checkLoginBy();
+            this.network.onConnect().subscribe(() => {
+                this.exportErr = localStorage.getItem("fail");
+                if (localStorage.getItem("fail") != undefined) {
+                    this._export.exportData();
+                }
+            });
         });
     }
-    importData() {
-        if (!this.isclick) {
-            this._local.callDBtoManage(this.myNav);
+    //    importData() {
+    //        if (!this.isclick) {
+    //            this._local.callDBtoManage(this.myNav);
+    //        }
+    //    }
+    setDisplayMode(event) {
+        if (event) {
+            this.displayMode = 'Landscape';
+            localStorage.setItem("displayMode", 'Landscape');
+            this._event.setEvent();
+        } else {
+            this.displayMode = 'Portrait';
+            localStorage.setItem("displayMode", 'Portrait');
+            this._event.setEvent();
+        }
+    }
+    checkLoginBy() {
+        if (this._consignmentProvider.checkLoginBy() == constantLoginBy.manual) {
+            return true;
+        } else {
+            return false;
         }
     }
     logout() {
+        this.menuDisplay = false;
         this._storage.resetLocalStorageData();
         this.myNav.setRoot(LoginPage);
+        this._consignmentProvider.removeUserData();
     }
     exportData() {
         if (!this.isclick) {
             this.isclick = true;
             this.spin = true;
-            this._sqlService.openDb().then((db: SQLiteObject) => {
-                this.sqlitePorter.exportDbToJson(db)
-                    .then((res) => {
-                        let exportData = res['data']['inserts'];
-                        let key = keys(exportData);
-                        let manageExportData = (data, callback) => {
-                            let first_key = data.splice(0, 1)[0];
-                            let sendData = {};
-                            sendData['name'] = first_key;
-                            //                            sendData['data'] = exportData[first_key];
-                            if (sendData['name'] == ConstantTableName.usage || sendData['name'] == ConstantTableName.usageLine) {
-                                let exportDataFinal = exportData[first_key];
-                                sendData['data'] = exportDataFinal;
-                                this._apiProvider.apiCallByPost('http://5.9.144.226:3031/save/data', sendData).subscribe(res => {
-                                    //                                    this._sqlService.deleteRecord(sendData['name']).then((res) => {
-                                    //                                    })
-                                    if (data.length) {
-                                        manageExportData(data, callback);
-                                    } else {
-                                        callback(true)
-                                    }
-                                }, (error) => {
-                                    this._toast.presentToast("Error Occur", 2000);
-                                    this._ngZone.run(() => {
-                                        this.isclick = false;
-                                        this.spin = false;
-                                    })
-                                })
-                            } else {
-                                if (data.length) {
-                                    manageExportData(data, callback);
-                                } else {
-                                    callback(true)
-                                }
-                            }
-                        }
-                        manageExportData(key, (response) => {
-                            this._ngZone.run(() => {
-                                this._toast.presentToast("Export Done", 2000);
-                                this.isclick = false;
-                                this.spin = false;
-                            })
-                        })
-                    }).catch(e => console.error(e));
+            this._export.exportData().then((res) => {
+                this.isclick = false;
+            }, (err) => {
+                //                this.exportErr = true;
+                this.isclick = false;
             })
-
         }
     }
 

@@ -1,10 +1,15 @@
 import {HttpClient} from '@angular/common/http';
-import {Injectable} from '@angular/core';
+import {Injectable, Output, EventEmitter} from '@angular/core';
 import 'rxjs/Rx';
 import {Observable} from 'rxjs/Observable';
 @Injectable()
 export class ApiServiceProvider {
+    @Output()
+    apiInProcess = new EventEmitter();
     constructor(public http: HttpClient) {
+    }
+    checkProgress(process: boolean) {
+        this.apiInProcess.emit(process);
     }
     apiCall(path): Observable<any> {
         return this.http.get(path).map((res: Response) => {
@@ -15,9 +20,13 @@ export class ApiServiceProvider {
     }
     apiCallByPost(path, data): Observable<any> {
         return this.http.post(path, data).map((res: Response) => {
+            localStorage.removeItem("fail");
+            this.checkProgress(false);
             return res;
         }).catch((error: any) => {
-            return Observable.throw(error || 'Server error')
+            localStorage.setItem("fail", 'true');
+            this.checkProgress(true);
+            return Observable.throw(error || 'Server error');
         });
     }
     apiCallByPut(path, data): Observable<any> {

@@ -92,18 +92,18 @@ export class LoginProvider {
                         data['IDWeb'] = res.rows.item(0).IDWeb;
                         data['IDLocal'] = res.rows.item(0).IDLocal;
                         data['barCode'] = false;
-                        this._sqlProvider.checkApiType("xyz", data).then(() => {
-                            resolve(res);
-                        }, (err) => {
-                            this._sqlProvider.checkDataExistInTable("Product Control List").then((tableLength) => {
+//                        this._sqlProvider.checkApiType("xyz", data).then(() => {
+//                            resolve(res);
+//                        }, (err) => {
+                            this._sqlProvider.checkDataExistInTable("Product_Control_List").then((tableLength) => {
                                 if (tableLength) {
-                                    res['err'] = "synchronization failed";
+//                                    res['err'] = "synchronization failed";
                                     resolve(res);
                                 } else {
-                                    reject("synchronization failed");
+//                                    reject("synchronization failed");
                                 }
                             })
-                        })
+//                        })
                     } else {
                         resolve(this.authUserContact(formDataEmail, formDataEmailPassword));
                     }
@@ -123,24 +123,38 @@ export class LoginProvider {
                     data['IDWeb'] = res.rows.item(0).IDWeb;
                     data['IDLocal'] = res.rows.item(0).IDLocal;
                     data['barCode'] = false;
-                    this._sqlProvider.checkApiType("xyz", data).then(() => {
-                        resolve(res);
-                    }, (err) => {
-                        this._sqlProvider.checkDataExistInTable("Product Control List").then((tableLength) => {
-                            if (tableLength) {
-                                res['err'] = "synchronization failed";
+//                    this._sqlProvider.checkApiType("xyz", data).then(() => {
+//                        resolve(res);
+//                    }, (err) => {
+//                        this._sqlProvider.checkDataExistInTable("Product_Control_List").then((tableLength) => {
+//                            if (tableLength) {
+//                                res['err'] = "synchronization failed";
                                 resolve(res);
-                            } else {
-                                reject("synchronization failed");
-                            }
-                        })
-                    })
+//                            } else {
+//                                reject("synchronization failed");
+//                            }
+//                        })
+//                    })
                 } else {
                     reject("user not exist");
+//                    this.checkDataExistInTable();
                 }
             }).catch(e => reject(e));
         })
     }
+    
+    getLoginRecord(){
+        return new Promise((resolve, reject) => {
+            
+        })
+    }
+    
+//    checkDataExistInTable() {
+//        this.DataBase.executeSql(`SELECT * FROM Customer_Table`, []).then((res) => {
+//            console.log("res", res)
+//        })
+//
+//    }
     authUserCustomerByBarCode(barCode) {
         return new Promise((resolve, reject) => {
             this._sqlProvider.openDb().then((db: SQLiteObject) => {
@@ -155,22 +169,22 @@ export class LoginProvider {
                         data['IDWeb'] = res.rows.item(0).IDWeb;
                         data['IDLocal'] = res.rows.item(0).IDLocal;
                         data['barCode'] = true;
-                        this._sqlProvider.checkApiType("xyz", data).then(() => {
-                            resolve(res);
-                        }, (err) => {
-                            this._sqlProvider.checkDataExistInTable("Product Control List").then((tableLength) => {
-                                if (tableLength) {
-                                    res['err'] = "synchronization failed";
+//                        this._sqlProvider.checkApiType("xyz", data).then(() => {
+//                            resolve(res);
+//                        }, (err) => {
+//                            this._sqlProvider.checkDataExistInTable("Product Control List").then((tableLength) => {
+//                                if (tableLength) {
+//                                    res['err'] = "synchronization failed";
                                     resolve(res);
-                                } else {
-                                    reject("synchronization failed");
-                                }
-                            })
-                        })
+//                                } else {
+//                                    reject("synchronization failed");
+//                                }
+//                            })
+//                        })
                     } else {
                         resolve(this.authUserContactByBarCode(barCode));
                     }
-                }).catch(e => reject(e));
+                }).catch(e => reject(""));
             })
         })
     }
@@ -186,22 +200,22 @@ export class LoginProvider {
                     data['IDWeb'] = res.rows.item(0).IDWeb;
                     data['IDLocal'] = res.rows.item(0).IDLocal;
                     data['barCode'] = true;
-                    this._sqlProvider.checkApiType("xyz", data).then(() => {
-                        resolve(res);
-                    }, (err) => {
-                        this._sqlProvider.checkDataExistInTable("Product Control List").then((tableLength) => {
-                            if (tableLength) {
-                                res['err'] = "synchronization failed";
+//                    this._sqlProvider.checkApiType("xyz", data).then(() => {
+//                        resolve(res);
+//                    }, (err) => {
+//                        this._sqlProvider.checkDataExistInTable("Product Control List").then((tableLength) => {
+//                            if (tableLength) {
+//                                res['err'] = "synchronization failed";
                                 resolve(res);
-                            } else {
-                                reject("synchronization failed");
-                            }
-                        })
-                    })
+//                            } else {
+//                                reject("synchronization failed");
+//                            }
+//                        })
+//                    })
                 } else {
                     reject("user not exist");
                 }
-            }).catch(e => reject(e));
+            }).catch(e => reject(""));
         })
     }
 }

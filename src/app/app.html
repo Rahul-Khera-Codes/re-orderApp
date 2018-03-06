@@ -1,18 +1,22 @@
-<ion-menu [content]="content">
+<ion-menu  [content]="content" persistent=false>
     <ion-header>
         <ion-toolbar>
             <ion-title>Menu</ion-title>
         </ion-toolbar>
     </ion-header>
     <ion-content>
-        <ion-list>
-            <ion-item (click)="exportData()">Export Data
-                <ion-spinner name="bubbles" float-right  *ngIf="spin"></ion-spinner>
-            </ion-item>
-            <!-- <ion-item (click)="importData()">Import Data</ion-item> -->
-            <ion-item *ngIf="_consignmentService.checkLoginBy()=='manual'" (click)="gotoChangePassword()">Change Password</ion-item>
-            <ion-item (click)="logout()">Logout</ion-item>
-        </ion-list>
-    </ion-content>
+        <ion-list *ngIf='menuDisplay'>
+            <ion-item menuClose *ngIf="exportErr">Export Data Pending
+                      <!--                      <ion-spinner name="bubbles" float-right  *ngIf="spin"></ion-spinner>-->
+        </ion-item>
+        <!-- <ion-item (click)="importData()">Import Data</ion-item> -->
+        <ion-item menuClose *ngIf="_consignmentService.checkLoginBy()=='manual'" (click)="gotoChangePassword()">Change Password</ion-item>
+        <ion-item *ngIf="checkLoginBy()">
+            <ion-label>Gallery View</ion-label>
+            <ion-toggle checked="true" [(ngModel)]="landscape" (ngModelChange)="setDisplayMode(landscape)"></ion-toggle>
+        </ion-item>
+        <ion-item menuClose (click)="logout()">Logout</ion-item>
+    </ion-list>
+</ion-content>
 </ion-menu>
 <ion-nav  #content [root]="rootPage"></ion-nav>

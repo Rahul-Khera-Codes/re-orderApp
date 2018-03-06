@@ -1,6 +1,16 @@
-page-consignment-in {
+page-consignment-in{
+    .button-full{
+        padding: 9vw; 
+    }
+}
+
+page-product-view , page-consignment-in {
     .name{
         color:#d65a5a !important;
+    }
+    .gridScroll{
+        position: fixed;
+        z-index: 999;
     }
     .hiddenBackButton{
         .back-button {
@@ -9,6 +19,16 @@ page-consignment-in {
     }
     .fa-lg {
         font-size: 23px;
+    }
+    .black{
+        background-color: black;
+    }
+    .fab-up{
+        bottom: 45px!important;
+        position: fixed;
+    }
+    .red{
+        color:red;
     }
     .width33{
         width: 33px; 
@@ -34,11 +54,14 @@ page-consignment-in {
         right: 10px;
     }
     .qty{
-        min-width: 50px;
-        padding: 6px 45% 0px;
+        min-width: 40px;
+        //padding: 6px 45% 0px;
         font-size: 20px;
         display: inline-block;
-
+        max-width: 52px;
+        text-align: center;
+        border: none;
+        height: 30px;
     }
     .padTop5{
         padding-top: 5px !important;
@@ -49,15 +72,11 @@ page-consignment-in {
     }
 
     .no-padding-top{
-        padding-top: 0px !important;
+        padding: 2px 5px 5px 5px!important;
     }
     .lightRed{
         color:red;
         font-size: 25px;
-    }
-    .borderForMode{
-        background: #efeff0;
-        min-height: 70px;
     }
     .selectList95{
         min-width: 95px;
@@ -65,18 +84,12 @@ page-consignment-in {
     .selectList50{
         min-width: 50px;
     }
-    .dispalyMode{
-        margin: 4px;
-        height: 35px;
-        border: 1px solid gray;
-    }
-    .active{
-        border: 2px solid #00b1c3;
-    }
     .footerColor{
         background: #fbfbfb;
     }
-
+    .padding{
+        padding: 5px;
+    }
     /*@media screen and (orientation: portrait) {*/  
     ion-grid{padding-top: 0px;} 
     .portrait{
@@ -116,9 +129,9 @@ page-consignment-in {
     /*@media screen and (orientation: landscape) {*/
     .landscape{
         img{
-            max-height: 150px;
+            max-height: 128px;
             max-width: 100%;
-            padding-top: 20px;
+            //padding-top: 20px;
         }
         .card1 {
             margin: 10px 0px 0px 0px ;
@@ -144,12 +157,14 @@ page-consignment-in {
             border-bottom:1px solid #EFEFEF;
         }
         .cartTitle{
-            display: block;
+            display: block !important;
             margin: 2px 0 2px;
-            padding: 8px 0 0px 0;
+            padding: 0px 0 0px 0;
             font-size: 1.8rem;
             line-height: 1.2;
             color: #222;
+            height: 6em;
+            overflow: hidden;
         }
         .rowForLandscape{
             display: -webkit-flex;
@@ -160,13 +175,14 @@ page-consignment-in {
             margin-bottom: 1px;
         }
         .margin10{
-            margin: 10px;
+            //  margin: 10px;
         }
         .col100{
             -webkit-flex: 0 100%;
             -ms-flex: 0 0 100%;
             flex: 0 0 100%;
             max-width: 100%;   
+            min-height: 130px;
         }
         .padTop5{
             padding-top: 5px;
@@ -202,6 +218,7 @@ img{
 .border{
     border: 1px solid gray;
     border-radius: 6px;
+    margin:0px !important;
 }
 .headerLogo{
     position: absolute;
@@ -231,4 +248,19 @@ img{
 .no-margin{
     margin: 0px !important;
 }
+ion-content.scroll{
+    top: 0px !important;
+}
 
+.dispalyMode{
+    margin: 4px;
+    height: 35px;
+    border: 1px solid gray;
+}
+.borderForMode{
+    background: #efeff0;
+    min-height: 70px;
+}
+.active{
+    border: 2px solid #00b1c3;
+}

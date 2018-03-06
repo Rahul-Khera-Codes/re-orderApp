@@ -1,5 +1,5 @@
 import {BrowserModule} from '@angular/platform-browser';
-import {ErrorHandler, NgModule} from '@angular/core';
+import {ErrorHandler, NgModule, CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
 import {IonicApp, IonicErrorHandler, IonicModule} from 'ionic-angular';
 import {SplashScreen} from '@ionic-native/splash-screen';
 import {StatusBar} from '@ionic-native/status-bar';
@@ -23,6 +23,19 @@ import {ToastProvider} from '../providers/toast/toast';
 import {LocalDbProvider} from '../providers/local-db/local-db';
 import {ChangePassword} from '../pages/changePassword/changePassword';
 import {ForgotPasswordPage} from '../pages/forgot-password/forgot-password';
+import {HeaderScroller} from '../directive/header/header-scroller';
+import {ProductViewPage} from './../pages/product-view/product-view';
+import {ExportDataProvider} from '../providers/export-data/export-data';
+import {Network} from '@ionic-native/network';
+import {HideFabDirective} from '../directive/topScroll/hide-button-scroller';
+import {InAppBrowser} from '@ionic-native/in-app-browser';
+import {ImageDirective} from './../directive/loadImage/load-image';
+import {FileTransfer, FileTransferObject} from '@ionic-native/file-transfer';
+import {File} from '@ionic-native/file';
+import {IsLoginEventHandlerProvider} from '../providers/is-login-event-handler/is-login-event-handler';
+import {EventProvider} from './../providers/event/event';
+import {Toast} from '@ionic-native/toast';
+
 @NgModule({
     declarations: [
         MyApp,
@@ -31,13 +44,18 @@ import {ForgotPasswordPage} from '../pages/forgot-password/forgot-password';
         ConsignmentInPage,
         ProgressDetailsPage,
         ChangePassword,
-        ForgotPasswordPage
+        ForgotPasswordPage,
+        HeaderScroller,
+        HideFabDirective,
+        ImageDirective,
+        ProductViewPage
     ],
     imports: [
         BrowserModule,
         HttpClientModule,
         IonicModule.forRoot(MyApp)
     ],
+    schemas: [CUSTOM_ELEMENTS_SCHEMA],
     bootstrap: [IonicApp],
     entryComponents: [
         MyApp,
@@ -46,12 +64,14 @@ import {ForgotPasswordPage} from '../pages/forgot-password/forgot-password';
         ConsignmentInPage,
         ProgressDetailsPage,
         ChangePassword,
-        ForgotPasswordPage
+        ForgotPasswordPage,
+        ProductViewPage
     ],
     providers: [
         StatusBar,
         SplashScreen,
         BarcodeScanner,
+        InAppBrowser,
         {provide: ErrorHandler, useClass: IonicErrorHandler},
         ApiServiceProvider,
         SQLite,
@@ -63,6 +83,15 @@ import {ForgotPasswordPage} from '../pages/forgot-password/forgot-password';
         LocalStorageProvider,
         Geolocation,
         ToastProvider,
-        LocalDbProvider]
+        LocalDbProvider,
+        ExportDataProvider,
+        Network,
+        FileTransfer,
+        FileTransferObject,
+        File,
+        IsLoginEventHandlerProvider,
+        EventProvider,
+        Toast
+    ]
 })
 export class AppModule {}
