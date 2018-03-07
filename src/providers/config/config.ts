@@ -8,3 +8,14 @@ export const constantidType = {
     "customerIDWeb": "CustomerIDWeb",
     "customerIDLocal": "CustomerIDLocal"
 }
+export const constantUserType = {
+    "customer": "customer"
+}
+export const constantLoginBy = {
+    "manual": "manual",
+    "barCode": "barCode"
+}
+export const ConstantTableName = {
+    "usage": "Usage",
+    "usageLine": "Usage_Line"
+}

@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {SqlLiteProvider} from '../sql-lite/sql-lite';
 import {SQLiteObject} from '@ionic-native/sqlite';
-import {constantidType} from './../config/config';
+import {constantidType, constantLoginBy} from './../config/config';
 import {LocalStorageProvider} from './../local-storage/local-storage';
 @Injectable()
 export class ConsignmentProvider {
@@ -9,6 +9,9 @@ export class ConsignmentProvider {
     DB: SQLiteObject;
     consignmentList = [];
     constructor(private _localStorageProvider: LocalStorageProvider, private _sqlProvider: SqlLiteProvider) {}
+    checkLoginBy() {
+        return this._localStorageProvider.getLocalStorageData('LoginBy')
+    }
     getUserData() {
         if (this.userData) {
             return this.userData;
@@ -37,7 +40,7 @@ export class ConsignmentProvider {
         })
     }
     checkIdIfNegative(userdataIDWeb, userdataIDLocal) {
-        let idForConditionCheck = {}
+        let idForConditionCheck = {};
         if (userdataIDWeb != -1) {
             idForConditionCheck['name'] = constantidType['idWeb'];
             idForConditionCheck['value'] = userdataIDWeb;
@@ -48,7 +51,20 @@ export class ConsignmentProvider {
             return idForConditionCheck;
         }
     }
+
+    createList(reponseData) {
+        let data = [];
+        for (let i = 0; i < reponseData.rows.length; i++) {
+            if (reponseData.rows.item(i)) {
+                data.push(reponseData.rows.item(i));
+            }
+            if ((reponseData.rows.length - 1) == i) {
+                return data;
+            }
+        }
+    }
     queryToProductControlList() {
+        this.consignmentList = [];
         return new Promise((resolve, reject) => {
             let userdata = this.getUserData();
             let IDToBeCheck = null;
@@ -57,16 +73,23 @@ export class ConsignmentProvider {
             } else {
                 IDToBeCheck = constantidType['customerIDLocal'];
             }
-            this.DB.executeSql(`SELECT * FROM Product_Control_List WHERE ${IDToBeCheck}=${this.checkIdIfNegative(userdata[0].IDWeb, userdata[0].IDLocal)['value']}`, []).then((res) => {
-                if (res && res.rows.length) {
-                    for (let i = 0; i < res.rows.length; i++) {
-                        if (res.rows.item(i)) {
-                            this.consignmentList.push(res.rows.item(i));
-                        }
+            if (this.checkLoginBy() == constantLoginBy.manual) {
+                this.DB.executeSql(`SELECT * FROM Product_Control_List WHERE ${IDToBeCheck}=${this.checkIdIfNegative(userdata[0].IDWeb, userdata[0].IDLocal)['value']}`, []).then((res) => {
+                    if (res && res.rows.length) {
+                        this.consignmentList = this.createList(res);
                     }
+                }).catch(e => console.log(e)).then(() => {
                     resolve({list: this.consignmentList});
-                }
-            }).catch(e => console.log(e));
+                });
+            } else {
+                this.DB.executeSql(`SELECT * FROM Product_Control_List WHERE ${IDToBeCheck}=${this.checkIdIfNegative(userdata[0].IDWeb, userdata[0].IDLocal)['value']} AND IsDefault="true"`, []).then((res) => {
+                    if (res && res.rows.length) {
+                        this.consignmentList = this.createList(res);
+                    }
+                }).catch(e => console.log(e)).then(() => {
+                    resolve({list: this.consignmentList});
+                });
+            }
         })
     }
 
@@ -80,12 +103,21 @@ export class ConsignmentProvider {
             } else {
                 IDToBeCheck = constantidType['contactIDLocal'];
             }
-            this.DB.executeSql(`SELECT * FROM List_to_Contact WHERE ${IDToBeCheck}=${this.checkIdIfNegative(userdata[0].IDWeb, userdata[0].IDLocal)['value']}`, []).then((res) => {
-                for (let i = 0; i < res.rows.length; i++) {
-                    listToContact.push(res.rows.item(i));
-                }
-                resolve(listToContact);
-            }).catch(e => console.log(e));
+            if (this.checkLoginBy() == constantLoginBy.manual) {
+                this.DB.executeSql(`SELECT * FROM List_to_Contact WHERE ${IDToBeCheck}=${this.checkIdIfNegative(userdata[0].IDWeb, userdata[0].IDLocal)['value']}`, []).then((res) => {
+                    if (res.rows.length) {
+                        listToContact = this.createList(res);
+                    }
+                    resolve(listToContact);
+                }).catch(e => console.log(e));
+            } else {
+                this.DB.executeSql(`SELECT * FROM List_to_Contact WHERE ${IDToBeCheck}=${this.checkIdIfNegative(userdata[0].IDWeb, userdata[0].IDLocal)['value']} AND IsDefault="true"`, []).then((res) => {
+                    if (res.rows.length) {
+                        listToContact = this.createList(res);
+                    }
+                    resolve(listToContact);
+                }).catch(e => console.log(e));
+            }
         })
     }
     IDCheckListToContact(listToContactIDWeb, listToContactIDLocal) {
@@ -104,7 +136,7 @@ export class ConsignmentProvider {
             let j;
             let Product_Control_ListComplete = false;
             for (let i = 0; i < listToContact.length; i++) {
-                this.DB.executeSql(`SELECT * FROM Product_Control_List WHERE ${this.IDCheckListToContact(listToContact[i].IDWeb, listToContact[i].IDLocal)['name']}=${this.IDCheckListToContact(listToContact[i].IDWeb, listToContact[i].IDLocal)['value']}`, []).then((res) => {
+                this.DB.executeSql(`SELECT * FROM Product_Control_List WHERE ${this.IDCheckListToContact(listToContact[i].ListIDWeb, listToContact[i].ListIDLocal)['name']}=${this.IDCheckListToContact(listToContact[i].ListIDWeb, listToContact[i].ListIDLocal)['value']}`, []).then((res) => {
                     if (res && res.rows.length) {
                         for (j = 0; j < res.rows.length; j++) {
                             if (res.rows.item(j)) {

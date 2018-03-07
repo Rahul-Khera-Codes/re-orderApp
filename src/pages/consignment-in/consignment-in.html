@@ -1,52 +1,159 @@
 
 <ion-header>
-
-    <ion-navbar color="primary">
-        <ion-title></ion-title>
+    <ion-navbar color="black" class='relative' [ngClass]="{'hiddenBackButton':searchBar}">
+        <ion-buttons *ngIf="searchBar">
+            <button ion-button (click)="dismiss()" showWhen="android" [ngClass]="{'inputHeader':searchBar}">
+                    <ion-icon padding-top name="md-close"></ion-icon>
+            </button>
+            <button ion-button (tap)="dismiss()" showWhen="ios" [ngClass]="{'inputHeader':searchBar}">
+                    <ion-icon padding-top name="md-close" ></ion-icon>
+            </button>
+        </ion-buttons>
+        <ion-searchbar #searchbar style="width: 90%;" class="floatRight" *ngIf="searchBar" [(ngModel)]="data" [(ngModel)]="myInput"
+            [showCancelButton]="shouldShowCancel"
+            (ionInput)="searchProduct($event)"
+            (ionCancel)="onSearchCancel($event)" ></ion-searchbar>
+        <button ion-button icon-only menuToggle (click)="openMenu()" *ngIf="!searchBar && default">
+                <ion-icon name="menu" color='yellow'></ion-icon>
+        </button>
+        <img *ngIf="!searchBar" src="assets/imgs/bst.jpg" alt="" class='headerLogo'/>
+        <button ion-button float-right icon-only color='black' (click)="gotoSearch()"  *ngIf="isManualLogin && !searchBar && myInputEnable">
+                <ion-icon name="search" color='red'></ion-icon>
+        </button>
     </ion-navbar>
-
 </ion-header>
+<side-menu></side-menu>
 
-
-<ion-content padding>
-    <ion-list>
-        <ion-item>
-            <ion-label color="primary">Enter ID</ion-label>
-            <ion-input placeholder="ID" [(ngModel)]="textID"></ion-input>
+<ion-content>
+    <div class="borderForMode" *ngIf="isManualLogin">
+        <div class="center" padding-top>
+            <button class="width33" ion-button icon-only color="light" [ngClass]="{'dispalyMode':true,'active':displayMode == 'Landscape'}" (click)="displayMode = 'Landscape'">
+                <i class="fa fa-th-large fa-lg gray" aria-hidden="true"></i>
+            </button>
+            <button class="width33" ion-button icon-only color="light" [ngClass]="{'dispalyMode':true,'active':displayMode == 'Portrait'}" (click)="displayMode = 'Portrait'">
+                <i class="fa fa-list-ul fa-lg gray" aria-hidden="true"></i>
+            </button>
+        </div>
+    </div>
+    <ion-list padding>
+        <ion-item *ngIf="isManualLogin">
+            <ion-label color="primary">Job ID</ion-label>
+            <ion-input placeholder="ID" [(ngModel)]="usageData['jobID']"></ion-input>
         </ion-item>
+
+        <!--        <ion-item>
+                    <ion-label>Save JobID</ion-label>
+                    <ion-checkbox [(ngModel)]="isRemember" ></ion-checkbox>
+                </ion-item>-->
         <ion-grid padding-top>
-            <ion-row>
+            <ion-row *ngIf="isManualLogin">
                 <ion-col col-6>
-                    <button ion-button full color="secondary"  (click)="buttonClick()">Submit Id</button>
+                    <button ion-button full color="red" class="radius"  (click)="buttonClick()">Submit Id</button>
                 </ion-col>
                 <ion-col col-6>
-                    <button ion-button  full  (click)="openBarCode()">Scan Id</button>
+                    <button ion-button  full class="radius" (click)="openBarCode()">Scan Id</button>
+                </ion-col>
+            </ion-row>
+            <ion-row *ngIf="!isManualLogin">
+                <ion-col>
+                    <button ion-button  full class="radius" (click)="openBarCode()">Scan Id</button>
                 </ion-col>
             </ion-row>
         </ion-grid>
-        <div *ngIf="(barcodeData && barcodeData.format) || myInputEnable">
-            <ion-searchbar
-                [(ngModel)]="myInput"
-                [showCancelButton]="shouldShowCancel"
-                (ionInput)="searchProduct($event)"
-                (ionCancel)="onSearchCancel($event)">
-            </ion-searchbar>
-            <div padding text-center *ngIf="products && products.length==0">
-                 <ion-badge color="danger"> Not found </ion-badge>
+        <div *ngIf="isManualLogin && myInputEnable">
+            <div padding text-center *ngIf="products && products.length==0 || !isFound">
+             <ion-badge color="danger"> Not found </ion-badge>
             </div>
-            <ion-grid  *ngIf="products && products.length">
-                <ion-row text-uppercase>
-                    <ion-col col-3>Sno.</ion-col>
-                    <ion-col col-6>Produt Name</ion-col>
-                    <ion-col col-3>Qty</ion-col>
-                </ion-row>
-                <ion-row *ngFor="let product of products; let i=index" class="gray" text-capitalize>
-                    <ion-col col-3>{{i+1}}</ion-col>
-                    <ion-col col-6>{{product.name}}</ion-col>
-                    <ion-col col-3><input type="text" class="qtyBox" [(ngModel)]="product.qty" ></ion-col>
-                </ion-row>
-            </ion-grid>
-            <button ion-button full margin-top  (click)="addItemByBarcode()">Scan Product</button>
         </div>
+
+        <ion-grid  *ngIf="isManualLogin && products && products.length && (myInputEnable)" [ngClass]="{'portrait': displayMode == 'Portrait', 'landscape': displayMode == 'Landscape'}" no-padding>
+            <div class="card1">   
+                <div class="rowForLandscape" wrap>
+                    <div class="column cursorPointer" *ngFor="let product of products; let i=index">
+                         <div class="cardForPortrait">
+                            <div class="row"> 
+                                <div class="columnForGrid50 col100 relative">
+                                    <div class="imgBox center" style="background-image: url('assets/imgs/default.jpg');">
+                                        <img class="center" src="{{product.ImageURL}}"/>
+                                    </div>
+                                </div>
+                                <div class="columnForGrid50 col100 no-padding-top" padding>
+                                    <ion-card-content class="margin10 relative" >
+                                        <div class="row rowForLandscape">
+                                            <div >
+                                                <div text-capitalize class="font16 name cartTitle center" >
+                                                    {{product.Name}}
+                                                </div>    
+                                            </div>
+                                        </div>
+                                        <div  *ngIf="displayMode == 'Portrait'"  >
+
+                                            <ion-row class="border">
+                                                <ion-col col-4 no-padding>
+                                                    <button no-margin float-left color="gray" class="radiusLeft" ion-button icon-only (click)="add(product)">
+                                                            <ion-icon name="add" color="light"></ion-icon>
+                                                    </button>
+                                                </ion-col>
+                                                <ion-col col-4 no-padding>
+                                                    <span class="qty">  {{product['qty']}}  </span>
+                                                </ion-col>
+                                                <ion-col col-4 no-padding>
+                                                    <button no-margin color="gray" class="radiusRight" float-right ion-button icon-only (click)="remove(product)">
+                                                            <ion-icon name="remove" color="light"></ion-icon>
+                                                    </button>
+                                                </ion-col>
+                                            </ion-row>
+                                        </div>
+                                    </ion-card-content>
+                                </div>  
+                                <div class="row">
+                                    <div class="columnForGrid50 no-padding-top" padding *ngIf="displayMode == 'Landscape'">
+                                         <ion-row class="border">
+                                            <ion-col col-4 no-padding>
+                                                <button no-margin float-left color="gray" class="radiusLeft" ion-button icon-only (click)="add(product)">
+                                                        <ion-icon name="add" color="light" ></ion-icon>
+                                                </button>
+                                            </ion-col>
+                                            <ion-col col-4 no-padding>
+                                                <span class="qty">  {{product['qty']}}  </span>
+                                            </ion-col>
+                                            <ion-col col-4 no-padding>
+                                                <button no-margin color="gray" class="radiusRight" float-right ion-button icon-only (click)="remove(product)" >
+                                                        <ion-icon name="remove" color="light" ></ion-icon>
+                                                </button>
+                                            </ion-col>
+                                        </ion-row>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </ion-grid>
+        <ion-grid padding-top>    
+            <ion-row *ngIf="!isManualLogin && myInputEnable">
+                <ion-col col-6>
+                    <button class="no-margin radius" color="gray" ion-button full margin-top  (click)="addProductByBarcode()">Scan Product</button>
+                </ion-col>
+                <ion-col col-6>
+                    <button class="no-margin radius" ion-button full margin-top color="red" (click)="submitProductByScan()">Submit by Scan</button>
+                </ion-col>
+            </ion-row>
+            <ion-row *ngIf="(isManualLogin && products && products.length && myInputEnable)">
+                <ion-col>
+                    <button class="no-margin radius" ion-button full margin-top color='gray' (click)="addItemByBarcode()">Scan Product</button>
+                </ion-col>
+            </ion-row>
+            <ion-row *ngIf="(isManualLogin && products && products.length && myInputEnable)">
+                <ion-col col-6>
+                    <button class="no-margin radius" ion-button full margin-top color='red' (click)="submitProduct()">Submit Product</button>
+                </ion-col>
+                <ion-col col-6>
+                    <button class="no-margin radius" ion-button full margin-top  (click)="submitProductByScan()">Submit by Scan</button>
+                </ion-col>
+            </ion-row>
+        </ion-grid>
     </ion-list>
 </ion-content>

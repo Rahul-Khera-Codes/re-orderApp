@@ -1,108 +1,20 @@
-[
-    {
-        "type": "table",
-        "name": "Customer_Table",
-        "database": "reorderDB",
-        "structure":
-                {
-                    "IDLocal": "INTEGER",
-                    "IDWeb": "INTEGER",
-                    "FirstName": "CHAR",
-                    "LastName": "CHAR",
-                    "EmailAddress": "CHAR",
-                    "Password": "CHAR",
-                    "CustomerAccountIDLocal": "CHAR",
-                    "JobIDForce": "CHAR",
-                    "LastUpdatedDateTime": "CHAR"
-                }
-    }
-    , {
-        "type": "table",
-        "name": "Contact_Table",
-        "database": "reorderDB",
-        "structure":
-                {
-                    "IDLocal": "INTEGER",
-                    "IDWeb": "INTEGER",
-                    "FirstName": "CHAR",
-                    "LastName": "CHAR",
-                    "EmailAddress": "CHAR",
-                    "Password": "CHAR",
-                    "CustomerIDLocal": "CHAR",
-                    "CustomerIDWeb": "CHAR",
-                    "JobIDForce": "CHAR",
-                    "LastUpdatedDateTime": "CHAR"
-                }
-    }
-    , {
-        "type": "table",
-        "name": "Product",
-        "database": "reorderDB",
-        "structure":
-                {
-                    "ID": "INTEGER",
-                    "Code": "INTEGER",
-                    "Name": "CHAR",
-                    "Barcode1": "CHAR",
-                    "Barcode2": "CHAR",
-                    "Barcode3": "CHAR",
-                    "SearchText": "CHAR",
-                    "URL": "CHAR",
-                    "ImageURL": "CHAR"
-                }
-    }
-    , {
-        "type": "table",
-        "name": "ProductCodes",
-        "database": "reorderDB",
-        "structure":
-                {
-                    "ProductID": "INTEGER",
-                    "Barcode": "INTEGER",
-                    "Name": "CHAR"
-                }
-    }
-    , {
-        "type": "table",
-        "name": "Product_Control_List",
-        "database": "reorderDB",
-        "structure":
-                {
-                    "IDLocal": "INTEGER",
-                    "IDWeb": "INTEGER",
-                    "Name": "CHAR",
-                    "LastUpdatedDateTime": "CHAR",
-                    "CustomerIDLocal": "INTEGER",
-                    "CustomerIDWeb": "INTEGER"
-                }
-    }
-    , {
-        "type": "table",
-        "name": "Product_Control_Line",
-        "database": "reorderDB",
-        "structure":
-                {
-                    "IDLocal": "INTEGER",
-                    "IDWeb": "INTEGER",
-                    "ListIDLocal": "CHAR",
-                    "ListIDWeb": "CHAR",
-                    "ProductIDLocal": "INTEGER"
-                }
-
-    }, {
-        "type": "table",
-        "name": "List_to_Contact",
-        "database": "reorderDB",
-        "structure":
-                {
-                    "IDLocal": "INTEGER",
-                    "IDWeb": "INTEGER",
-                    "ContactIDLocal": "INTEGER",
-                    "ContactIDWeb": "INTEGER",
-                    "ListIDLocal": "INTEGER",
-                    "ListIDWeb": "INTEGER",
-                    "IsActive": "INTEGER",
-                    "IsDefault": "INTEGER"
-                }
-    }
-]
+{
+    "Contact_Table":
+            "CREATE TABLE IF NOT EXISTS Contact_Table(IDLocal INTEGER,IDWeb INTEGER,FirstName CHAR,LastName CHAR,EmailAddress CHAR,Password CHAR,CustomerIDLocal CHAR,CustomerIDWeb CHAR,JobIDForce CHAR,LastUpdatedDateTime CHAR,LoginBarcode CHAR)",
+    "Customer_Table":
+            "CREATE TABLE IF NOT EXISTS Customer_Table(IDLocal INTEGER,IDWeb INTEGER,FirstName CHAR,LastName CHAR,EmailAddress CHAR,Password CHAR,CustomerAccountIDLocal INTEGER,JobIDForce CHAR,LastUpdatedDateTime CHAR,LoginBarcode CHAR)",
+    "List_to_Contact":
+            "CREATE TABLE IF NOT EXISTS List_to_Contact(IDLocal INTEGER,IDWeb INTEGER,ContactIDLocal INTEGER,ContactIDWeb INTEGER,ListIDLocal INTEGER,ListIDWeb INTEGER,IsActive INTEGER,IsDefault INTEGER)",
+    "Product":
+            "CREATE TABLE IF NOT EXISTS Product(ID INTEGER,Code INTEGER,Name CHAR,Barcode1 CHAR,Barcode2 CHAR,Barcode3 CHAR,SearchText CHAR,URL CHAR,ImageURL CHAR,IsActive BOOLEAN)",
+    "ProductCodes":
+            "CREATE TABLE IF NOT EXISTS ProductCodes(ProductID INTEGER,Barcode INTEGER,Name CHAR)",
+    "Product_Control_Line":
+            "CREATE TABLE IF NOT EXISTS Product_Control_Line(IDLocal INTEGER,IDWeb INTEGER,ListIDLocal INTEGER,ListIDWeb INTEGER,ProductIDLocal INTEGER)",
+    "Product_Control_List":
+            "CREATE TABLE IF NOT EXISTS Product_Control_List(IDLocal INTEGER,IDWeb INTEGER,Name CHAR,LastUpdatedDateTime CHAR,CustomerIDLocal INTEGER,CustomerIDWeb INTEGER,IsDefault BOOLEAN,ReLoginToSubmit BOOLEAN)",
+    "Usage":
+            "CREATE TABLE IF NOT EXISTS Usage(IDLocal INTEGER,ListIDLocal INTEGER,CustomerIDLocal INTEGER,ContactIDLocal INTEGER,CreatedDateTime CHAR,JobID CHAR,Longitude CHAR,Latitude CHAR)",
+    "Usage_Line":
+            "CREATE TABLE IF NOT EXISTS Usage_Line(IDLocal INTEGER,UsageIDLocal INTEGER,ProductIDLocal INTEGER,Quantity INTEGER,CreatedDateTime CHAR )"
+}

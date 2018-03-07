@@ -7,8 +7,21 @@ export class ApiServiceProvider {
     constructor(public http: HttpClient) {
     }
     apiCall(path): Observable<any> {
-        let completePath = `assets/jsonData/${path}`;
-        return this.http.get(completePath).map((res: Response) => {
+        return this.http.get(path).map((res: Response) => {
+            return res;
+        }).catch((error: any) => {
+            return Observable.throw(error || 'Server error')
+        });
+    }
+    apiCallByPost(path, data): Observable<any> {
+        return this.http.post(path, data).map((res: Response) => {
+            return res;
+        }).catch((error: any) => {
+            return Observable.throw(error || 'Server error')
+        });
+    }
+    apiCallByPut(path, data): Observable<any> {
+        return this.http.put(path, data).map((res: Response) => {
             return res;
         }).catch((error: any) => {
             return Observable.throw(error || 'Server error')
