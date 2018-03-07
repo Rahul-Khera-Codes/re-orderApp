@@ -57,7 +57,8 @@ function createStructure(data, callback) {
 
 function fetchAllData(callback) {
   let data = []
-  let dirname = __dirname + "/CustomerProductControl";
+  let dirname = "../../../tmp/data_files/feeds/CustomerProductControl";
+  // let dirname = __dirname + "CustomerProductControl"
   fs.readdir(dirname, function(err, filenames) {
     if (err) {
       console.log(err)
@@ -434,7 +435,8 @@ app.post('/save/data', function(req, res, next) {
   let filtered = _.filter(structure, (filtered_data) => {
     return filtered_data.name == orignal_data.name
   })
-  let file_path = filtered.length ? `CustomerProductControl/${filtered[0].filename}.txt` : `CustomerProductControl/${orignal_data.name + new Date()}.txt`
+  let file_path = filtered.length ? `../../../tmp/data_files/feeds/CustomerProductControl/${filtered[0].filename}.txt` : `../../../tmp/data_files/feeds/CustomerProductControl/${orignal_data.name + new Date()}.txt`
+  // let file_path = filtered.length ? `CustomerProductControl/${filtered[0].filename}.txt` : `CustomerProductControl/${orignal_data.name + new Date()}.txt`
 
   function createDataString(data, callback) {
     let records = data.splice(0, 1)[0]
