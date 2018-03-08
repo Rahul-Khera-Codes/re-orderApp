@@ -12,8 +12,8 @@ var mysql = require('mysql');
 
 var con = mysql.createConnection({
   host: "localhost",
-  user: "root",
-  password: "java@123",
+  user: "bstgroupcom",
+  password: "",
   database: "bstgroup_custprodcont0"
 });
 let file_location;
