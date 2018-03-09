@@ -27,7 +27,9 @@ let list_of_file_to_import = [
   'ppp_Customer_ProductControlProduct.txt',
   'ppp_Customer_ProductControlProductCodes.txt'
 ]
+
 let export_file_location;
+
 con.connect(function(err) {
   if (err) throw err;
   console.log("Connected!");
@@ -80,6 +82,8 @@ function insertDataInTime(table_info, callback) {
   con.query(`TRUNCATE TABLE ${table.table}`, function(err, truncate_response) {
     if (err) throw err;
     let terminated_by = "|#"
+    console.log(truncate_response)
+    console.log(`load data local infile '${file_location}/${table.filename}' into table ${table.table} fields terminated by '|#' LINES TERMINATED BY '[#]'`)
     con.query(`load data local infile '${file_location}/${table.filename}' into table ${table.table} fields terminated by '|#' LINES TERMINATED BY '[#]'`, function(err, insert_reponse) {
       if (err) throw err;
       if (table_info.length) {
