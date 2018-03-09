@@ -12,8 +12,8 @@ var mysql = require('mysql');
 
 var con = mysql.createConnection({
   host: "localhost",
-  user: "bstgroupcom",
-  password: "",
+  user: "bstgroup_cpc0",
+  password: "{m*A&YpO,*Ro",
   database: "bstgroup_custprodcont0"
 });
 let file_location;
@@ -33,10 +33,10 @@ con.connect(function(err) {
   console.log("Connected!");
   con.query("create table IF NOT EXISTS configuration (id INT AUTO_INCREMENT PRIMARY KEY, name VARCHAR(100), value VARCHAR(1000))", function(err, result) {
     if (err) throw err;
-    con.query("select * from configuration where id=1", (err, import_file_location) => {
+    con.query("select * from configuration where ID=1", (err, import_file_location) => {
       if (err) throw err;
       file_location = import_file_location[0].value;
-      con.query("select * from configuration where id=2", (err, export_file_path) => {
+      con.query("select * from configuration where ID=2", (err, export_file_path) => {
         if (err) throw err;
         export_file_location = export_file_path
       })
