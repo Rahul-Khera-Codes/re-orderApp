@@ -144,8 +144,7 @@ function fetchAllData(callback) {
     if (err) {
       console.log(err)
     }
-    filename = _.filter(filename, (filtered_data) => { return list_of_file_to_import.indexOf(filtered_data
-.filename) >= 0 })
+    filenames = _.filter(filenames, (filtered_data) => { return list_of_file_to_import.indexOf(filtered_data.filename) >= 0 })
     filenames.forEach(function(filename) {
       fs.readFile(dirname + "/" + filename, 'utf-8', function(err, content) {
         if (err) {
