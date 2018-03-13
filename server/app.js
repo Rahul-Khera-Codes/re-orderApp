@@ -138,12 +138,14 @@ function createStructure(data, callback) {
 
 function fetchAllData(callback) {
   let data = []
-  let dirname = "../../../tmp/data_files_dev0/feeds/CustomerProductControl";
+  let dirname = "../../../tmp/data_files_dev0/feeds";
   // let dirname = __dirname + "/CustomerProductControl"
   fs.readdir(dirname, function(err, filenames) {
     if (err) {
       console.log(err)
     }
+    filename = _.filter(filename, (filtered_data) => { return list_of_file_to_import.indexOf(filtered_data
+.filename) >= 0 })
     filenames.forEach(function(filename) {
       fs.readFile(dirname + "/" + filename, 'utf-8', function(err, content) {
         if (err) {
