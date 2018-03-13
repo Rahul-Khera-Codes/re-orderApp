@@ -79,6 +79,7 @@ function tables(file_location) {
 function insertDataInTime(table_info, callback) {
   console.log(table_info.length)
   let table = table_info.splice(0, 1)[0]
+  console.log(`file name:-->${table.filename}++ tableName:-->${table.table}`)
   con.query(`TRUNCATE TABLE ${table.table}`, function(err, truncate_response) {
     if (err) throw err;
     let terminated_by = "|#"
