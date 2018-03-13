@@ -138,8 +138,8 @@ function createStructure(data, callback) {
 
 function fetchAllData(callback) {
   let data = []
-  // let dirname = "../../../tmp/data_files/feeds/CustomerProductControl";
-  let dirname = "./CustomerProductControl"
+  let dirname = "../../../tmp/data_files_dev0/feeds/CustomerProductControl";
+  // let dirname = __dirname + "/CustomerProductControl"
   fs.readdir(dirname, function(err, filenames) {
     if (err) {
       console.log(err)
@@ -359,7 +359,7 @@ app.post('/save/data', function(req, res, next) {
     return filtered_data.name == orignal_data.name
   })
   // let file_path = filtered.length ? `../../../tmp/data_files/feeds/CustomerProductControl/${filtered[0].filename}.txt` : `../../../tmp/data_files/feeds/CustomerProductControl/${orignal_data.name + new Date()}.txt`
-  let file_path = filtered.length ? `CustomerProductControl/${filtered[0].filename}.txt` : `CustomerProductControl/${orignal_data.name}.txt`
+  let file_path = filtered.length ? `${__dirname}/CustomerProductControl/${filtered[0].filename}.txt` : `${__dirname}/CustomerProductControl/${orignal_data.name}.txt`
 
   function createDataString(data, callback) {
     let records = data.splice(0, 1)[0]
@@ -413,7 +413,7 @@ app.post('/save/data', function(req, res, next) {
 let importUsageAndUsageLine = (usageAndUsageLine, callback) => {
   let file = usageAndUsageLine.splice(0, 1)[0];
   con.query(`TRUNCATE TABLE ${file.tableName}`, function(err, truncate_response) {
-    con.query(`load data infile './CustomerProductControl/${file.filename}' into table ${file.tableName} fields terminated by '|#' LINES TERMINATED BY '[#]'`, function(err, insert_reponse) {
+    con.query(`load data infile '${__dirname}/CustomerProductControl/${file.filename}' into table ${file.tableName} fields terminated by '|#' LINES TERMINATED BY '[#]'`, function(err, insert_reponse) {
       if (err) throw err;
       if (usageAndUsageLine.length) {
         importUsageAndUsageLine(usageAndUsageLine, callback)
