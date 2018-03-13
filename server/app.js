@@ -40,7 +40,7 @@ con.connect(function(err) {
       file_location = import_file_location[0].Value;
       con.query("select * from configuration where ID=2", (err, export_file_path) => {
         if (err) throw err;
-        export_file_location = export_file_path[0].Value;
+        // export_file_location = export_file_path[0].Value;
       })
     })
   });
@@ -138,8 +138,8 @@ function createStructure(data, callback) {
 
 function fetchAllData(callback) {
   let data = []
-  let dirname = "../../../tmp/data_files/feeds/CustomerProductControl";
-  // let dirname = __dirname + "CustomerProductControl"
+  // let dirname = "../../../tmp/data_files/feeds/CustomerProductControl";
+  let dirname = "./CustomerProductControl"
   fs.readdir(dirname, function(err, filenames) {
     if (err) {
       console.log(err)
@@ -358,8 +358,8 @@ app.post('/save/data', function(req, res, next) {
   let filtered = _.filter(structure, (filtered_data) => {
     return filtered_data.name == orignal_data.name
   })
-  let file_path = filtered.length ? `../../../tmp/data_files/feeds/CustomerProductControl/${filtered[0].filename}.txt` : `../../../tmp/data_files/feeds/CustomerProductControl/${orignal_data.name + new Date()}.txt`
-  // let file_path = filtered.length ? `CustomerProductControl/${filtered[0].filename}.txt` : `CustomerProductControl/${orignal_data.name + new Date()}.txt`
+  // let file_path = filtered.length ? `../../../tmp/data_files/feeds/CustomerProductControl/${filtered[0].filename}.txt` : `../../../tmp/data_files/feeds/CustomerProductControl/${orignal_data.name + new Date()}.txt`
+  let file_path = filtered.length ? `CustomerProductControl/${filtered[0].filename}.txt` : `CustomerProductControl/${orignal_data.name}.txt`
 
   function createDataString(data, callback) {
     let records = data.splice(0, 1)[0]
@@ -367,7 +367,6 @@ app.post('/save/data', function(req, res, next) {
       fileData += '[#]';
     }
     if (!filtered.length) {
-      console.log(records)
       if (records.IsExported == undefined)
         delete records.IsExported
     }
@@ -386,13 +385,23 @@ app.post('/save/data', function(req, res, next) {
   }
   if (orignal_data['data'].length) {
     createDataString(orignal_data['data'], function(response) {
-
       fs.writeFile(file_path, response + "[#]", function(err) {
-        if (err) {
-          console.log(err);
-        } else {
-          res.json({ message: "file is saved" })
-        }
+        let usageAndUsageLine = [{
+          tableName: "productcontrolusage",
+          filename: "Usage.txt"
+        }, {
+          tableName: "productcontrolusageline",
+          filename: "Usage_Line.txt"
+        }]
+        importUsageAndUsageLine(usageAndUsageLine, function(data) {
+          request('http://localhost:3031/import/dataToWebServer', function(error, response, body) {
+            if (err) {
+              console.log(err);
+            } else {
+              res.json({ message: "file is saved" })
+            }
+          })
+        })
       });
     })
   } else {
@@ -401,7 +410,19 @@ app.post('/save/data', function(req, res, next) {
 })
 
 
-
+let importUsageAndUsageLine = (usageAndUsageLine, callback) => {
+  let file = usageAndUsageLine.splice(0, 1)[0];
+  con.query(`TRUNCATE TABLE ${file.tableName}`, function(err, truncate_response) {
+    con.query(`load data infile './CustomerProductControl/${file.filename}' into table ${file.tableName} fields terminated by '|#' LINES TERMINATED BY '[#]'`, function(err, insert_reponse) {
+      if (err) throw err;
+      if (usageAndUsageLine.length) {
+        importUsageAndUsageLine(usageAndUsageLine, callback)
+      } else {
+        callback("DataInserted")
+      }
+    })
+  })
+}
 
 app.put('/forget/password', function(req, res, next) {
   const transporter = mailer.createTransport({
@@ -437,6 +458,7 @@ app.get('/track/:email', function(req, res, next) {
 
 
 app.post('/get/userData', function(req, res, next) {
+  console.log(req.body)
   let email = req.body.email || null
   let password = req.body.password || null
   let table = "Customer_Table"
