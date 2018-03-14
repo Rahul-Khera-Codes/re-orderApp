@@ -82,7 +82,7 @@ function insertDataInTime(table_info, callback) {
   con.query(`TRUNCATE TABLE ${table.table}`, function(err, truncate_response) {
     if (err) throw err;
     let terminated_by = "|#"
-    con.query(`load data local infile '${file_location}/${table.filename}' into table ${table.table} fields terminated by '|#' LINES TERMINATED BY '[#]'`, function(err, insert_reponse) {
+    con.query(`load data infile '${file_location}/${table.filename}' into table ${table.table} fields terminated by '|#' LINES TERMINATED BY '[#]'`, function(err, insert_reponse) {
       if (err) throw err;
       if (table_info.length) {
         insertDataInTime(table_info, callback)
