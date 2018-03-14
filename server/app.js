@@ -432,7 +432,7 @@ app.put('/forget/password', function(req, res, next) {
     port: 465,
     auth: {
       user: 'testhr69@gmail.com',
-      pass: 'java@123'
+      pass: 'testhr69'
     }
   });
 
