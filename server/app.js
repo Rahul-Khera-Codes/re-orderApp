@@ -9,6 +9,7 @@ let structure = require('./structure');
 let mailer = require('nodemailer');
 let request = require('request');
 var mysql = require('mysql');
+var moment = require('moment');
 
 var con = mysql.createConnection({
   host: "localhost",
@@ -40,7 +41,7 @@ con.connect(function(err) {
       file_location = import_file_location[0].Value;
       con.query("select * from configuration where ID=2", (err, export_file_path) => {
         if (err) throw err;
-        // export_file_location = export_file_path[0].Value;
+        export_file_location = export_file_path[0].Value;
       })
     })
   });
@@ -77,13 +78,11 @@ function tables(file_location) {
 }
 
 function insertDataInTime(table_info, callback) {
-  console.log(table_info.length)
   let table = table_info.splice(0, 1)[0]
-  console.log(`file name:-->${table.filename}++ tableName:-->${table.table}`)
   con.query(`TRUNCATE TABLE ${table.table}`, function(err, truncate_response) {
     if (err) throw err;
     let terminated_by = "|#"
-    con.query(`load data infile '${file_location}/${table.filename}' into table ${table.table} fields terminated by '|#' LINES TERMINATED BY '[#]'`, function(err, insert_reponse) {
+    con.query(`load data local infile '${file_location}/${table.filename}' into table ${table.table} fields terminated by '|#' LINES TERMINATED BY '[#]'`, function(err, insert_reponse) {
       if (err) throw err;
       if (table_info.length) {
         insertDataInTime(table_info, callback)
@@ -99,7 +98,6 @@ app.get('/import/dataToWebServer', (req, res, next) => {
     let list_of_files = _.filter(table, (filtered_data) => { return list_of_file_to_import.indexOf(filtered_data.filename) >= 0 })
     insertDataInTime(list_of_files, function(insertData) {
       table_name = []
-      console.log('done')
       res.json({ status: 1, message: insertData })
     })
 
@@ -139,12 +137,13 @@ function createStructure(data, callback) {
 function fetchAllData(callback) {
   let data = []
   // let dirname = "../../../tmp/data_files_dev0/feeds";
-  let dirname = __dirname + "/CustomerProductControl"
+  // let dirname = __dirname + "/CustomerProductControl"
+  let dirname = file_location
   fs.readdir(dirname, function(err, filenames) {
     if (err) {
       console.log(err)
     }
-    // filenames = _.filter(filenames, (filtered_data) => { return list_of_file_to_import.indexOf(filtered_data.filename) >= 0 })
+    filenames = _.filter(filenames, (filtered_data) => { return list_of_file_to_import.indexOf(filtered_data.filename) >= 0 })
     filenames.forEach(function(filename) {
       console.log(dirname + "/" + filename)
       fs.readFile(dirname + "/" + filename, 'utf-8', function(err, content) {
@@ -360,8 +359,9 @@ app.post('/save/data', function(req, res, next) {
   let filtered = _.filter(structure, (filtered_data) => {
     return filtered_data.name == orignal_data.name
   })
+  console.log(req.body)
   // let file_path = filtered.length ? `../../../tmp/data_files/feeds/CustomerProductControl/${filtered[0].filename}.txt` : `../../../tmp/data_files/feeds/CustomerProductControl/${orignal_data.name + new Date()}.txt`
-  let file_path = filtered.length ? `${__dirname}/CustomerProductControl/${filtered[0].filename}.txt` : `${__dirname}/CustomerProductControl/${orignal_data.name}.txt`
+  let file_path = filtered.length ? `${export_file_location}/${filtered[0].filename}.txt` : `${__dirname}/CustomerProductControl/${orignal_data.name}_${orignal_data.ListIdLocal}_${moment(new Date()).format('YYYY-MM-DD-hh-mm-ss')}.txt`
 
   function createDataString(data, callback) {
     let records = data.splice(0, 1)[0]
@@ -385,16 +385,15 @@ app.post('/save/data', function(req, res, next) {
       callback(fileData)
     }
   }
+
   if (orignal_data['data'].length) {
     createDataString(orignal_data['data'], function(response) {
       fs.writeFile(file_path, response + "[#]", function(err) {
         let usageAndUsageLine = [{
-          tableName: "productcontrolusage",
-          filename: "Usage.txt"
-        }, {
-          tableName: "productcontrolusageline",
-          filename: "Usage_Line.txt"
+          tableName: orignal_data.name == 'Usage' ? 'productcontrolusage' : 'productcontrolusageline',
+          filename: `${orignal_data.name}_${orignal_data.ListIdLocal}_${moment(new Date()).format('YYYY-MM-DD-hh-mm-ss')}.txt`
         }]
+
         importUsageAndUsageLine(usageAndUsageLine, function(data) {
           request('http://localhost:3031/import/dataToWebServer', function(error, response, body) {
             if (err) {
@@ -415,7 +414,7 @@ app.post('/save/data', function(req, res, next) {
 let importUsageAndUsageLine = (usageAndUsageLine, callback) => {
   let file = usageAndUsageLine.splice(0, 1)[0];
   con.query(`TRUNCATE TABLE ${file.tableName}`, function(err, truncate_response) {
-    con.query(`load data infile '${__dirname}/CustomerProductControl/${file.filename}' into table ${file.tableName} fields terminated by '|#' LINES TERMINATED BY '[#]'`, function(err, insert_reponse) {
+    con.query(`load data local infile '${export_file_location}/${file.filename}' into table ${file.tableName} fields terminated by '|#' LINES TERMINATED BY '[#]'`, function(err, insert_reponse) {
       if (err) throw err;
       if (usageAndUsageLine.length) {
         importUsageAndUsageLine(usageAndUsageLine, callback)
@@ -460,13 +459,11 @@ app.get('/track/:email', function(req, res, next) {
 
 
 app.post('/get/userData', function(req, res, next) {
-  console.log(req.body)
   let email = req.body.email || null
   let password = req.body.password || null
   let table = "Customer_Table"
   let barCode = req.body.barCode || null;
   request('http://localhost:3031/get/loginDetails', function(error, response, body) {
-    console.log(body)
     if (email) {
       let findTable = _.filter(JSON.parse(body).data, (filtered_data) => { return filtered_data.name == table })[0];
       let loggedInUser = _.filter(findTable.data, (filtered_data) => { return (filtered_data.EmailAddress == email && filtered_data.Password == password) })[0];
