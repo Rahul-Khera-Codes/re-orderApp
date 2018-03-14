@@ -361,7 +361,8 @@ app.post('/save/data', function(req, res, next) {
   })
   console.log(req.body)
   // let file_path = filtered.length ? `../../../tmp/data_files/feeds/CustomerProductControl/${filtered[0].filename}.txt` : `../../../tmp/data_files/feeds/CustomerProductControl/${orignal_data.name + new Date()}.txt`
-  let file_path = filtered.length ? `${export_file_location}/${filtered[0].filename}.txt` : `${__dirname}/CustomerProductControl/${orignal_data.name}_${orignal_data.ListIdLocal}_${moment(new Date()).format('YYYY-MM-DD-hh-mm-ss')}.txt`
+  let file_path = filtered.length ? `${export_file_location}/${filtered[0].filename}.txt` : `${export_file_location}/${orignal_data.name}_${orignal_data.ListIdLocal}_${moment(new Date()).format('YYYY-MM-DD-hh-mm-ss')}.txt`
+  console.log(file_path)
 
   function createDataString(data, callback) {
     let records = data.splice(0, 1)[0]
@@ -414,7 +415,7 @@ app.post('/save/data', function(req, res, next) {
 let importUsageAndUsageLine = (usageAndUsageLine, callback) => {
   let file = usageAndUsageLine.splice(0, 1)[0];
   con.query(`TRUNCATE TABLE ${file.tableName}`, function(err, truncate_response) {
-    con.query(`load data local infile '${export_file_location}/${file.filename}' into table ${file.tableName} fields terminated by '|#' LINES TERMINATED BY '[#]'`, function(err, insert_reponse) {
+    con.query(`load data infile '${export_file_location}/${file.filename}' into table ${file.tableName} fields terminated by '|#' LINES TERMINATED BY '[#]'`, function(err, insert_reponse) {
       if (err) throw err;
       if (usageAndUsageLine.length) {
         importUsageAndUsageLine(usageAndUsageLine, callback)
