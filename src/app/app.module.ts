@@ -35,6 +35,7 @@ import {File} from '@ionic-native/file';
 import {IsLoginEventHandlerProvider} from '../providers/is-login-event-handler/is-login-event-handler';
 import {EventProvider} from './../providers/event/event';
 import {Toast} from '@ionic-native/toast';
+import {PopupPage} from './../pages/popupForScan/popup'
 
 @NgModule({
     declarations: [
@@ -48,7 +49,8 @@ import {Toast} from '@ionic-native/toast';
         HeaderScroller,
         HideFabDirective,
         ImageDirective,
-        ProductViewPage
+        ProductViewPage,
+        PopupPage
     ],
     imports: [
         BrowserModule,
@@ -65,7 +67,8 @@ import {Toast} from '@ionic-native/toast';
         ProgressDetailsPage,
         ChangePassword,
         ForgotPasswordPage,
-        ProductViewPage
+        ProductViewPage,
+        PopupPage
     ],
     providers: [
         StatusBar,

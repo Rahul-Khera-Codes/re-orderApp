@@ -26,14 +26,15 @@ export class ExportDataProvider {
                         let manageExportData = (data, callback) => {
                             let first_key = data.splice(0, 1)[0];
                             let sendData = {};
-                            sendData['name'] = first_key;
+                            sendData['name'] = first_key == 'Usage_Line' ? 'UsageLine' : first_key;
                             //                            sendData['data'] = exportData[first_key];
                             if (sendData['name'] == ConstantTableName.usage || sendData['name'] == ConstantTableName.usageLine) {
                                 let exportDataFinal = exportData[first_key];
                                 sendData['data'] = exportDataFinal;
-                                this._apiProvider.apiCallByPost('http://5.9.144.226:3031/save/data', sendData).subscribe(res => {
-                                    //                                    this._sqlService.deleteRecord(sendData['name']).then((res) => {
-                                    //                                    })
+                                sendData['ListIdLocal'] = localStorage.getItem('listIDLocal');
+                                this._apiProvider.apiCallByPost('http://101.0.73.66:3031/save/data', sendData).subscribe(res => {
+                                    this._sqlService.deleteRecord(first_key).then((res) => {
+                                    })
                                     if (data.length) {
                                         manageExportData(data, callback);
                                     } else {

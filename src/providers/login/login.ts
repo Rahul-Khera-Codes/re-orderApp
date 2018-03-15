@@ -27,6 +27,7 @@ export class LoginProvider {
     }
     checkWhichTableEmailExits(email) {
         return new Promise((resolve, reject) => {
+            console.log("email",email)
             this.DataBase.executeSql(`SELECT * FROM Customer_Table WHERE EmailAddress='${email}'`, []).then((res) => {
                 if (res.rows.length) {
                     resolve('Customer_Table');
@@ -47,6 +48,7 @@ export class LoginProvider {
         return new Promise((resolve, reject) => {
             this._sqlProvider.openDb().then((db: SQLiteObject) => {
                 this.DataBase = db;
+                console.log("db",db);
                 this.checkWhichTableEmailExits(email).then((tableName) => {
                     this.DataBase.executeSql(`UPDATE ${tableName} SET Password='${pass}' , LastUpdatedDateTime='${this.getCurentTimeDate()}' WHERE EmailAddress = '${email}'`, []).then((res) => {
                         resolve(pass);

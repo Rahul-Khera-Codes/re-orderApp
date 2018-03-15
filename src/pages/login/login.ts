@@ -27,6 +27,7 @@ export class LoginPage {
     relogin = false;
     preUserEmail: string;
     spin = false;
+    synErr: boolean = false;
     isRemember: boolean = false;
     constructor(public _local: LocalDbProvider, public _isLogin: IsLoginEventHandlerProvider, public _storage: LocalStorageProvider, public viewCtrl: ViewController, private _toast: ToastProvider, private _consignmentProvider: ConsignmentProvider, private _login: LoginProvider, private barcodeScanner: BarcodeScanner, public navCtrl: NavController, public navParams: NavParams, private formBuilder: FormBuilder) {
         this.relogin = this.navParams.get('relogin');
@@ -87,6 +88,7 @@ export class LoginPage {
         });
     }
     signin(formData) {
+        this.synErr = false;
         if (!this.spin) {
             this._consignmentProvider.removeUserData();
             if (this.isRemember) {
@@ -97,12 +99,12 @@ export class LoginPage {
                 if (!res['message']) {
                     this.authLogin(formData);
                 } else {
-                    this.err = 'user not found';
+                    this.err = res['message'];
                     this.spin = false;
                 }
             }, (err) => {
                 this.authLogin(formData);
-                this.err = err.err;
+                this.synErr = true;
             })
         }
     }
@@ -127,10 +129,11 @@ export class LoginPage {
             }
         }, (err) => {
             this.spin = false;
-            this.err = err;
+            this.err = this.synErr ? 'Could not access the Web Server' : err;
         })
     }
     openBarCode() {
+        this.synErr = false;
         this.barcodeScanner.scan().then((barcodeData) => {
             this.barcodeData = barcodeData;
             this._local.callDBtoManage({barCode: barcodeData.text}).then((res) => {
@@ -141,7 +144,7 @@ export class LoginPage {
                 }
             }, (err) => {
                 this.authLoginByBarcode(barcodeData)
-                this.err = err.err;
+                this.synErr = true;
             })
         }, (err) => {
             //            this.barCodeErr = err;
@@ -162,7 +165,7 @@ export class LoginPage {
             }
         }, (err) => {
             console.log(err)
-            this.barCodeErr = err;
+            this.barCodeErr = this.synErr ? 'Could not access the Web Server' : err;
         })
     }
 }

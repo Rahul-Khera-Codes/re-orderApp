@@ -16,5 +16,9 @@
     "Usage":
             "CREATE TABLE IF NOT EXISTS Usage(IDLocal CHAR,ListIDLocal CHAR,CustomerIDLocal CHAR,ContactIDLocal CHAR,CreatedDateTime CHAR,JobID CHAR,Longitude CHAR,Latitude CHAR)",
     "Usage_Line":
-            "CREATE TABLE IF NOT EXISTS Usage_Line(IDLocal CHAR,UsageIDLocal CHAR,ProductIDLocal CHAR,Quantity CHAR,CreatedDateTime CHAR )"
+            "CREATE TABLE IF NOT EXISTS Usage_Line(IDLocal CHAR,UsageIDLocal CHAR,ProductIDLocal CHAR,Quantity CHAR,CreatedDateTime CHAR )",
+    "contactpasswordrecord":
+            "CREATE TABLE IF NOT EXISTS contactpasswordrecord(ContactIDWeb CHAR,Password CHAR,LastUpdatedDateTime CHAR)",
+    "customerpasswordrecord":
+            "CREATE TABLE IF NOT EXISTS customerpasswordrecord(CustomerIDWeb CHAR,Password CHAR,LastUpdatedDateTime CHAR)"
 }

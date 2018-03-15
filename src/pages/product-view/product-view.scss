@@ -3,3 +3,17 @@ page-product-view {
         padding-top: 112px !important;
     }
 }
+.always-modal .modal-wrapper{
+    background: rgba(0, 0, 0, 0.7);
+    width: 100%;
+    height: 100%;
+    left: unset !important;
+    top: unset !important;
+    .ion-page{
+        margin:0 auto;
+        position: relative;
+        top: 20%;
+        width: 75%;
+        height: 50%
+    }
+}

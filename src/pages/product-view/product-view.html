@@ -16,7 +16,7 @@
         <button ion-button icon-only menuToggle (click)="openMenu()" *ngIf="!searchBar && default">
                 <ion-icon name="menu" color='yellow'></ion-icon>
         </button>
-        <img *ngIf="!searchBar" src="assets/imgs/bst.jpg" alt="" (click)="onClickImage('www.bstgroup.com.au')" class='headerLogo'/>
+        <img *ngIf="!searchBar" src="assets/imgs/bst.jpg" alt="" (click)="onClickImage('https://www.bstgroup.com.au/')" class='headerLogo'/>
         <button ion-button float-right icon-only color='black' (click)="gotoSearch()"  *ngIf="isManualLogin && !searchBar">
             <ion-icon name="search" color='red'></ion-icon>
         </button>

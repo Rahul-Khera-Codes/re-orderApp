@@ -1,0 +1,53 @@
+<ion-header>
+    <ion-toolbar>
+        <ion-title float-left>Quantity</ion-title>
+        <button ion-button icon-right clear float-right (click)="dismiss()">
+                <ion-icon  name="close"></ion-icon>
+        </button>
+    </ion-toolbar>
+</ion-header>
+<ion-content>
+    <ion-list>
+        <ion-item>
+            <p>
+                Enter a quantity for this product you're so keen on adding
+            </p>
+        </ion-item>
+        <ion-item>
+            <ion-thumbnail item-start>
+                <img [src]="data.ImageURL">
+            </ion-thumbnail>
+            <h2>{{data.Name}}</h2>
+            <p>{{data.Code}}</p>
+            <ion-grid>
+                <ion-row class="border">
+                    <ion-col col-4 no-padding>
+                        <button no-margin float-left color="gray" class="radiusLeft"  ion-button icon-only (click)="remove(data)" >
+                                <ion-icon name="remove" color="light" ></ion-icon>
+                        </button>
+                    </ion-col>
+                    <ion-col col-4 no-padding>
+                        <input type="number" autoCorrect=false class="qty" [(ngModel)]="data['qty']" (blur)="onBlurMethod(data)">
+                    </ion-col>
+                    <ion-col col-4 no-padding>
+                        <button no-margin  color="gray" class="radiusRight" float-right ion-button icon-only (click)="add(data)">
+                                <ion-icon name="add" color="light" ></ion-icon>
+                        </button>
+                    </ion-col>
+                </ion-row>
+            </ion-grid>
+        </ion-item>
+    </ion-list>
+</ion-content>
+<ion-footer>
+    <ion-grid no-padding>
+        <ion-row>
+            <ion-col col-6 no-padding>
+                <button ion-button full (click)="submit()">Submit</button>
+            </ion-col>
+            <ion-col col-6 no-padding>
+                <button ion-button full color="danger" (click)="dismiss()">Close</button>
+            </ion-col>
+        </ion-row>
+    </ion-grid>
+</ion-footer>

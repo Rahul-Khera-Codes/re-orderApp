@@ -23,6 +23,11 @@ export class ConsignmentInPage implements OnInit {
     browser: any;
     constructor(private iab: InAppBrowser, private barcodeScanner: BarcodeScanner, public navCtrl: NavController, public navParams: NavParams, public _consignmentProvider: ConsignmentProvider) {
     }
+    
+    ionViewWillEnter() {
+        console.log("this.usageData",this.usageData)
+        this.usageData.jobID = '';
+    }
     ngOnInit() {
         this.usageData.selectedConsignment = this.navParams.get('selectedConsignment');
         this.checkLoginBy();
@@ -41,7 +46,7 @@ export class ConsignmentInPage implements OnInit {
         if (this.usageData['jobID'] && this.usageData['jobID'].length) {
             this.myInputEnable = true;
             this.jobIDErr = false;
-            this.navCtrl.push(ProductViewPage, this.usageData, {animate: false});
+            this.navCtrl.push(ProductViewPage, {'selectedConsignment': this.usageData.selectedConsignment, 'jobID': this.usageData.jobID}, {animate: false});
         } else {
             this.jobIDErr = true;
             this.myInputEnable = false;
@@ -50,11 +55,12 @@ export class ConsignmentInPage implements OnInit {
     openBarCode() {
         this.jobIDErr = false;
         this.usageData['jobID'] = null;
-        this.barcodeScanner.scan().then((barcodeData:any) => {
+        this.barcodeScanner.scan().then((barcodeData: any) => {
             this.usageData['jobID'] = barcodeData.text;
             this.myInputEnable = true;
-            if (barcodeData.length) {
-                this.navCtrl.push("ProductViewPage", this.usageData, {animate: false});
+            console.log(barcodeData.text, barcodeData.text.length, this.usageData)
+            if (this.usageData['jobID'] && this.usageData['jobID'].length) {
+                this.navCtrl.push(ProductViewPage, {'selectedConsignment': this.usageData.selectedConsignment, 'jobID': this.usageData.jobID}, {animate: false});
             } else {
                 this.jobIDErr = true;
             }

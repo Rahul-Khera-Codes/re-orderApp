@@ -3,7 +3,6 @@ import {NavController, NavParams, ModalController} from 'ionic-angular';
 import {BarcodeScanner} from '@ionic-native/barcode-scanner';
 import {AlertController} from 'ionic-angular';
 import {ProductProvider} from './../../providers/product/product';
-import {UUID} from 'angular2-uuid';
 import {Geolocation} from '@ionic-native/geolocation';
 import filter from 'lodash/filter';
 import forEach from 'lodash/forEach';
@@ -20,6 +19,7 @@ import {Content} from 'ionic-angular';
 import {ExportDataProvider} from '../../providers/export-data/export-data';
 import {InAppBrowser} from '@ionic-native/in-app-browser';
 import {EventProvider} from './../../providers/event/event';
+import {PopupPage} from './../popupForScan/popup';
 @Component({
     selector: 'page-product-view',
     templateUrl: 'product-view.html',
@@ -48,7 +48,7 @@ export class ProductViewPage {
         "longitude": 0,
         "currentData": "",
         "listIDLocal": "",
-        "IDLocal": "",
+        "IDLocal": 0,
         "contactIDLocal": -1,
         "customerIDLocal": -1
     }
@@ -68,6 +68,7 @@ export class ProductViewPage {
         this.checkLoginBy();
         this.selectedConsignment = this.navParams.get('selectedConsignment');
         this.usageData.jobID = this.navParams.get('jobID');
+        console.log("usageData", this.usageData)
         this.default = this.navParams.get('default');
         if (this.selectedConsignment) {
             this._productProvider.queryToProductControlLine(this.selectedConsignment.IDWeb, this.selectedConsignment.IDLocal).then((productControlLineData) => {
@@ -166,7 +167,7 @@ export class ProductViewPage {
     //        }
     //    }
     createIDLocal() {
-        return UUID.UUID();
+        return Math.floor(Math.random() * (999999 - 100000)) + 100000;
     }
     getCurentTimeDate() {
         let today = new Date();
@@ -178,9 +179,9 @@ export class ProductViewPage {
     addProductCreateData(productID, qty) {
         let usageLineData = {
             "qty": 0,
-            "IDLocal": "",
+            "IDLocal": 0,
             "productID": "",
-            "usageIDLocal": "",
+            "usageIDLocal": 0,
             "createdDateTime": ""
         }
         return new Promise((resolve, reject) => {
@@ -188,6 +189,7 @@ export class ProductViewPage {
                 if (!this.usageData['IDLocal']) {
                     this.getLocation();
                     this.getCurentTimeDate();
+                    localStorage.setItem('listIDLocal', this.selectedConsignment['IDLocal']);
                     this.usageData['listIDLocal'] = this.selectedConsignment['IDLocal'];
                     this.usageData['IDLocal'] = this.createIDLocal();
                     this.usageData['currentData'] = this.getCurentTimeDate();
@@ -248,7 +250,7 @@ export class ProductViewPage {
                         "longitude": 0,
                         "currentData": "",
                         "listIDLocal": "",
-                        "IDLocal": "",
+                        "IDLocal": 0,
                         "contactIDLocal": -1,
                         "customerIDLocal": -1
                     }
@@ -285,12 +287,14 @@ export class ProductViewPage {
     //    }
 
     checkBarCodeOnproduct(barcodeData) {
-        return filter(this.products, function (data) {
-            if (data.Barcode1 == barcodeData.text) {
+        return filter(this.products, function (data: any) {
+            if (data && (data.Barcode1 == barcodeData.text)) {
                 return data;
-            } else if (data.Barcode2 == barcodeData.text) {
+            } else if (data && (data.Barcode2 == barcodeData.text)) {
                 return data;
-            } else if (data.Barcode3 == barcodeData.text) {
+            } else if (data && (data.Barcode3 == barcodeData.text)) {
+                return data;
+            } else if (data && (data.Code == barcodeData.text)) {
                 return data;
             } else {
                 return false;
@@ -300,6 +304,7 @@ export class ProductViewPage {
     addItemByBarcode() {
         let cancel = false;
         let filterBarcodeData;
+        this.isFound = true;
         this.barcodeScanner.scan().then((barcodeData) => {
             filterBarcodeData = this.checkBarCodeOnproduct(barcodeData);
         }, (err) => {
@@ -307,40 +312,18 @@ export class ProductViewPage {
             // An error occurred
         }).then(() => {
             if (filterBarcodeData && filterBarcodeData.length) {
-                let prompt = this.alertCtrl.create({
-                    title: 'Quantity',
-                    message: "Enter a quantity for this product you're so keen on adding",
-                    inputs: [
-                        {
-                            name: 'qty',
-                            placeholder: 'qty',
-                            type: 'number'
-                        },
-                    ],
-                    buttons: [
-                        {
-                            text: 'Cancel',
-                            handler: data => {
-                                console.log('Cancel clicked');
-                                cancel = true;
-                            }
-                        },
-                        {
-                            text: 'Submit',
-                            handler: dataOfQty => {
-                                if (dataOfQty.qty == '0') {                    //check selected quantity should not 0
-                                    return false;
-                                } else {
-                                    if (filterBarcodeData && filterBarcodeData.length) {
-                                        filterBarcodeData[0]['qty'] = dataOfQty.qty;
-                                        this.isDataExistINList(filterBarcodeData[0].ID, filterBarcodeData[0].qty)
-                                    }
-                                }
-                            }
-                        }
-                    ]
+                let profileModal = this.modalCtrl.create(PopupPage, {data: filterBarcodeData[0]}, {cssClass: "always-modal"});
+                let qty = filterBarcodeData[0].qty;
+                profileModal.onDidDismiss(data => {
+                    if (data && data.qty > 0) {
+                        this.isDataExistINList(data.ID, data.qty);
+                    } else {
+                        filterBarcodeData[0].qty = qty;
+                        this._toast.presentToast("Please add quentity", 3000);
+                    }
                 });
-                prompt.present();
+                profileModal.present();
+                console.log("filterBarcodeData", filterBarcodeData)
             } else {
                 this._toast.presentToast("Product Not Found", 3000);
                 this.isFound = false;
@@ -382,6 +365,7 @@ export class ProductViewPage {
         }
     }
     addProductByBarcode() {
+        this.isFound = true;
         this.barcodeScanner.scan().then((barcodeData) => {
             let filterBarcodeData = this.checkBarCodeOnproduct(barcodeData);
             if (filterBarcodeData && filterBarcodeData.length) {

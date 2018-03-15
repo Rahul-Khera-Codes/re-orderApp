@@ -17,5 +17,5 @@ export const constantLoginBy = {
 }
 export const ConstantTableName = {
     "usage": "Usage",
-    "usageLine": "Usage_Line"
+    "usageLine": "UsageLine"
 }
