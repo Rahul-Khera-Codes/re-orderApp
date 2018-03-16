@@ -414,15 +414,15 @@ app.post('/save/data', function(req, res, next) {
 
 let importUsageAndUsageLine = (usageAndUsageLine, callback) => {
   let file = usageAndUsageLine.splice(0, 1)[0];
-  con.query(`TRUNCATE TABLE ${file.tableName}`, function(err, truncate_response) {
-    con.query(`load data infile '${export_file_location}/${file.filename}' into table ${file.tableName} fields terminated by '|#' LINES TERMINATED BY '[#]'`, function(err, insert_reponse) {
-      if (err) throw err;
-      if (usageAndUsageLine.length) {
-        importUsageAndUsageLine(usageAndUsageLine, callback)
-      } else {
-        callback("DataInserted")
-      }
-    })
+  con.query(`load data infile '${export_file_location}/${file.filename}' into table ${file.tableName} fields terminated by '|#' LINES TERMINATED BY '[#]'`, function(err, insert_reponse) {
+    if (err) {
+      res.status(400).json({ staus: 0, message: err.message || err })
+    };
+    if (usageAndUsageLine.length) {
+      importUsageAndUsageLine(usageAndUsageLine, callback)
+    } else {
+      callback("DataInserted")
+    }
   })
 }
 
@@ -447,6 +447,7 @@ app.put('/forget/password', function(req, res, next) {
     if (error) {
       console.log(error);
     }
+    console.log(info)
     res.json({ response: info });
   });
 })
