@@ -30,7 +30,6 @@ export class ForgotPasswordPage {
         this.spin = true;
         let rand=Math.random()*1000000;
         let pwd = Math.ceil(rand);
-        console.log("pwd",pwd);
         value['password'] = this._login.encryptPassword(pwd);
         this._login.updatePasswordWhenForgot(value['password'], value['email']).then((res) => {
             value['password'] = pwd;

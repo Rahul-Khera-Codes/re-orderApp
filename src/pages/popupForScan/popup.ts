@@ -15,15 +15,12 @@ export class PopupPage implements OnInit {
     ngOnInit() {
         this.data = this._navParams.get('data')
         this.qty = this.data.qty;
-        console.log("data", this.data);
     }
     dismiss() {
         this.data.qty = this.qty;
-        console.log("data", this.data)
         this.viewCtrl.dismiss(this.data);
     }
     submit() {
-        console.log("data", this.data)
         this.viewCtrl.dismiss(this.data);
     }
     remove(productData) {
@@ -38,7 +35,6 @@ export class PopupPage implements OnInit {
         if (data.qty > 0) {
 
         } else {
-        console.log(this.qty)
             data.qty = this.qty;
         }
     }

@@ -25,7 +25,6 @@ export class ConsignmentInPage implements OnInit {
     }
     
     ionViewWillEnter() {
-        console.log("this.usageData",this.usageData)
         this.usageData.jobID = '';
     }
     ngOnInit() {
@@ -58,7 +57,6 @@ export class ConsignmentInPage implements OnInit {
         this.barcodeScanner.scan().then((barcodeData: any) => {
             this.usageData['jobID'] = barcodeData.text;
             this.myInputEnable = true;
-            console.log(barcodeData.text, barcodeData.text.length, this.usageData)
             if (this.usageData['jobID'] && this.usageData['jobID'].length) {
                 this.navCtrl.push(ProductViewPage, {'selectedConsignment': this.usageData.selectedConsignment, 'jobID': this.usageData.jobID}, {animate: false});
             } else {

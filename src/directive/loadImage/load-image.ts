@@ -31,9 +31,7 @@ export class ImageDirective {
         const fileTransfer: FileTransferObject = this.transfer.create();
         let img = image.split("/");
         this.file.checkFile(this.storageDirectory, img[img.length - 1])
-            .then(() => {
-                console.log(`${image} was successfully retrieved from: ${this.storageDirectory}`);
-            })
+            .then(() => {})
             .catch((err) => {
                 fileTransfer.download(image, this.storageDirectory + img[img.length - 1]).then((entry) => {
                 }, (err) => {console.log("err", err)});
@@ -55,8 +53,7 @@ export class ImageDirective {
         this.retrieveImage(this._el.nativeElement.src).then(path => {
             this._el.nativeElement.src = path;
         }, (err) => {
-        this._el.nativeElement.src='assets/imgs/default.jpg';
-            console.log("****", err);
+            this._el.nativeElement.src = 'assets/imgs/default.jpg';
         })
     }
     handleLoad() {

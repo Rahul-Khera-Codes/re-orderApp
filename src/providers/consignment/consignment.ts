@@ -79,8 +79,10 @@ export class ConsignmentProvider {
                 IDToBeCheck = constantidType['customerIDLocal'];
             }
             if (this.checkLoginBy() == constantLoginBy.manual) {
+                this.DB.executeSql(`SELECT * FROM Product_Control_List`,[]).then((res)=>{
+                })
                 this.DB.executeSql(`SELECT * FROM Product_Control_List WHERE ${IDToBeCheck}=${this.checkIdIfNegative(userdata[0].IDWeb, userdata[0].IDLocal)['value']}`, []).then((res) => {
-                    if (res && res.rows.length) {
+                         if (res && res.rows.length) {
                         this.consignmentList = this.createList(res);
                     }
                 }).catch(e => console.log(e)).then(() => {

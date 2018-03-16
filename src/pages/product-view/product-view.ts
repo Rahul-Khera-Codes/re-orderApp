@@ -68,7 +68,6 @@ export class ProductViewPage {
         this.checkLoginBy();
         this.selectedConsignment = this.navParams.get('selectedConsignment');
         this.usageData.jobID = this.navParams.get('jobID');
-        console.log("usageData", this.usageData)
         this.default = this.navParams.get('default');
         if (this.selectedConsignment) {
             this._productProvider.queryToProductControlLine(this.selectedConsignment.IDWeb, this.selectedConsignment.IDLocal).then((productControlLineData) => {
@@ -323,7 +322,6 @@ export class ProductViewPage {
                     }
                 });
                 profileModal.present();
-                console.log("filterBarcodeData", filterBarcodeData)
             } else {
                 this._toast.presentToast("Product Not Found", 3000);
                 this.isFound = false;
