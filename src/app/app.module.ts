@@ -35,7 +35,8 @@ import {File} from '@ionic-native/file';
 import {IsLoginEventHandlerProvider} from '../providers/is-login-event-handler/is-login-event-handler';
 import {EventProvider} from './../providers/event/event';
 import {Toast} from '@ionic-native/toast';
-import {PopupPage} from './../pages/popupForScan/popup'
+import {PopupPage} from './../pages/popupForScan/popup';
+import {PopupSuccessPage} from './../pages/popupForSuccess/popupSuccess';;
 
 @NgModule({
     declarations: [
@@ -50,7 +51,8 @@ import {PopupPage} from './../pages/popupForScan/popup'
         HideFabDirective,
         ImageDirective,
         ProductViewPage,
-        PopupPage
+        PopupPage,
+        PopupSuccessPage
     ],
     imports: [
         BrowserModule,
@@ -68,7 +70,8 @@ import {PopupPage} from './../pages/popupForScan/popup'
         ChangePassword,
         ForgotPasswordPage,
         ProductViewPage,
-        PopupPage
+        PopupPage,
+        PopupSuccessPage
     ],
     providers: [
         StatusBar,

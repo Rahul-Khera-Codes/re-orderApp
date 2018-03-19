@@ -20,6 +20,8 @@ import {ExportDataProvider} from '../../providers/export-data/export-data';
 import {InAppBrowser} from '@ionic-native/in-app-browser';
 import {EventProvider} from './../../providers/event/event';
 import {PopupPage} from './../popupForScan/popup';
+import {PopupSuccessPage} from './../popupForSuccess/popupSuccess';
+
 @Component({
     selector: 'page-product-view',
     templateUrl: 'product-view.html',
@@ -240,7 +242,8 @@ export class ProductViewPage {
             this._productProvider.queryToUsage(this.usageData).then((usageRes) => {
                 this._productProvider.queryToUsageLine(this.usageLineDataStore).then((res) => {
                     this._export.exportData().then(res => {});
-                    this._toast.presentToast("Successfully Submited", 3000);
+                    let profileModal = this.modalCtrl.create(PopupSuccessPage, {data: "Successfully Submited"}, {cssClass: "always-modalSuccess"});
+                    profileModal.present();
                     this.navCtrl.pop({animate: false});
                     this.usageLineDataStore = [];
                     this.usageData = {

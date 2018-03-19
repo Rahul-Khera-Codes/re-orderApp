@@ -1,0 +1,29 @@
+<ion-header>
+    <ion-toolbar>
+        <button ion-button icon-right clear float-right (click)="dismiss()">
+                <ion-icon  name="close"></ion-icon>
+        </button>
+    </ion-toolbar>
+</ion-header>
+<ion-content>
+    <ion-list>
+        <ion-item>
+            <ion-thumbnail item-start>
+               <img src="assets/imgs/success.png">
+            </ion-thumbnail>
+            <h2>
+                {{message}}
+                
+            </h2>
+        </ion-item>
+    </ion-list>
+</ion-content>
+<ion-footer>
+    <ion-grid no-padding>
+        <ion-row>
+            <ion-col center col-12 no-padding>
+                <button no-margin float-right ion-button Large (click)="dismiss()">Close</button>
+            </ion-col>
+        </ion-row>
+    </ion-grid>
+</ion-footer>
