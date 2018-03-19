@@ -29,6 +29,9 @@ let list_of_file_to_import = [
   'ppp_Customer_ProductControlProductCodes.txt'
 ]
 
+let customer_file = 'ppp_Customer_ProductControlCustomer.txt';
+let contact_file = 'ppp_Customer_ProductControlContact.txt';
+
 let export_file_location;
 
 con.connect(function(err) {
@@ -435,23 +438,37 @@ app.put('/forget/password', function(req, res, next) {
       pass: 'testhr69'
     }
   });
-
-  let mailOptions = {
-    from: 'testhr69@gmail.com', // sender address
-    to: req.body.email, // list of receivers
-    subject: req.body.subject, // Subject line
-    text: '', // plain text body
-    html: req.body.html // html body
-  };
-  transporter.sendMail(mailOptions, (error, info) => {
-    if (error) {
-      console.log(error);
-    }
-    console.log(info)
-    res.json({ response: info });
-  });
+  console.log(req.body)
+  con.query(`update ${req.body.tableName} set Password=${req.body.password} where EmailAddress='${req.body.email}'`, function(err, data) {
+    console.log(err, data)
+    updateFile(req.body, function(response) {
+      console.log("==========================")
+      // let mailOptions = {
+      //   from: 'testhr69@gmail.com', // sender address
+      //   to: req.body.email, // list of receivers
+      //   subject: req.body.subject, // Subject line
+      //   text: '', // plain text body
+      //   html: req.body.html // html body
+      // };
+      // transporter.sendMail(mailOptions, (error, info) => {
+      //   if (error) {
+      //     console.log(error);
+      //   }
+      //   console.log(info)
+      //   res.json({ response: info });
+      // })
+    });
+  })
 })
 
+
+function updateFile(body, callback) {
+  con.query(`SELECT * FROM customer INTO OUTFILE "/var/www/html/projects/re-orderApp/server/CustomerProductControl/ppp_Customer_ProductControlCustomer.txt" FIELDS TERMINATED BY "|#" LINES TERMINATED BY "[#]"`, function(err, response) {
+    console.log(err, response)
+    callback()
+  })
+
+}
 app.get('/track/:email', function(req, res, next) {
   console.log(req.params.email)
 })
