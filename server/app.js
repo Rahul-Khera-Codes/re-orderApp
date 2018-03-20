@@ -148,7 +148,6 @@ function fetchAllData(callback) {
     }
     filenames = _.filter(filenames, (filtered_data) => { return list_of_file_to_import.indexOf(filtered_data) >= 0 })
     filenames.forEach(function(filename) {
-      console.log(dirname + "/" + filename)
       fs.readFile(dirname + "/" + filename, 'utf-8', function(err, content) {
         if (err) {
           console.log(err)
@@ -362,10 +361,8 @@ app.post('/save/data', function(req, res, next) {
   let filtered = _.filter(structure, (filtered_data) => {
     return filtered_data.name == orignal_data.name
   })
-  console.log(req.body)
   // let file_path = filtered.length ? `../../../tmp/data_files/feeds/CustomerProductControl/${filtered[0].filename}.txt` : `../../../tmp/data_files/feeds/CustomerProductControl/${orignal_data.name + new Date()}.txt`
   let file_path = filtered.length ? `${export_file_location}/${filtered[0].filename}.txt` : `${export_file_location}/${orignal_data.name}_${orignal_data.ListIdLocal}_${moment(new Date()).format('YYYY-MM-DD-hh-mm-ss')}.txt`
-  console.log(file_path)
 
   function createDataString(data, callback) {
     let records = data.splice(0, 1)[0]
@@ -417,10 +414,7 @@ app.post('/save/data', function(req, res, next) {
 
 let importUsageAndUsageLine = (usageAndUsageLine, callback) => {
   let file = usageAndUsageLine.splice(0, 1)[0];
-  con.query(`load data infile '${export_file_location}/${file.filename}' into table ${file.tableName} fields terminated by '|#' LINES TERMINATED BY '[#]'`, function(err, insert_reponse) {
-    if (err) {
-      res.status(400).json({ staus: 0, message: err.message || err })
-    };
+  con.query(`load local data infile '${export_file_location}/${file.filename}' into table ${file.tableName} fields terminated by '|#' LINES TERMINATED BY '[#]'`, function(err, insert_reponse) {
     if (usageAndUsageLine.length) {
       importUsageAndUsageLine(usageAndUsageLine, callback)
     } else {
@@ -430,51 +424,135 @@ let importUsageAndUsageLine = (usageAndUsageLine, callback) => {
 }
 
 app.put('/forget/password', function(req, res, next) {
-  const transporter = mailer.createTransport({
-    host: 'smtp.gmail.com',
-    port: 465,
-    auth: {
-      user: 'testhr69@gmail.com',
-      pass: 'testhr69'
+  con.query(`select * from customer where EmailAddress="${req.body.email}"`, function(err, customer_details) {
+    if (!customer_details.length) {
+      con.query(`select * from contact where EmailAddress="${req.body.email}"`, function(err, contact_details) {
+        if (!contact_details.length) {
+          res.json({ status: 1, message: 'you have entered incorrect email' })
+        } else {
+          sendUpdatedPassword('contactpasswordrecord', { IDweb: contact_details[0].IDWeb, field: 'ContactIDWeb' }, function(response) {
+            res.json({ response: response })
+          })
+        }
+      })
+    } else {
+      sendUpdatedPassword('customerpasswordrecord', { IDweb: customer_details[0].IDWeb, field: 'CustomerIDWeb' }, function(response) {
+        res.json({ response: response })
+      })
     }
-  });
-  console.log(req.body)
-  con.query(`update ${req.body.tableName} set Password=${req.body.password} where EmailAddress='${req.body.email}'`, function(err, data) {
-    console.log(err, data)
-    updateFile(req.body, function(response) {
-      console.log("==========================")
-      // let mailOptions = {
-      //   from: 'testhr69@gmail.com', // sender address
-      //   to: req.body.email, // list of receivers
-      //   subject: req.body.subject, // Subject line
-      //   text: '', // plain text body
-      //   html: req.body.html // html body
-      // };
-      // transporter.sendMail(mailOptions, (error, info) => {
-      //   if (error) {
-      //     console.log(error);
-      //   }
-      //   console.log(info)
-      //   res.json({ response: info });
-      // })
+  })
+
+  function sendUpdatedPassword(tableName, update_info, callback) {
+    const transporter = mailer.createTransport({
+      host: 'smtp.gmail.com',
+      port: 465,
+      auth: {
+        user: 'testhr69@gmail.com',
+        pass: 'testhr69'
+      }
     });
-  })
+    let mailOptions = {
+      from: 'testhr69@gmail.com', // sender address
+      to: req.body.email, // list of receivers
+      subject: req.body.subject, // Subject line
+      text: '', // plain text body
+      html: req.body.html // html body
+    };
+
+    transporter.sendMail(mailOptions, (error, info) => {
+      if (error) {
+        console.log(error);
+      }
+      con.query(`select * from ${tableName} where ${update_info.field}=${update_info.IDweb}`, function(err, table_data) {
+        if (table_data.length) {
+          con.query(`update ${tableName} set Password='${req.body.password}' where ${update_info.field}='${update_info.IDweb}'`, function(err, data) {
+            callback(info)
+          })
+        } else {
+          con.query(`insert into ${tableName} values(${update_info.IDweb}, '${req.body.password}',now())`, function(err, create_password) {
+            callback(info)
+          })
+        }
+      })
+    });
+  }
 })
 
-
-function updateFile(body, callback) {
-  con.query(`SELECT * FROM customer INTO OUTFILE "/var/www/html/projects/re-orderApp/server/CustomerProductControl/ppp_Customer_ProductControlCustomer.txt" FIELDS TERMINATED BY "|#" LINES TERMINATED BY "[#]"`, function(err, response) {
-    console.log(err, response)
-    callback()
+app.put('/update/password', function(req, res, next) {
+  con.query(`select * from customer where EmailAddress='${req.body.EmailAddress}'`, function(err, customer_data) {
+    if (customer_data.length) {
+      if (customer_data[0].Password == req.body.oldPassword) {
+        con.query(`select * from customerpasswordrecord where CustomerIDWeb=${customer_data[0].IDWeb}`, function(err, customerpasswordrecord) {
+          if (customerpasswordrecord.length) {
+            if (customerpasswordrecord[0].Password == req.body.oldPassword) {
+              con.query(`update customerpasswordrecord set Password='${req.body.newPassword}' where CustomerIDWeb='${customerpasswordrecord[0].CustomerIDWeb}'`, function(err, updated_password) {
+                res.json({ status: 1, message: "Password Updated Successfully" })
+              })
+            } else {
+              res.json({ status: 0, message: "Incorrect Old Password" })
+            }
+          } else {
+            con.query(`insert into customerpasswordrecord values(${customer_data[0].IDWeb}, '${req.body.newPassword}',now())`, function(err, create_password) {
+              res.json({ status: 1, message: "Password Updated Successfully" })
+            })
+          }
+        })
+      } else {
+        con.query(`select * from customerpasswordrecord where CustomerIDWeb=${customer_data[0].IDWeb}`, function(err, customerpasswordrecord) {
+          if (customerpasswordrecord != undefined && customerpasswordrecord.length) {
+            if (customerpasswordrecord[0].Password == req.body.oldPassword) {
+              con.query(`update customerpasswordrecord set Password='${req.body.newPassword}' where CustomerIDWeb='${customerpasswordrecord[0].CustomerIDWeb}'`, function(err, updated_password) {
+                res.json({ status: 1, message: "Password Updated Successfully" })
+              })
+            } else {
+              res.json({ status: 0, message: "Incorrect Old Password" })
+            }
+          } else {
+            res.json({ status: 0, message: "Incorrect Old Password" })
+          }
+        })
+      }
+    } else {
+      con.query(`select * from contact where EmailAddress='${req.body.EmailAddress}'`, function(err, contact_data) {
+        if (contact_data.length) {
+          if (contact_data[0].Password == req.body.oldPassword) {
+            con.query(`select * from contactpasswordrecord where ContactIDWeb=${contact_data[0].IDWeb}`, function(err, contactpasswordrecord) {
+              if (contactpasswordrecord.length) {
+                if (contactpasswordrecord[0].Password == req.body.oldPassword) {
+                  con.query(`update contactpasswordrecord set Password='${req.body.newPassword}' where ContactIDWeb='${contactpasswordrecord[0].ContactIDWeb}'`, function(err, updated_password) {
+                    res.json({ status: 1, message: "Password Updated Successfully" })
+                  })
+                } else {
+                  res.json({ status: 0, message: "Incorrect Old Password" })
+                }
+              } else {
+                con.query(`insert into contactpasswordrecord values(${contact_data[0].IDWeb}, '${req.body.newPassword}',now())`, function(err, create_password) {
+                  res.json({ status: 1, message: "Password Updated Successfully" })
+                })
+              }
+            })
+          } else {
+            con.query(`select * from contactpasswordrecord where ContactIDWeb=${contact_data[0].IDWeb}`, function(err, contactpasswordrecord) {
+              if (contactpasswordrecord != undefined && contactpasswordrecord.length) {
+                if (contactpasswordrecord[0].Password == req.body.oldPassword) {
+                  con.query(`update contactpasswordrecord set Password='${req.body.newPassword}' where ContactIDWeb='${contactpasswordrecord[0].ContactIDWeb}'`, function(err, updated_password) {
+                    res.json({ status: 1, message: "Password Updated Successfully" })
+                  })
+                } else {
+                  res.json({ status: 0, message: "Incorrect Old Password" })
+                }
+              } else {
+                res.json({ status: 0, message: "Incorrect Old Password" })
+              }
+            })
+          }
+        } else {
+          res.json({ status: 0, message: "Invalid User" })
+        }
+      })
+    }
   })
-
-}
-app.get('/track/:email', function(req, res, next) {
-  console.log(req.params.email)
 })
-
-
-
 
 
 app.post('/get/userData', function(req, res, next) {
@@ -482,16 +560,129 @@ app.post('/get/userData', function(req, res, next) {
   let password = req.body.password || null
   let table = "Customer_Table"
   let barCode = req.body.barCode || null;
-  request('http://localhost:3031/get/loginDetails', function(error, response, body) {
-    if (email) {
-      let findTable = _.filter(JSON.parse(body).data, (filtered_data) => { return filtered_data.name == table })[0];
-      let loggedInUser = _.filter(findTable.data, (filtered_data) => { return (filtered_data.EmailAddress == email && filtered_data.Password == password) })[0];
-      if (loggedInUser == undefined) {
-        table = "Contact_Table"
-        findTable = _.filter(JSON.parse(body).data, (filtered_data) => { return filtered_data.name == table })[0];
-        loggedInUser = _.filter(findTable.data, (filtered_data) => { return (filtered_data.EmailAddress == email && filtered_data.Password == password) })[0];
+  con.query(`select * from customer`, function(err, customer_data) {
+    con.query(`select * from contact`, function(err, contact_data) {
+      if (email) {
+        let login_data = [];
+        let body = {};
+        login_data.push({ type: 'table', name: 'Customer_Table', database: 'reorderDB', data: customer_data })
+        login_data.push({ type: 'table', name: 'Contact_Table', database: 'reorderDB', data: contact_data })
+        body['data'] = login_data;
+        body = JSON.stringify(body)
+        let findTable = _.filter(JSON.parse(body).data, (filtered_data) => { return filtered_data.name == table })[0];
+        let loggedInUser = _.filter(findTable.data, (filtered_data) => { return (filtered_data.EmailAddress == email) })[0];
         if (loggedInUser == undefined) {
-          res.json({ status: 0, message: "Invalid User" })
+          table = "Contact_Table"
+          findTable = _.filter(JSON.parse(body).data, (filtered_data) => { return filtered_data.name == table })[0];
+          loggedInUser = _.filter(findTable.data, (filtered_data) => { return (filtered_data.EmailAddress == email) })[0];
+          if (loggedInUser == undefined) {
+            res.json({ status: 0, message: "Invalid User" })
+          } else {
+            loggedInUser['tableName'] = table;
+            console.log(loggedInUser)
+            if (loggedInUser && loggedInUser.Password == password) {
+              con.query(`select * from contactpasswordrecord where  ContactIDWeb=${loggedInUser.IDWeb} AND Password='${password}'`, function(err, password_record) {
+                if (password_record.length) {
+                  getUserData(loggedInUser, function(response) {
+                    delete loggedInUser['tableName']
+                    let user_data = {
+                      type: "table",
+                      database: "reorderDB",
+                      name: table,
+                      data: [loggedInUser]
+                    }
+                    response.data.push(user_data)
+                    res.json(response)
+                  })
+                } else {
+                  res.json({ status: 0, message: "Invalid Password" })
+                }
+              })
+            } else {
+              con.query(`select * from contactpasswordrecord where  ContactIDWeb=${loggedInUser.IDWeb} AND Password='${password}'`, function(err, customer_password_data) {
+                if (customer_password_data.length) {
+                  getUserData(loggedInUser, function(response) {
+                    delete loggedInUser['tableName']
+                    let user_data = {
+                      type: "table",
+                      database: "reorderDB",
+                      name: table,
+                      data: [loggedInUser]
+                    }
+                    response.data.push(user_data)
+                    res.json(response)
+                  })
+                } else {
+                  res.json({ status: 0, message: "Invalid User" })
+                }
+              })
+            }
+
+          }
+        } else {
+          loggedInUser['tableName'] = table;
+          if (loggedInUser && loggedInUser.Password == password) {
+            con.query(`select * from customerpasswordrecord where CustomerIDWeb=${loggedInUser.IDWeb} AND Password='${password}'`, function(err, customer_password_data) {
+              if (customer_password_data.length) {
+                getUserData(loggedInUser, function(response) {
+                  delete loggedInUser['tableName']
+                  let user_data = {
+                    type: "table",
+                    database: "reorderDB",
+                    name: table,
+                    data: [loggedInUser]
+                  }
+                  response.data.push(user_data)
+                  res.json(response)
+                })
+              } else {
+                res.json({ status: 0, message: "Invalid User" })
+              }
+            })
+          } else {
+            con.query(`select * from customerpasswordrecord where CustomerIDWeb=${loggedInUser.IDWeb} AND Password='${password}'`, function(err, customer_password_data) {
+              console.log(err)
+              if (customer_password_data.length) {
+                getUserData(loggedInUser, function(response) {
+                  delete loggedInUser['tableName']
+                  let user_data = {
+                    type: "table",
+                    database: "reorderDB",
+                    name: table,
+                    data: [loggedInUser]
+                  }
+                  response.data.push(user_data)
+                  res.json(response)
+                })
+              } else {
+                res.json({ status: 0, message: "Invalid User" })
+              }
+            })
+          }
+        }
+      } else if (barCode) {
+        let findTable = _.filter(JSON.parse(body).data, (filtered_data) => { return filtered_data.name == table })[0];
+        let loggedInUser = _.filter(findTable.data, (filtered_data) => { return (filtered_data.LoginBarcode == barCode) })[0];
+        if (loggedInUser == undefined) {
+          table = "Contact_Table"
+          findTable = _.filter(JSON.parse(body).data, (filtered_data) => { return filtered_data.name == table })[0];
+          loggedInUser = _.filter(findTable.data, (filtered_data) => { return (filtered_data.LoginBarcode == barCode) })[0];
+          if (loggedInUser == undefined) {
+            res.json({ status: 0, message: "Invalid User" })
+          } else {
+            loggedInUser['tableName'] = table;
+            getUserData(loggedInUser, function(response) {
+              delete loggedInUser['tableName']
+              let user_data = {
+                type: "table",
+                database: "reorderDB",
+                name: table,
+                data: [loggedInUser]
+              }
+              response.data.push(user_data)
+              res.json(response)
+            })
+          }
         } else {
           loggedInUser['tableName'] = table;
           getUserData(loggedInUser, function(response) {
@@ -507,60 +698,10 @@ app.post('/get/userData', function(req, res, next) {
           })
         }
       } else {
-        loggedInUser['tableName'] = table;
-        getUserData(loggedInUser, function(response) {
-          delete loggedInUser['tableName']
-          let user_data = {
-            type: "table",
-            database: "reorderDB",
-            name: table,
-            data: [loggedInUser]
-          }
-          response.data.push(user_data)
-          res.json(response)
-        })
+        res.json({ status: 0, message: "Invalid Login Type" })
       }
-    } else if (barCode) {
-      let findTable = _.filter(JSON.parse(body).data, (filtered_data) => { return filtered_data.name == table })[0];
-      let loggedInUser = _.filter(findTable.data, (filtered_data) => { return (filtered_data.LoginBarcode == barCode) })[0];
-      if (loggedInUser == undefined) {
-        table = "Contact_Table"
-        findTable = _.filter(JSON.parse(body).data, (filtered_data) => { return filtered_data.name == table })[0];
-        loggedInUser = _.filter(findTable.data, (filtered_data) => { return (filtered_data.LoginBarcode == barCode) })[0];
-        if (loggedInUser == undefined) {
-          res.json({ status: 0, message: "Invalid User" })
-        } else {
-          loggedInUser['tableName'] = table;
-          getUserData(loggedInUser, function(response) {
-            delete loggedInUser['tableName']
-            let user_data = {
-              type: "table",
-              database: "reorderDB",
-              name: table,
-              data: [loggedInUser]
-            }
-            response.data.push(user_data)
-            res.json(response)
-          })
-        }
-      } else {
-        loggedInUser['tableName'] = table;
-        getUserData(loggedInUser, function(response) {
-          delete loggedInUser['tableName']
-          let user_data = {
-            type: "table",
-            database: "reorderDB",
-            name: table,
-            data: [loggedInUser]
-          }
-          response.data.push(user_data)
-          res.json(response)
-        })
-      }
-    } else {
-      res.json({ status: 0, message: "Invalid Login Type" })
-    }
-  });
+    })
+  })
 })
 
 app.listen(process.env.PORT || 3031)
