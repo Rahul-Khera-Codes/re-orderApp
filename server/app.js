@@ -579,10 +579,26 @@ app.post('/get/userData', function(req, res, next) {
             res.json({ status: 0, message: "Invalid User" })
           } else {
             loggedInUser['tableName'] = table;
-            console.log(loggedInUser)
             if (loggedInUser && loggedInUser.Password == password) {
-              con.query(`select * from contactpasswordrecord where  ContactIDWeb=${loggedInUser.IDWeb} AND Password='${password}'`, function(err, password_record) {
+              con.query(`select * from contactpasswordrecord where  ContactIDWeb=${loggedInUser.IDWeb}`, function(err, password_record) {
+                console.log(password_record.length && password_record[0].Password == password)
                 if (password_record.length) {
+                  if (password_record[0].Password == password) {
+                    getUserData(loggedInUser, function(response) {
+                      delete loggedInUser['tableName']
+                      let user_data = {
+                        type: "table",
+                        database: "reorderDB",
+                        name: table,
+                        data: [loggedInUser]
+                      }
+                      response.data.push(user_data)
+                      res.json(response)
+                    })
+                  } else {
+                    res.json({ status: 0, message: "Invalid Password" })
+                  }
+                } else {
                   getUserData(loggedInUser, function(response) {
                     delete loggedInUser['tableName']
                     let user_data = {
@@ -594,8 +610,6 @@ app.post('/get/userData', function(req, res, next) {
                     response.data.push(user_data)
                     res.json(response)
                   })
-                } else {
-                  res.json({ status: 0, message: "Invalid Password" })
                 }
               })
             } else {
@@ -622,8 +636,24 @@ app.post('/get/userData', function(req, res, next) {
         } else {
           loggedInUser['tableName'] = table;
           if (loggedInUser && loggedInUser.Password == password) {
-            con.query(`select * from customerpasswordrecord where CustomerIDWeb=${loggedInUser.IDWeb} AND Password='${password}'`, function(err, customer_password_data) {
+            con.query(`select * from customerpasswordrecord where CustomerIDWeb=${loggedInUser.IDWeb}`, function(err, customer_password_data) {
               if (customer_password_data.length) {
+                if (customer_password_data[0].Password == password) {
+                  getUserData(loggedInUser, function(response) {
+                    delete loggedInUser['tableName']
+                    let user_data = {
+                      type: "table",
+                      database: "reorderDB",
+                      name: table,
+                      data: [loggedInUser]
+                    }
+                    response.data.push(user_data)
+                    res.json(response)
+                  })
+                } else {
+                  res.json({ status: 0, message: "Invalid Password" })
+                }
+              } else {
                 getUserData(loggedInUser, function(response) {
                   delete loggedInUser['tableName']
                   let user_data = {
@@ -635,13 +665,10 @@ app.post('/get/userData', function(req, res, next) {
                   response.data.push(user_data)
                   res.json(response)
                 })
-              } else {
-                res.json({ status: 0, message: "Invalid User" })
               }
             })
           } else {
             con.query(`select * from customerpasswordrecord where CustomerIDWeb=${loggedInUser.IDWeb} AND Password='${password}'`, function(err, customer_password_data) {
-              console.log(err)
               if (customer_password_data.length) {
                 getUserData(loggedInUser, function(response) {
                   delete loggedInUser['tableName']
