@@ -459,7 +459,7 @@ app.put('/forget/password', function(req, res, next) {
     const transporter = mailer.createTransport({
       host: smtp_data.SMTPServer,
       port: smtp_data.SMTPPort,
-      secure: false
+      secure: false,
       auth: {
         user: '',
         pass: ''
