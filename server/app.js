@@ -458,7 +458,8 @@ app.put('/forget/password', function(req, res, next) {
   function sendUpdatedPassword(tableName, update_info, callback) {
     const transporter = mailer.createTransport({
       host: smtp_data.SMTPServer,
-      port: smtp_data.SMTPPort
+      port: smtp_data.SMTPPort,
+      secure: true
       /*auth: {
         user: 'testhr69@gmail.com',
         pass: 'testhr69'
