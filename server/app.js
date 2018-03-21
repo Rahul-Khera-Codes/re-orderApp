@@ -13,8 +13,8 @@ var moment = require('moment');
 
 var con = mysql.createConnection({
   host: "localhost",
-  user: "bstgroup_cpc0",
-  password: "{m*A&YpO,*Ro",
+  user: "root",
+  password: "java@123",
   database: "bstgroup_custprodcont0"
 });
 let file_location;
@@ -49,7 +49,20 @@ con.connect(function(err) {
     })
   });
 });
-
+let smtp_data = {}
+con.query(`select Value from configuration where ID=3`, function(err, SMTPServer) {
+  smtp_data['SMTPServer'] = SMTPServer[0].Value
+  con.query(`select Value from configuration where ID=4`, function(err, SMTPPort) {
+    smtp_data['SMTPPort'] = SMTPPort[0].Value
+    con.query(`select Value from configuration where ID=5`, function(err, SMTPSendSSL) {
+      smtp_data['SMTPSendSSL'] = SMTPSendSSL[0].Value
+      con.query(`select Value from configuration where ID=6`, function(err, SMTPFromAddress) {
+        smtp_data['SMTPFromAddress'] = SMTPFromAddress[0].Value
+        console.log(smtp_data)
+      })
+    })
+  })
+})
 app.server = http.createServer(app);
 
 app.use(cors({
@@ -444,15 +457,15 @@ app.put('/forget/password', function(req, res, next) {
 
   function sendUpdatedPassword(tableName, update_info, callback) {
     const transporter = mailer.createTransport({
-      host: 'smtp.gmail.com',
-      port: 465,
-      auth: {
+      host: smtp_data.SMTPServer,
+      port: smtp_data.SMTPPort
+      /*auth: {
         user: 'testhr69@gmail.com',
         pass: 'testhr69'
-      }
+      }*/
     });
     let mailOptions = {
-      from: 'testhr69@gmail.com', // sender address
+      from: smtp_data.SMTPFromAddress, // sender address
       to: req.body.email, // list of receivers
       subject: req.body.subject, // Subject line
       text: '', // plain text body
