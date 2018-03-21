@@ -13,8 +13,8 @@ var moment = require('moment');
 
 var con = mysql.createConnection({
   host: "localhost",
-  user: "root",
-  password: "java@123",
+  user: "bstgroup_cpc0",
+  password: "{m*A&YpO,*Ro",
   database: "bstgroup_custprodcont0"
 });
 let file_location;
