@@ -70,7 +70,7 @@ function findListData(list_data, email, line_data, callback) {
               Product_Control_Line[key1] = val1
             } else {
               if (key1 == 'IsActive') {
-                console.log(val1)
+                console.log(val1.type)
                 Product[key1] = val1;
               } else {
                 Product[key1] = val1
