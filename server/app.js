@@ -52,9 +52,8 @@ con.connect(function(err) {
 
 function findListData(list_data, email, line_data, callback) {
   let list = list_data.splice(0, 1)[0];
-  console.log(list.IDWeb)
   con.query(`CALL sp_productcontrolline(${list.IDWeb},'${email}')`, function(err, list_line_Data) {
-    line_data.push(list_line_Data)
+    line_data.push(list_line_Data[0])
     if (list_data.length) {
       findListData(list_data, email, line_data, callback)
     } else {
@@ -68,8 +67,9 @@ function withStoredProcedure(body, callback) {
   let product_list_data = [];
   let product_line_data = [];
   con.query(`CALL sp_productcontrol('${body.email}')`, function(err, list_Data) {
-    product_list_data.push({ type: "table", name: "Product_Control_List", database: "reorderDB", data: list_Data })
-    findListData(list_Data[0], body.email, product_line_data, function(response) {
+    let data = JSON.stringify(JSON.parse(list_Data[0]))
+    product_list_data.push({ type: "table", name: "Product_Control_List", database: "reorderDB", data: list_Data[0] })
+    findListData(data, body.email, product_line_data, function(response) {
       product_list_data.push(response)
       callback(product_list_data)
     })
