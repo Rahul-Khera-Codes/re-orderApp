@@ -61,23 +61,29 @@ function findListData(list_data, email, line_data, callback) {
       line_data = _.flattenDeep(line_data);
       let product_line = [];
       let product = [];
-      _.forEach(line_data, (val, key) => {
-        let Product_Control_Line = {};
-        let Product = {};
-        _.map(val, (val1, key1) => {
-          if (key1 == 'IDLocal' || key1 == 'IDWeb' || key1 == 'ListIDLocal' || key1 == 'ListIDWeb' || key1 == 'ProductIDLocal' || key1 == 'LastUpdatedDateTime') {
-            Product_Control_Line[key1] = val1
-          } else {
-            Product[key1] = val1
+      console.log(line_data.length)
+      if (line_data.length) {
+        _.forEach(line_data, (val, key) => {
+          let Product_Control_Line = {};
+          let Product = {};
+          _.map(val, (val1, key1) => {
+            if (key1 == 'IDLocal' || key1 == 'IDWeb' || key1 == 'ListIDLocal' || key1 == 'ListIDWeb' || key1 == 'ProductIDLocal' || key1 == 'LastUpdatedDateTime') {
+              Product_Control_Line[key1] = val1
+            } else {
+              Product[key1] = val1
+            }
+          })
+          product_line.push(Product_Control_Line)
+          product.push(Product);
+          if (file_data.data.length == key + 1) {
+            let final_data = [{ type: "table", name: "Product", database: "reorderDB", data: product }, { type: "table", name: "Product_Control_Line", database: "reorderDB", data: product_line }]
+            callback(final_data)
           }
         })
-        product_line.push(Product_Control_Line)
-        product.push(Product);
-        if (file_data.data.length == key + 1) {
-          let final_data = [{ type: "table", name: "Product", database: "reorderDB", data: product }, { type: "table", name: "Product_Control_Line", database: "reorderDB", data: product_line }]
-          callback(final_data)
-        }
-      })
+      } else {
+        let final_data = [{ type: "table", name: "Product", database: "reorderDB", data: product }, { type: "table", name: "Product_Control_Line", database: "reorderDB", data: product_line }]
+        callback(final_data)
+      }
     }
   })
 }
@@ -86,6 +92,7 @@ function withStoredProcedure(body, callback) {
   let product_list_data = [];
   let product_line_data = [];
   con.query(`CALL sp_productcontrol('${body.email}')`, function(err, list_Data) {
+    console.log(list_data.length)
     let data = JSON.parse(JSON.stringify(list_Data[0]))
     product_list_data.push({ type: "table", name: "Product_Control_List", database: "reorderDB", data: _.flattenDeep(list_Data) })
     findListData(data, body.email, product_line_data, function(response) {
@@ -242,171 +249,6 @@ function fetchAllData(callback) {
     });
   });
 }
-
-
-// login user data
-
-// function getUserData(body, callback) {
-//   let { tableName, IDWeb, IDLocal, barCode } = body;
-//   let product_cancignment = []
-//   let product_table_data = []
-//   let product_list_contact = []
-//   fetchAllData(function(response) {
-//     let data = response.data;
-//     let List_to_Contact = data.find(function(data_response) {
-//       return data_response.name == 'List_to_Contact';
-//     })
-//     let Product_Control_List = data.find(function(data_response) {
-//       return data_response.name == 'Product_Control_List';
-//     })
-//     let Product_Control_Line = data.find(function(data_response) {
-//       return data_response.name == 'Product_Control_Line';
-//     })
-//     let Product = data.find(function(data_response) {
-//       return data_response.name == 'Product';
-//     })
-
-
-//     if (tableName == 'Customer_Table') {
-//       findInProductList(function(product_List) {
-//         let list_data_product = JSON.stringify(product_List);
-//         findProductLine(JSON.parse(list_data_product), function(productLine) {
-//           let consignment_data = JSON.stringify(productLine);
-//           findProduct(JSON.parse(consignment_data), function(product) {
-//             let final_response = []
-//             final_response.push(product_List);
-//             final_response.push(productLine)
-//             final_response.push(product)
-//             callback({ data: final_response })
-//           })
-//         })
-//       })
-//     } else if (tableName == 'Contact_Table') {
-//       findFromContactToTable(function(contact_response) {
-//         let contact_response_data = JSON.stringify(contact_response)
-//         findProductListForContact(JSON.parse(contact_response_data), function(product_list) {
-//           let list_data_product = JSON.stringify(product_list);
-//           findProductLine(JSON.parse(list_data_product), function(productLine) {
-//             let consignment_data = JSON.stringify(productLine);
-//             findProduct(JSON.parse(consignment_data), function(product) {
-//               let final_response = []
-//               final_response.push(contact_response)
-//               final_response.push(product_list);
-//               final_response.push(productLine)
-//               final_response.push(product)
-//               callback({ data: final_response })
-//             })
-//           })
-//         })
-//       })
-//     }
-
-//     function findProductListForContact(contact_response_data, callback) {
-//       let contact_data = contact_response_data.data.splice(0, 1)[0];
-//       if (contact_data.ListIDWeb * 1 != -1) {
-//         let list = _.filter(Product_Control_List.data, (filtered_data) => { return filtered_data.IDWeb == contact_data.ListIDWeb });
-//         _.forEach(list, (val, key) => {
-//           if (product_list_contact.indexOf(val) < 0) {
-//             product_list_contact.push(val)
-//           }
-//           if (key == list.length - 1) {
-//             if (contact_response_data.data.length) {
-//               findProductListForContact(contact_response_data, callback)
-//             } else {
-//               callback({ type: Product_Control_List.type, database: Product_Control_List.database, name: Product_Control_List.name, data: product_list_contact })
-//             }
-//           }
-//         })
-//       } else {
-//         let list = _.filter(Product_Control_List.data, (filtered_data) => { return parseInt(filtered_data.IDLocal) == contact_data.ListIDLocal });
-//         _.forEach(list, (val, key) => {
-//           if (product_list_contact.indexOf(val) < 0) {
-//             product_list_contact.push(val)
-//           }
-//           if (key == list.length - 1) {
-//             if (contact_response_data.data.length) {
-//               findProductListForContact(contact_response_data, callback)
-//             } else {
-//               callback({ type: Product_Control_List.type, database: Product_Control_List.database, name: Product_Control_List.name, data: product_list_contact })
-//             }
-//           }
-//         })
-//       }
-//     }
-
-//     function findFromContactToTable(callback) {
-//       if (IDWeb * 1 != -1 && !barCode) {
-//         callback({ type: List_to_Contact.type, database: List_to_Contact.database, name: List_to_Contact.name, data: _.filter(List_to_Contact.data, (filtered_data) => { return filtered_data.ContactIDWeb == IDWeb }) })
-//       } else if (IDLocal * 1 != -1 && !barCode) {
-//         callback({ type: List_to_Contact.type, database: List_to_Contact.database, name: List_to_Contact.name, data: _.filter(List_to_Contact.data, (filtered_data) => { return filtered_data.ContactIDLocal == IDLocal }) })
-//       } else {
-//         callback({ type: List_to_Contact.type, database: List_to_Contact.database, name: List_to_Contact.name, data: _.filter(List_to_Contact.data, (filtered_data) => { return (filtered_data.ContactIDLocal == IDLocal && IsDefault == true) }) })
-//       }
-//     }
-
-//     function findInProductList(callback) {
-//       if (IDWeb * 1 != -1 && !barCode) {
-//         callback({ type: Product_Control_List.type, database: Product_Control_List.database, name: Product_Control_List.name, data: _.filter(Product_Control_List.data, (filtered_data) => { return filtered_data.CustomerIDWeb == IDWeb }) })
-//       } else if (IDLocal * 1 != -1 && !barCode) {
-//         callback({ type: Product_Control_List.type, database: Product_Control_List.database, name: Product_Control_List.name, data: _.filter(Product_Control_List.data, (filtered_data) => { return filtered_data.CustomerIDLocal == IDLocal }) })
-//       } else {
-//         callback({ type: Product_Control_List.type, database: Product_Control_List.database, name: Product_Control_List.name, data: _.filter(Product_Control_List.data, (filtered_data) => { return (filtered_data.CustomerIDLocal == IDLocal && filtered_data.IsDefault == true) }) })
-//       }
-//     }
-
-//     function findProductLine(productList, callback) {
-//       let product_list = productList['data'].splice(0, 1)[0]
-//       if (product_list.IDWeb * 1 != -1) {
-//         let list = _.filter(Product_Control_Line.data, (filtered_data) => { return filtered_data.ListIDWeb == product_list.IDWeb });
-//         _.forEach(list, (val, key) => {
-//           if (product_cancignment.indexOf(val) < 0) {
-//             product_cancignment.push(val)
-//           }
-//           if (key == list.length - 1) {
-//             if (productList.data.length) {
-//               findProductLine(productList, callback)
-//             } else {
-//               callback({ type: Product_Control_Line.type, database: Product_Control_Line.database, name: Product_Control_Line.name, data: product_cancignment })
-//             }
-//           }
-//         })
-//       } else {
-//         let list = _.filter(Product_Control_Line.data, (filtered_data) => { return filtered_data.ListIDLocal == parseInt(product_list.IDLocal) });
-//         _.forEach(list, (val, key) => {
-//           if (product_cancignment.indexOf(val) < 0) {
-//             product_cancignment.push(val)
-//           }
-//           if (key == list.length - 1) {
-//             if (productList.data.length) {
-//               findProductLine(productList, callback)
-//             } else {
-//               callback({ type: Product_Control_Line.type, database: Product_Control_Line.database, name: Product_Control_Line.name, data: product_cancignment })
-//             }
-//           }
-//         })
-//       }
-//     }
-
-//     function findProduct(product_details, callback) {
-//       let product_info = product_details.data.splice(0, 1)[0]
-//       let list = _.filter(Product.data, (filtered_data) => { return filtered_data.ID == product_info.ProductIDLocal });
-//       _.forEach(list, (val, key) => {
-//         if (product_table_data.indexOf(val) < 0) {
-//           product_table_data.push(val)
-//         }
-//         if (key == list.length - 1) {
-//           if (product_details.data.length) {
-//             findProduct(product_details, callback)
-//           } else {
-//             callback({ type: Product.type, database: Product.database, name: Product.name, data: product_table_data })
-//           }
-//         }
-//       })
-//     }
-//   })
-
-// }
-
 //imort data...
 
 
