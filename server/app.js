@@ -621,6 +621,9 @@ app.post('/get/userData', function(req, res, next) {
           }
         }
       } else if (barCode) {
+        login_data.push({ type: 'table', name: 'Customer_Table', database: 'reorderDB', data: customer_data })
+        login_data.push({ type: 'table', name: 'Contact_Table', database: 'reorderDB', data: contact_data })
+        body['data'] = login_data;
         let findTable = _.filter(JSON.parse(body).data, (filtered_data) => { return filtered_data.name == table })[0];
         let loggedInUser = _.filter(findTable.data, (filtered_data) => { return (filtered_data.LoginBarcode == barCode) })[0];
         if (loggedInUser == undefined) {
