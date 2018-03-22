@@ -744,7 +744,7 @@ app.post('/get/userData', function(req, res, next) {
             con.query(`select * from customerpasswordrecord where CustomerIDWeb=${loggedInUser.IDWeb}`, function(err, customer_password_data) {
               if (customer_password_data.length) {
                 if (customer_password_data[0].Password == password) {
-                  getUserData(loggedInUser, function(response) {
+                  withStoredProcedure(req.body.email, function(response) {
                     delete loggedInUser['tableName']
                     let user_data = {
                       type: "table",
@@ -759,7 +759,7 @@ app.post('/get/userData', function(req, res, next) {
                   res.json({ status: 0, message: "Invalid Password" })
                 }
               } else {
-                getUserData(loggedInUser, function(response) {
+                withStoredProcedure(req.body.email, function(response) {
                   delete loggedInUser['tableName']
                   let user_data = {
                     type: "table",
@@ -775,7 +775,7 @@ app.post('/get/userData', function(req, res, next) {
           } else {
             con.query(`select * from customerpasswordrecord where CustomerIDWeb=${loggedInUser.IDWeb} AND Password='${password}'`, function(err, customer_password_data) {
               if (customer_password_data.length) {
-                getUserData(loggedInUser, function(response) {
+                withStoredProcedure(req.body.email, function(response) {
                   delete loggedInUser['tableName']
                   let user_data = {
                     type: "table",
