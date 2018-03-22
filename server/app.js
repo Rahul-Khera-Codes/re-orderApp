@@ -95,6 +95,7 @@ function withStoredProcedure(body, callback) {
   let product_list_data = [];
   let product_line_data = [];
   con.query(`CALL sp_productcontrol('${body.email}')`, function(err, list_Data) {
+    let list_to_contact = [];
     list_data = _.filter(list_Data[0], (value) => {
       console.log(value)
       if (value.ContactIDLocal) {
@@ -113,6 +114,7 @@ function withStoredProcedure(body, callback) {
         delete value.ListIdLocal
         delete value.ListIDWeb
         delete value.IsActive
+        list_to_contact.push(data)
       }
       if (value.IsDefault)
         value.IsDefault = JSON.parse(JSON.stringify(value.IsDefault)).data[0]
@@ -123,6 +125,7 @@ function withStoredProcedure(body, callback) {
       return value
     })
     let data = JSON.parse(JSON.stringify(list_Data[0]))
+    product_list_data.push(type: "table", name: "List_to_Contact", database: "reorderDB", data: List_to_Contact)
     product_list_data.push({ type: "table", name: "Product_Control_List", database: "reorderDB", data: _.flattenDeep(list_Data[0]) })
     findListData(data, body.email, product_line_data, function(response) {
       product_list_data.push(response[0])
