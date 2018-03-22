@@ -53,10 +53,10 @@ con.connect(function(err) {
 function findListData(list_data, email, line_data, callback) {
   console.log(list_data, email, line_data, callback)
   let list = list_data.splice(0, 1)[0];
-  con.query(`CALL sp_productcontrolline(list.IDWeb,${email})`, function(err, list_line_Data) {
+  con.query(`CALL sp_productcontrolline(list.IDWeb,'${email}')`, function(err, list_line_Data) {
     line_data.push(list_line_Data)
     if (list_data.length) {
-      findListData(list_data, email, line_data)
+      findListData(list_data, email, line_data, callback)
     } else {
       callback({ type: "table", name: "Product_Control_List", database: "reorderDB", data: line_data })
     }
