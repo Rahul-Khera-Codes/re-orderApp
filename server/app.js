@@ -18,6 +18,7 @@ var con = mysql.createConnection({
   database: "bstgroup_custprodcont0"
 });
 let file_location;
+let file_data = require('./test');
 
 let list_of_file_to_import = [
   'ppp_Customer_ProductControlProductControl.txt',
@@ -57,7 +58,26 @@ function findListData(list_data, email, line_data, callback) {
     if (list_data.length) {
       findListData(list_data, email, line_data, callback)
     } else {
-      callback({ type: "table", name: "Product_Control_List", database: "reorderDB", data: _.flattenDeep(line_data) })
+      line_data = _.flattenDeep(line_data);
+      let product_line = [];
+      let product = [];
+      _.forEach(line_data, (val, key) => {
+        let Product_Control_Line = {};
+        let Product = {};
+        _.map(val, (val1, key1) => {
+          if (key1 == 'IDLocal' || key1 == 'IDWeb' || key1 == 'ListIDLocal' || key1 == 'ListIDWeb' || key1 == 'ProductIDLocal' || key1 == 'LastUpdatedDateTime') {
+            Product_Control_Line[key1] = val1
+          } else {
+            Product[key1] = val1
+          }
+        })
+        product_line.push(Product_Control_Line)
+        product.push(Product);
+        if (file_data.data.length == key + 1) {
+          let final_data = [{ type: "table", name: "Product", database: "reorderDB", data: product }, { type: "table", name: "Product_Control_Line", database: "reorderDB", data: product_line }]
+          callback(final_data)
+        }
+      })
     }
   })
 }
