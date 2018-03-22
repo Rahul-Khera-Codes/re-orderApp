@@ -106,6 +106,7 @@ app.use(bodyParser.urlencoded({
 
 
 app.post("/get/user/data", (req, res) => {
+  console.log(req.body)
   withStoredProcedure(req.body, function(response) {
     // readDataFromWebServer(req.body, function(response) {
     res.json({ data: response })
