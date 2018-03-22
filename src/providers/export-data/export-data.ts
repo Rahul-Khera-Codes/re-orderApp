@@ -9,6 +9,7 @@ import {ToastProvider} from './../toast/toast';
 import {SqlLiteProvider} from './../sql-lite/sql-lite';
 //import {ConsignmentProvider} from './../consignment/consignment';
 import {NgZone} from '@angular/core';
+import {url} from '../config/config';
 
 @Injectable()
 export class ExportDataProvider {
@@ -32,7 +33,7 @@ export class ExportDataProvider {
                                 let exportDataFinal = exportData[first_key];
                                 sendData['data'] = exportDataFinal;
                                 sendData['ListIdLocal'] = localStorage.getItem('listIDLocal');
-                                this._apiProvider.apiCallByPost('http://101.0.73.66:3031/save/data', sendData).subscribe(res => {
+                                this._apiProvider.apiCallByPost(`${url.url}/save/data`, sendData).subscribe(res => {
                                     this._sqlService.deleteRecord(first_key).then((res) => {
                                     })
                                     if (data.length) {

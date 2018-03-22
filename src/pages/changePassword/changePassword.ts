@@ -5,14 +5,14 @@ import {FormControl, FormGroup, Validators, ValidatorFn, AbstractControl} from '
 import {LoginProvider} from './../../providers/login/login';
 import {ConsignmentProvider} from './../../providers/consignment/consignment';
 import {ToastProvider} from './../../providers/toast/toast';
-
+import {ApiServiceProvider} from './../../providers/api-service/api-service';
 @Component({
     selector: 'page-home',
     templateUrl: 'changepassword.html'
 })
 export class ChangePassword implements OnInit {
     user: FormGroup;
-    constructor(private _toast: ToastProvider, private _consignmentService: ConsignmentProvider, private _loginService: LoginProvider) {}
+    constructor(public _nav: NavController, public _api: ApiServiceProvider, private _toast: ToastProvider, private _consignmentService: ConsignmentProvider, private _loginService: LoginProvider) {}
 
     ngOnInit() {
         this.user = new FormGroup({
@@ -38,19 +38,29 @@ export class ChangePassword implements OnInit {
     onSubmit(user) {
         let userData = this._consignmentService.getUserData()[0];
         this._consignmentService.checkUserType().then((loginWith) => {
-            if (loginWith == "customer") {
-                this._loginService.updatePassword("Customer_Table", user.value.oldPassword, userData.EmailAddress, user.value.re_password).then((res) => {
-                    this._toast.presentToast("Password Change Successfully", 2000);
-                }, (err) => {
-                    this._toast.presentToast("Wrong Password", 2000);
-                })
-            } else {
-                this._loginService.updatePassword("Contact_Table", user.value.oldPassword, userData.EmailAddress, user.value.re_password).then((res) => {
-                    this._toast.presentToast("Password Change Successfully", 2000);
-                }, (err) => {
-                    this._toast.presentToast("Wrong Password", 2000);
-                })
-            }
+            let details: any = {};
+            details = JSON.parse(localStorage.getItem('userDetails'))[0];
+            details['newPassword'] = user.value.re_password;
+            details['oldPassword'] = user.value.oldPassword;
+            details['tableName'] = loginWith;
+            this._api.apiCallByPut("http://192.168.1.113:3031/update/password", details).subscribe(res => {
+                if (loginWith == "customer") {
+                    this._loginService.updatePassword("Customer_Table", user.value.oldPassword, userData.EmailAddress, user.value.re_password).then((res) => {
+                        this._toast.presentToast("Password Change Successfully", 2000);
+                    }, (err) => {
+                        this._toast.presentToast("Wrong Password", 2000);
+                    })
+                } else {
+                    this._loginService.updatePassword("Contact_Table", user.value.oldPassword, userData.EmailAddress, user.value.re_password).then((res) => {
+                        this._nav.popToRoot();
+                        this._toast.presentToast("Password Change Successfully", 2000);
+                    }, (err) => {
+                        this._toast.presentToast("Wrong Password", 2000);
+                    })
+                }
+            }, err => {
+                this._toast.presentToast(err.message, 2000);
+            })
         })
     }
 }

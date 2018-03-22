@@ -4,6 +4,7 @@ import {FormBuilder, Validators} from '@angular/forms';
 import {ApiServiceProvider} from '../../providers/api-service/api-service';
 import {LoginProvider} from '../../providers/login/login';
 import {ToastProvider} from './../../providers/toast/toast';
+import {url} from '../../providers/config/config';
 
 @Component({
     selector: 'page-forgot-password',
@@ -28,18 +29,22 @@ export class ForgotPasswordPage {
     }
     forgot(value: any) {
         this.spin = true;
-        let rand=Math.random()*1000000;
+        let rand = Math.random() * 1000000;
         let pwd = Math.ceil(rand);
-        value['password'] = this._login.encryptPassword(pwd);
-        this._login.updatePasswordWhenForgot(value['password'], value['email']).then((res) => {
+        //this._login.encryptPassword(
+
+        value['password'] = pwd;
+        console.log("value",value)
+//        101.0.73.66
+        this._apiProvider.apiCallByPut(`${url.url}/forget/password`, value).subscribe(res => {
             value['password'] = pwd;
-            this._apiProvider.apiCallByPut("http://101.0.73.66:3031/forget/password", value).subscribe(res => {
+            this._login.updatePasswordWhenForgot(value['password'], value['email']).then((res) => {
                 this._toast.presentToast("please check your mail id to reset your password", 2000);
             }, (err) => {
-                this._toast.presentToast("Fail response", 2000);
+                this._toast.presentToast("Some thing went wrong", 2000);
             })
         }, (err) => {
-            this._toast.presentToast("User Not Exist", 2000);
+            this._toast.presentToast(err, 2000);
         })
     }
 }

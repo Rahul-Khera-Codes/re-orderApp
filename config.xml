@@ -3,7 +3,7 @@
     <name>ReOrderApp</name>
     <description>App to quickly reorder items.</description>
     <author email="Ronn@ron.com" href="http://ionicframework.com/">Ron Kidd</author>
-    <content original-src="index.html" src="http://192.168.1.129:8100" />
+    <content original-src="index.html" src="http://192.168.1.19:8100" />
     <access origin="*" />
     <allow-intent href="http://*/*" />
     <allow-intent href="https://*/*" />
@@ -93,6 +93,8 @@
     <allow-navigation href="http://192.168.1.129:8100" />
     <allow-navigation href="http://192.168.1.48:8100" />
     <allow-navigation href="http://192.168.1.52:8100" />
+    <allow-navigation href="http://192.168.1.134:8100" />
+    <allow-navigation href="http://192.168.1.19:8100" />
     <engine name="android" spec="^6.2.3" />
     <engine name="ios" spec="4.5.4" />
     <plugin name="com.hiddentao.cordova.filepath" spec="~1.0.1" />
