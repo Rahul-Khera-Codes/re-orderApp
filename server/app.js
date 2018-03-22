@@ -69,34 +69,7 @@ function withStoredProcedure(body, callback) {
     product_list_data.push({ type: "table", name: "Product_Control_List", database: "reorderDB", data: list_Data })
     findListData(list_Data, body.email, product_line_data, function(resposne) {
       product_list_data.push(response)
-      res.json({ data: product_list_data })
-    })
-    callback(list_Data)
-  })
-}
-
-function readDataFromWebServer(body, callback) {
-  let Web_Server_Data = [];
-  con.query(`select * from contact`, function(err, contact_data) {
-    con.query(`select * from customer`, function(err, customer_data) {
-      con.query(`select * from product`, function(err, product_data) {
-        con.query(`select * from productcodes`, function(err, productcodes_data) {
-          con.query(`select * from  productcontrol`, function(err, productcontrol_data) {
-            con.query(`select * from  productcontrolline`, function(err, productcontrolline_data) {
-              con.query(`select * from  productcontroltocontact`, function(err, productcontroltocontact_data) {
-                Web_Server_Data.push({ type: "table", name: "Customer_Table", database: "reorderDB", data: customer_data });
-                Web_Server_Data.push({ type: "table", name: "Contact_Table", database: "reorderDB", data: contact_data })
-                Web_Server_Data.push({ type: "table", name: "Product", database: "reorderDB", data: product_data })
-                Web_Server_Data.push({ type: "table", name: "ProductCodes", database: "reorderDB", data: productcodes_data })
-                Web_Server_Data.push({ type: "table", name: "Product_Control_List", database: "reorderDB", data: productcontrol_data })
-                Web_Server_Data.push({ type: "table", name: "List_to_Contact", database: "reorderDB", data: productcontroltocontact_data })
-                Web_Server_Data.push({ type: "table", name: "Product_Control_Line", database: "reorderDB", data: productcontrolline_data })
-                callback(Web_Server_Data)
-              })
-            })
-          })
-        })
-      })
+      callback(product_list_data)
     })
   })
 }
