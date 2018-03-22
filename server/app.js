@@ -65,6 +65,7 @@ function findListData(list_data, email, line_data, callback) {
         _.forEach(line_data, (val, key) => {
           let Product_Control_Line = {};
           let Product = {};
+          val = JSON.parse(val)
           _.map(val, (val1, key1) => {
             if (key1 == 'IDLocal' || key1 == 'IDWeb' || key1 == 'ListIDLocal' || key1 == 'ListIDWeb' || key1 == 'ProductIDLocal' || key1 == 'LastUpdatedDateTime') {
               Product_Control_Line[key1] = val1
