@@ -99,9 +99,9 @@ function withStoredProcedure(body, callback) {
       console.log(value)
       if (value.IsDefault)
         value.IsDefault = JSON.parse(JSON.stringify(value.IsDefault)).data[0]
-      else if (value.ReLoginToSubmit)
+      if (value.ReLoginToSubmit)
         value.ReLoginToSubmit = JSON.parse(JSON.stringify(value.ReLoginToSubmit)).data[0]
-      else
+      if (value.IsActive)
         value.IsActive = JSON.parse(JSON.stringify(value.IsActive)).data[0]
       return value
     })
