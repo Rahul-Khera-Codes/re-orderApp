@@ -13,8 +13,8 @@ var moment = require('moment');
 
 var con = mysql.createConnection({
   host: "localhost",
-  user: "bstgroup_cpc0",
-  password: "{m*A&YpO,*Ro",
+  user: "root",
+  password: "java@123",
   database: "bstgroup_custprodcont0"
 });
 let file_location;
@@ -101,13 +101,6 @@ function readDataFromWebServer(body, callback) {
 }
 
 
-app.get("/get/user/data", (req, res) => {
-  withStoredProcedure(req.body, function(response) {
-    // readDataFromWebServer(req.body, function(response) {
-    //   res.json({ data: response })
-    // })
-  })
-})
 let smtp_data = {}
 con.query(`select Value from configuration where ID=3`, function(err, SMTPServer) {
   smtp_data['SMTPServer'] = SMTPServer[0].Value
@@ -135,6 +128,14 @@ app.use(bodyParser.urlencoded({
   extended: true
 }));
 
+
+app.post("/get/user/data", (req, res) => {
+  withStoredProcedure(req.body, function(response) {
+    // readDataFromWebServer(req.body, function(response) {
+    res.json({ data: response })
+    // })
+  })
+})
 // fetch all data...
 
 let table_name = []
