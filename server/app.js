@@ -244,216 +244,166 @@ function fetchAllData(callback) {
 }
 
 
-// function readDataFromWebServer(body, callback) {
-//   let Web_Server_Data = [];
-//   con.query(`select * from contact`, function(err, contact_data) {
-//     con.query(`select * from customer`, function(err, customer_data) {
-//       con.query(`select * from product`, function(err, product_data) {
-//         con.query(`select * from productcodes`, function(err, productcodes_data) {
-//           con.query(`select * from  productcontrol`, function(err, productcontrol_data) {
-//             con.query(`select * from  productcontrolline`, function(err, productcontrolline_data) {
-//               con.query(`select * from  productcontroltocontact`, function(err, productcontroltocontact_data) {
-//                 Web_Server_Data.push({ type: "table", name: "Customer_Table", database: "reorderDB", data: customer_data });
-//                 Web_Server_Data.push({ type: "table", name: "Contact_Table", database: "reorderDB", data: contact_data })
-//                 Web_Server_Data.push({ type: "table", name: "Product", database: "reorderDB", data: product_data })
-//                 Web_Server_Data.push({ type: "table", name: "ProductCodes", database: "reorderDB", data: productcodes_data })
-//                 Web_Server_Data.push({ type: "table", name: "Product_Control_List", database: "reorderDB", data: productcontrol_data })
-//                 Web_Server_Data.push({ type: "table", name: "List_to_Contact", database: "reorderDB", data: productcontroltocontact_data })
-//                 Web_Server_Data.push({ type: "table", name: "Product_Control_Line", database: "reorderDB", data: productcontrolline_data })
-//                 callback(Web_Server_Data)
-//               })
+// login user data
+
+// function getUserData(body, callback) {
+//   let { tableName, IDWeb, IDLocal, barCode } = body;
+//   let product_cancignment = []
+//   let product_table_data = []
+//   let product_list_contact = []
+//   fetchAllData(function(response) {
+//     let data = response.data;
+//     let List_to_Contact = data.find(function(data_response) {
+//       return data_response.name == 'List_to_Contact';
+//     })
+//     let Product_Control_List = data.find(function(data_response) {
+//       return data_response.name == 'Product_Control_List';
+//     })
+//     let Product_Control_Line = data.find(function(data_response) {
+//       return data_response.name == 'Product_Control_Line';
+//     })
+//     let Product = data.find(function(data_response) {
+//       return data_response.name == 'Product';
+//     })
+
+
+//     if (tableName == 'Customer_Table') {
+//       findInProductList(function(product_List) {
+//         let list_data_product = JSON.stringify(product_List);
+//         findProductLine(JSON.parse(list_data_product), function(productLine) {
+//           let consignment_data = JSON.stringify(productLine);
+//           findProduct(JSON.parse(consignment_data), function(product) {
+//             let final_response = []
+//             final_response.push(product_List);
+//             final_response.push(productLine)
+//             final_response.push(product)
+//             callback({ data: final_response })
+//           })
+//         })
+//       })
+//     } else if (tableName == 'Contact_Table') {
+//       findFromContactToTable(function(contact_response) {
+//         let contact_response_data = JSON.stringify(contact_response)
+//         findProductListForContact(JSON.parse(contact_response_data), function(product_list) {
+//           let list_data_product = JSON.stringify(product_list);
+//           findProductLine(JSON.parse(list_data_product), function(productLine) {
+//             let consignment_data = JSON.stringify(productLine);
+//             findProduct(JSON.parse(consignment_data), function(product) {
+//               let final_response = []
+//               final_response.push(contact_response)
+//               final_response.push(product_list);
+//               final_response.push(productLine)
+//               final_response.push(product)
+//               callback({ data: final_response })
 //             })
 //           })
 //         })
 //       })
-//     })
+//     }
+
+//     function findProductListForContact(contact_response_data, callback) {
+//       let contact_data = contact_response_data.data.splice(0, 1)[0];
+//       if (contact_data.ListIDWeb * 1 != -1) {
+//         let list = _.filter(Product_Control_List.data, (filtered_data) => { return filtered_data.IDWeb == contact_data.ListIDWeb });
+//         _.forEach(list, (val, key) => {
+//           if (product_list_contact.indexOf(val) < 0) {
+//             product_list_contact.push(val)
+//           }
+//           if (key == list.length - 1) {
+//             if (contact_response_data.data.length) {
+//               findProductListForContact(contact_response_data, callback)
+//             } else {
+//               callback({ type: Product_Control_List.type, database: Product_Control_List.database, name: Product_Control_List.name, data: product_list_contact })
+//             }
+//           }
+//         })
+//       } else {
+//         let list = _.filter(Product_Control_List.data, (filtered_data) => { return parseInt(filtered_data.IDLocal) == contact_data.ListIDLocal });
+//         _.forEach(list, (val, key) => {
+//           if (product_list_contact.indexOf(val) < 0) {
+//             product_list_contact.push(val)
+//           }
+//           if (key == list.length - 1) {
+//             if (contact_response_data.data.length) {
+//               findProductListForContact(contact_response_data, callback)
+//             } else {
+//               callback({ type: Product_Control_List.type, database: Product_Control_List.database, name: Product_Control_List.name, data: product_list_contact })
+//             }
+//           }
+//         })
+//       }
+//     }
+
+//     function findFromContactToTable(callback) {
+//       if (IDWeb * 1 != -1 && !barCode) {
+//         callback({ type: List_to_Contact.type, database: List_to_Contact.database, name: List_to_Contact.name, data: _.filter(List_to_Contact.data, (filtered_data) => { return filtered_data.ContactIDWeb == IDWeb }) })
+//       } else if (IDLocal * 1 != -1 && !barCode) {
+//         callback({ type: List_to_Contact.type, database: List_to_Contact.database, name: List_to_Contact.name, data: _.filter(List_to_Contact.data, (filtered_data) => { return filtered_data.ContactIDLocal == IDLocal }) })
+//       } else {
+//         callback({ type: List_to_Contact.type, database: List_to_Contact.database, name: List_to_Contact.name, data: _.filter(List_to_Contact.data, (filtered_data) => { return (filtered_data.ContactIDLocal == IDLocal && IsDefault == true) }) })
+//       }
+//     }
+
+//     function findInProductList(callback) {
+//       if (IDWeb * 1 != -1 && !barCode) {
+//         callback({ type: Product_Control_List.type, database: Product_Control_List.database, name: Product_Control_List.name, data: _.filter(Product_Control_List.data, (filtered_data) => { return filtered_data.CustomerIDWeb == IDWeb }) })
+//       } else if (IDLocal * 1 != -1 && !barCode) {
+//         callback({ type: Product_Control_List.type, database: Product_Control_List.database, name: Product_Control_List.name, data: _.filter(Product_Control_List.data, (filtered_data) => { return filtered_data.CustomerIDLocal == IDLocal }) })
+//       } else {
+//         callback({ type: Product_Control_List.type, database: Product_Control_List.database, name: Product_Control_List.name, data: _.filter(Product_Control_List.data, (filtered_data) => { return (filtered_data.CustomerIDLocal == IDLocal && filtered_data.IsDefault == true) }) })
+//       }
+//     }
+
+//     function findProductLine(productList, callback) {
+//       let product_list = productList['data'].splice(0, 1)[0]
+//       if (product_list.IDWeb * 1 != -1) {
+//         let list = _.filter(Product_Control_Line.data, (filtered_data) => { return filtered_data.ListIDWeb == product_list.IDWeb });
+//         _.forEach(list, (val, key) => {
+//           if (product_cancignment.indexOf(val) < 0) {
+//             product_cancignment.push(val)
+//           }
+//           if (key == list.length - 1) {
+//             if (productList.data.length) {
+//               findProductLine(productList, callback)
+//             } else {
+//               callback({ type: Product_Control_Line.type, database: Product_Control_Line.database, name: Product_Control_Line.name, data: product_cancignment })
+//             }
+//           }
+//         })
+//       } else {
+//         let list = _.filter(Product_Control_Line.data, (filtered_data) => { return filtered_data.ListIDLocal == parseInt(product_list.IDLocal) });
+//         _.forEach(list, (val, key) => {
+//           if (product_cancignment.indexOf(val) < 0) {
+//             product_cancignment.push(val)
+//           }
+//           if (key == list.length - 1) {
+//             if (productList.data.length) {
+//               findProductLine(productList, callback)
+//             } else {
+//               callback({ type: Product_Control_Line.type, database: Product_Control_Line.database, name: Product_Control_Line.name, data: product_cancignment })
+//             }
+//           }
+//         })
+//       }
+//     }
+
+//     function findProduct(product_details, callback) {
+//       let product_info = product_details.data.splice(0, 1)[0]
+//       let list = _.filter(Product.data, (filtered_data) => { return filtered_data.ID == product_info.ProductIDLocal });
+//       _.forEach(list, (val, key) => {
+//         if (product_table_data.indexOf(val) < 0) {
+//           product_table_data.push(val)
+//         }
+//         if (key == list.length - 1) {
+//           if (product_details.data.length) {
+//             findProduct(product_details, callback)
+//           } else {
+//             callback({ type: Product.type, database: Product.database, name: Product.name, data: product_table_data })
+//           }
+//         }
+//       })
+//     }
 //   })
-// }
-
-
-// app.get("/get/user/data", (req, res) => {
-//   // fetchAllData(function(response) {
-//   readDataFromWebServer(req.body, function(response) {
-//     res.json({ data: response })
-//     // })
-//   })
-// })
-
-app.get("/fetch/data", (req, res, next) => {
-  fetchAllData(function(response) {
-    res.json(response)
-  })
-})
-
-// login details....
-
-app.get('/get/loginDetails', function(req, res, next) {
-  fetchAllData(function(response) {
-    res.json({ data: response.data.slice(0, 2) })
-  })
-})
-
-
-// login user data
-
-function getUserData(body, callback) {
-  let { tableName, IDWeb, IDLocal, barCode } = body;
-  let product_cancignment = []
-  let product_table_data = []
-  let product_list_contact = []
-  fetchAllData(function(response) {
-    let data = response.data;
-    let List_to_Contact = data.find(function(data_response) {
-      return data_response.name == 'List_to_Contact';
-    })
-    let Product_Control_List = data.find(function(data_response) {
-      return data_response.name == 'Product_Control_List';
-    })
-    let Product_Control_Line = data.find(function(data_response) {
-      return data_response.name == 'Product_Control_Line';
-    })
-    let Product = data.find(function(data_response) {
-      return data_response.name == 'Product';
-    })
-
-
-    if (tableName == 'Customer_Table') {
-      findInProductList(function(product_List) {
-        let list_data_product = JSON.stringify(product_List);
-        findProductLine(JSON.parse(list_data_product), function(productLine) {
-          let consignment_data = JSON.stringify(productLine);
-          findProduct(JSON.parse(consignment_data), function(product) {
-            let final_response = []
-            final_response.push(product_List);
-            final_response.push(productLine)
-            final_response.push(product)
-            callback({ data: final_response })
-          })
-        })
-      })
-    } else if (tableName == 'Contact_Table') {
-      findFromContactToTable(function(contact_response) {
-        let contact_response_data = JSON.stringify(contact_response)
-        findProductListForContact(JSON.parse(contact_response_data), function(product_list) {
-          let list_data_product = JSON.stringify(product_list);
-          findProductLine(JSON.parse(list_data_product), function(productLine) {
-            let consignment_data = JSON.stringify(productLine);
-            findProduct(JSON.parse(consignment_data), function(product) {
-              let final_response = []
-              final_response.push(contact_response)
-              final_response.push(product_list);
-              final_response.push(productLine)
-              final_response.push(product)
-              callback({ data: final_response })
-            })
-          })
-        })
-      })
-    }
-
-    function findProductListForContact(contact_response_data, callback) {
-      let contact_data = contact_response_data.data.splice(0, 1)[0];
-      if (contact_data.ListIDWeb * 1 != -1) {
-        let list = _.filter(Product_Control_List.data, (filtered_data) => { return filtered_data.IDWeb == contact_data.ListIDWeb });
-        _.forEach(list, (val, key) => {
-          if (product_list_contact.indexOf(val) < 0) {
-            product_list_contact.push(val)
-          }
-          if (key == list.length - 1) {
-            if (contact_response_data.data.length) {
-              findProductListForContact(contact_response_data, callback)
-            } else {
-              callback({ type: Product_Control_List.type, database: Product_Control_List.database, name: Product_Control_List.name, data: product_list_contact })
-            }
-          }
-        })
-      } else {
-        let list = _.filter(Product_Control_List.data, (filtered_data) => { return parseInt(filtered_data.IDLocal) == contact_data.ListIDLocal });
-        _.forEach(list, (val, key) => {
-          if (product_list_contact.indexOf(val) < 0) {
-            product_list_contact.push(val)
-          }
-          if (key == list.length - 1) {
-            if (contact_response_data.data.length) {
-              findProductListForContact(contact_response_data, callback)
-            } else {
-              callback({ type: Product_Control_List.type, database: Product_Control_List.database, name: Product_Control_List.name, data: product_list_contact })
-            }
-          }
-        })
-      }
-    }
-
-    function findFromContactToTable(callback) {
-      if (IDWeb * 1 != -1 && !barCode) {
-        callback({ type: List_to_Contact.type, database: List_to_Contact.database, name: List_to_Contact.name, data: _.filter(List_to_Contact.data, (filtered_data) => { return filtered_data.ContactIDWeb == IDWeb }) })
-      } else if (IDLocal * 1 != -1 && !barCode) {
-        callback({ type: List_to_Contact.type, database: List_to_Contact.database, name: List_to_Contact.name, data: _.filter(List_to_Contact.data, (filtered_data) => { return filtered_data.ContactIDLocal == IDLocal }) })
-      } else {
-        callback({ type: List_to_Contact.type, database: List_to_Contact.database, name: List_to_Contact.name, data: _.filter(List_to_Contact.data, (filtered_data) => { return (filtered_data.ContactIDLocal == IDLocal && IsDefault == true) }) })
-      }
-    }
-
-    function findInProductList(callback) {
-      if (IDWeb * 1 != -1 && !barCode) {
-        callback({ type: Product_Control_List.type, database: Product_Control_List.database, name: Product_Control_List.name, data: _.filter(Product_Control_List.data, (filtered_data) => { return filtered_data.CustomerIDWeb == IDWeb }) })
-      } else if (IDLocal * 1 != -1 && !barCode) {
-        callback({ type: Product_Control_List.type, database: Product_Control_List.database, name: Product_Control_List.name, data: _.filter(Product_Control_List.data, (filtered_data) => { return filtered_data.CustomerIDLocal == IDLocal }) })
-      } else {
-        callback({ type: Product_Control_List.type, database: Product_Control_List.database, name: Product_Control_List.name, data: _.filter(Product_Control_List.data, (filtered_data) => { return (filtered_data.CustomerIDLocal == IDLocal && filtered_data.IsDefault == true) }) })
-      }
-    }
-
-    function findProductLine(productList, callback) {
-      let product_list = productList['data'].splice(0, 1)[0]
-      if (product_list.IDWeb * 1 != -1) {
-        let list = _.filter(Product_Control_Line.data, (filtered_data) => { return filtered_data.ListIDWeb == product_list.IDWeb });
-        _.forEach(list, (val, key) => {
-          if (product_cancignment.indexOf(val) < 0) {
-            product_cancignment.push(val)
-          }
-          if (key == list.length - 1) {
-            if (productList.data.length) {
-              findProductLine(productList, callback)
-            } else {
-              callback({ type: Product_Control_Line.type, database: Product_Control_Line.database, name: Product_Control_Line.name, data: product_cancignment })
-            }
-          }
-        })
-      } else {
-        let list = _.filter(Product_Control_Line.data, (filtered_data) => { return filtered_data.ListIDLocal == parseInt(product_list.IDLocal) });
-        _.forEach(list, (val, key) => {
-          if (product_cancignment.indexOf(val) < 0) {
-            product_cancignment.push(val)
-          }
-          if (key == list.length - 1) {
-            if (productList.data.length) {
-              findProductLine(productList, callback)
-            } else {
-              callback({ type: Product_Control_Line.type, database: Product_Control_Line.database, name: Product_Control_Line.name, data: product_cancignment })
-            }
-          }
-        })
-      }
-    }
-
-    function findProduct(product_details, callback) {
-      let product_info = product_details.data.splice(0, 1)[0]
-      let list = _.filter(Product.data, (filtered_data) => { return filtered_data.ID == product_info.ProductIDLocal });
-      _.forEach(list, (val, key) => {
-        if (product_table_data.indexOf(val) < 0) {
-          product_table_data.push(val)
-        }
-        if (key == list.length - 1) {
-          if (product_details.data.length) {
-            findProduct(product_details, callback)
-          } else {
-            callback({ type: Product.type, database: Product.database, name: Product.name, data: product_table_data })
-          }
-        }
-      })
-    }
-  })
 
 }
 
@@ -665,7 +615,6 @@ app.post('/get/userData', function(req, res, next) {
   let password = req.body.password || null
   let table = "Customer_Table"
   let barCode = req.body.barCode || null;
-  console.log(email)
   con.query(`select * from customer`, function(err, customer_data) {
     con.query(`select * from contact`, function(err, contact_data) {
       if (email) {
@@ -690,7 +639,7 @@ app.post('/get/userData', function(req, res, next) {
                 console.log(password_record.length && password_record[0].Password == password)
                 if (password_record.length) {
                   if (password_record[0].Password == password) {
-                    getUserData(loggedInUser, function(response) {
+                    withStoredProcedure(req.body, function(response) {
                       delete loggedInUser['tableName']
                       let user_data = {
                         type: "table",
@@ -705,7 +654,7 @@ app.post('/get/userData', function(req, res, next) {
                     res.json({ status: 0, message: "Invalid Password" })
                   }
                 } else {
-                  getUserData(loggedInUser, function(response) {
+                  withStoredProcedure(req.body, function(response) {
                     delete loggedInUser['tableName']
                     let user_data = {
                       type: "table",
@@ -721,7 +670,7 @@ app.post('/get/userData', function(req, res, next) {
             } else {
               con.query(`select * from contactpasswordrecord where  ContactIDWeb=${loggedInUser.IDWeb} AND Password='${password}'`, function(err, customer_password_data) {
                 if (customer_password_data.length) {
-                  getUserData(loggedInUser, function(response) {
+                  withStoredProcedure(req.body, function(response) {
                     delete loggedInUser['tableName']
                     let user_data = {
                       type: "table",
