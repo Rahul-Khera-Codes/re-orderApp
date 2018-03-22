@@ -69,7 +69,7 @@ function withStoredProcedure(body, callback) {
   con.query(`CALL sp_productcontrol('${body.email}')`, function(err, list_Data) {
     product_list_data.push({ type: "table", name: "Product_Control_List", database: "reorderDB", data: list_Data })
     console.log(list_Data)
-    findListData(list_Data[0], body.email, product_line_data, function(resposne) {
+    findListData(list_Data[0], body.email, product_line_data, function(response) {
       product_list_data.push(response)
       callback(product_list_data)
     })
