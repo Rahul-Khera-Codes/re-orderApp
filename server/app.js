@@ -96,7 +96,6 @@ function withStoredProcedure(body, callback) {
   let product_line_data = [];
   con.query(`CALL sp_productcontrol('${body.email}')`, function(err, list_Data) {
     list_data = _.filter(list_Data[0], (value) => {
-      console.log(JSON.parse(JSON.stringify(value.IsDefault)).data[0])
       value.IsDefault = JSON.parse(JSON.stringify(value.IsDefault)).data[0]
       value.ReLoginToSubmit = JSON.parse(JSON.stringify(value.ReLoginToSubmit)).data[0]
       value.IsActive = JSON.parse(JSON.stringify(value.IsActive)).data[0]
@@ -487,11 +486,11 @@ app.post('/get/userData', function(req, res, next) {
             loggedInUser['tableName'] = table;
             if (loggedInUser && loggedInUser.Password == password) {
               con.query(`select * from contactpasswordrecord where  ContactIDWeb=${loggedInUser.IDWeb}`, function(err, password_record) {
-                console.log(password_record.length && password_record[0].Password == password)
                 if (password_record.length) {
                   if (password_record[0].Password == password) {
                     withStoredProcedure(req.body, function(response) {
                       delete loggedInUser['tableName']
+                      console.log(loggedInUser)
                       loggedInUser = _.filter([loggedInUser], (value) => {
                         value.JobIDForce = JSON.parse(JSON.stringify(value.JobIDForce)).data[0]
                         return value
