@@ -18,7 +18,6 @@ var con = mysql.createConnection({
   database: "bstgroup_custprodcont0"
 });
 let file_location;
-let file_data = require('./test');
 
 let list_of_file_to_import = [
   'ppp_Customer_ProductControlProductControl.txt',
@@ -75,7 +74,7 @@ function findListData(list_data, email, line_data, callback) {
           })
           product_line.push(Product_Control_Line)
           product.push(Product);
-          if (file_data.data.length == key + 1) {
+          if (fline_data.data.length == key + 1) {
             let final_data = [{ type: "table", name: "Product", database: "reorderDB", data: product }, { type: "table", name: "Product_Control_Line", database: "reorderDB", data: product_line }]
             callback(final_data)
           }
