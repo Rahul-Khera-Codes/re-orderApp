@@ -492,11 +492,15 @@ app.post('/get/userData', function(req, res, next) {
                   if (password_record[0].Password == password) {
                     withStoredProcedure(req.body, function(response) {
                       delete loggedInUser['tableName']
+                      loggedInUser = _.filter([loggedInUser], (value) => {
+                        value.JobIDForce = JSON.parse(JSON.stringify(value.JobIDForce)).data[0]
+                        return value
+                      })
                       let user_data = {
                         type: "table",
                         database: "reorderDB",
                         name: table,
-                        data: [loggedInUser]
+                        data: loggedInUser
                       }
                       response.data.push(user_data)
                       res.json(response)
@@ -507,11 +511,15 @@ app.post('/get/userData', function(req, res, next) {
                 } else {
                   withStoredProcedure(req.body, function(response) {
                     delete loggedInUser['tableName']
+                    loggedInUser = _.filter([loggedInUser], (value) => {
+                      value.JobIDForce = JSON.parse(JSON.stringify(value.JobIDForce)).data[0]
+                      return value
+                    })
                     let user_data = {
                       type: "table",
                       database: "reorderDB",
                       name: table,
-                      data: [loggedInUser]
+                      data: loggedInUser
                     }
                     response.data.push(user_data)
                     res.json(response)
@@ -523,11 +531,15 @@ app.post('/get/userData', function(req, res, next) {
                 if (customer_password_data.length) {
                   withStoredProcedure(req.body, function(response) {
                     delete loggedInUser['tableName']
+                    loggedInUser = _.filter([loggedInUser], (value) => {
+                      value.JobIDForce = JSON.parse(JSON.stringify(value.JobIDForce)).data[0]
+                      return value
+                    })
                     let user_data = {
                       type: "table",
                       database: "reorderDB",
                       name: table,
-                      data: [loggedInUser]
+                      data: loggedInUser
                     }
                     response.data.push(user_data)
                     res.json(response)
@@ -547,11 +559,15 @@ app.post('/get/userData', function(req, res, next) {
                 if (customer_password_data[0].Password == password) {
                   withStoredProcedure(req.body, function(response) {
                     delete loggedInUser['tableName']
+                    loggedInUser = _.filter([loggedInUser], (value) => {
+                      value.JobIDForce = JSON.parse(JSON.stringify(value.JobIDForce)).data[0]
+                      return value
+                    })
                     let user_data = {
                       type: "table",
                       database: "reorderDB",
                       name: table,
-                      data: [loggedInUser]
+                      data: loggedInUser
                     }
                     response.data.push(user_data)
                     res.json(response)
@@ -562,11 +578,15 @@ app.post('/get/userData', function(req, res, next) {
               } else {
                 withStoredProcedure(req.body, function(response) {
                   delete loggedInUser['tableName']
+                  loggedInUser = _.filter([loggedInUser], (value) => {
+                    value.JobIDForce = JSON.parse(JSON.stringify(value.JobIDForce)).data[0]
+                    return value
+                  })
                   let user_data = {
                     type: "table",
                     database: "reorderDB",
                     name: table,
-                    data: [loggedInUser]
+                    data: loggedInUser
                   }
                   response.data.push(user_data)
                   res.json(response)
@@ -578,11 +598,15 @@ app.post('/get/userData', function(req, res, next) {
               if (customer_password_data.length) {
                 withStoredProcedure(req.body, function(response) {
                   delete loggedInUser['tableName']
+                  loggedInUser = _.filter([loggedInUser], (value) => {
+                    value.JobIDForce = JSON.parse(JSON.stringify(value.JobIDForce)).data[0]
+                    return value
+                  })
                   let user_data = {
                     type: "table",
                     database: "reorderDB",
                     name: table,
-                    data: [loggedInUser]
+                    data: loggedInUser
                   }
                   response.data.push(user_data)
                   res.json(response)
