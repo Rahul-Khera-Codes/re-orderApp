@@ -95,7 +95,7 @@ function withStoredProcedure(body, callback) {
   let product_list_data = [];
   let product_line_data = [];
   con.query(`CALL sp_productcontrol('${body.email}')`, function(err, list_Data) {
-    let list_to_contact = [];
+    let List_to_Contact = [];
     list_data = _.filter(list_Data[0], (value) => {
       console.log(value)
       if (value.ContactIDLocal) {
@@ -114,7 +114,7 @@ function withStoredProcedure(body, callback) {
         delete value.ListIdLocal
         delete value.ListIDWeb
         delete value.IsActive
-        list_to_contact.push(ListData)
+        List_to_Contact.push(ListData)
       }
       if (value.IsDefault)
         value.IsDefault = JSON.parse(JSON.stringify(value.IsDefault)).data[0]
