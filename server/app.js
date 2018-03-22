@@ -89,7 +89,8 @@ function withStoredProcedure(body, callback) {
     let data = JSON.parse(JSON.stringify(list_Data[0]))
     product_list_data.push({ type: "table", name: "Product_Control_List", database: "reorderDB", data: _.flattenDeep(list_Data) })
     findListData(data, body.email, product_line_data, function(response) {
-      product_list_data.push(response)
+      product_list_data.push(response[0])
+      product_list_data.push(response[1])
       callback(product_list_data)
     })
   })
