@@ -92,7 +92,7 @@ function withStoredProcedure(body, callback) {
   let product_list_data = [];
   let product_line_data = [];
   con.query(`CALL sp_productcontrol('${body.email}')`, function(err, list_Data) {
-    console.log(list_data.length)
+    console.log(list_Data.length)
     let data = JSON.parse(JSON.stringify(list_Data[0]))
     product_list_data.push({ type: "table", name: "Product_Control_List", database: "reorderDB", data: _.flattenDeep(list_Data) })
     findListData(data, body.email, product_line_data, function(response) {
