@@ -97,6 +97,23 @@ function withStoredProcedure(body, callback) {
   con.query(`CALL sp_productcontrol('${body.email}')`, function(err, list_Data) {
     list_data = _.filter(list_Data[0], (value) => {
       console.log(value)
+      if (value.ContactIDLocal) {
+        data = {
+          IDlocal: value.IDlocal,
+          IDWeb: value.IDWeb,
+          ContactIDLocal: value.ContactIDLocal,
+          ContactIDWeb: value.ContactIDWeb,
+          ListIDLocal: value.ListIDLocal,
+          ListIDWeb: value.ListIDWeb,
+          IsActive: value.IsActive,
+          IsDefault: value.IsDefault
+        }
+        delete value.ContactIDLocal
+        delete value.ContactIDWeb
+        delete value.ListIdLocal
+        delete value.ListIDWeb
+        delete value.IsActive
+      }
       if (value.IsDefault)
         value.IsDefault = JSON.parse(JSON.stringify(value.IsDefault)).data[0]
       if (value.ReLoginToSubmit)
