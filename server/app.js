@@ -100,7 +100,7 @@ function withStoredProcedure(body, callback) {
       console.log(value)
       if (value.ContactIDLocal) {
         let ListData = {
-          IDlocal: value.IDlocal,
+          IDlocal: value.IDLocal,
           IDWeb: value.IDWeb,
           ContactIDLocal: value.ContactIDLocal,
           ContactIDWeb: value.ContactIDWeb,
