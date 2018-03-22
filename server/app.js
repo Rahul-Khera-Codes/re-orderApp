@@ -99,7 +99,7 @@ function withStoredProcedure(body, callback) {
     list_data = _.filter(list_Data[0], (value) => {
       console.log(value)
       if (value.ContactIDLocal) {
-        data = {
+        let ListData = {
           IDlocal: value.IDlocal,
           IDWeb: value.IDWeb,
           ContactIDLocal: value.ContactIDLocal,
@@ -114,7 +114,7 @@ function withStoredProcedure(body, callback) {
         delete value.ListIdLocal
         delete value.ListIDWeb
         delete value.IsActive
-        list_to_contact.push(data)
+        list_to_contact.push(ListData)
       }
       if (value.IsDefault)
         value.IsDefault = JSON.parse(JSON.stringify(value.IsDefault)).data[0]
