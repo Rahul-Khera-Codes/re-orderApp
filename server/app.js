@@ -99,6 +99,7 @@ function withStoredProcedure(body, callback) {
       console.log(JSON.parse(JSON.stringify(value.IsDefault)).data[0])
       value.IsDefault = JSON.parse(JSON.stringify(value.IsDefault)).data[0]
       value.ReLoginToSubmit = JSON.parse(JSON.stringify(value.ReLoginToSubmit)).data[0]
+      value.IsActive = JSON.parse(JSON.stringify(value.IsActive)).data[0]
       return value
     })
     let data = JSON.parse(JSON.stringify(list_Data[0]))
