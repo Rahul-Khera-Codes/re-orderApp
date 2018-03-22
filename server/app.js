@@ -69,7 +69,11 @@ function findListData(list_data, email, line_data, callback) {
             if (key1 == 'IDLocal' || key1 == 'IDWeb' || key1 == 'ListIDLocal' || key1 == 'ListIDWeb' || key1 == 'ProductIDLocal' || key1 == 'LastUpdatedDateTime') {
               Product_Control_Line[key1] = val1
             } else {
-              Product[key1] = val1
+              if (key1 == 'IsActive') {
+                Product[key1] = val1.data[0];
+              } else {
+                Product[key1] = val1
+              }
             }
           })
           product_line.push(Product_Control_Line)
