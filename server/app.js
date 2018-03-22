@@ -125,7 +125,9 @@ function withStoredProcedure(body, callback) {
       return value
     })
     let data = JSON.parse(JSON.stringify(list_Data[0]))
-    product_list_data.push({ type: "table", name: "List_to_Contact", database: "reorderDB", data: List_to_Contact })
+    if (List_to_Contact.length) {
+      product_list_data.push({ type: "table", name: "List_to_Contact", database: "reorderDB", data: List_to_Contact })
+    }
     product_list_data.push({ type: "table", name: "Product_Control_List", database: "reorderDB", data: _.flattenDeep(list_Data[0]) })
     findListData(data, body.email, product_line_data, function(response) {
       product_list_data.push(response[0])
