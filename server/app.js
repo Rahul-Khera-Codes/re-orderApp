@@ -49,6 +49,65 @@ con.connect(function(err) {
     })
   });
 });
+
+function findListData(list_data, email, line_data, callback) {
+  let list = list_data.splice(0, 1)[0];
+  con.query(`CALL sp_productcontrolline(list.IDWeb,'${email}')`, function(err, list_line_Data) {
+    line_data.push(list_line_Data)
+    if (list_data.length) {
+      findListData(list_data, email, line_data)
+    } else {
+      callback({ type: "table", name: "Product_Control_List", database: "reorderDB", data: line_data })
+    }
+  })
+}
+
+function withStoredProcedure(body, callback) {
+  let product_list_data = [];
+  con.query(`CALL sp_productcontrol('${body.email}')`, function(err, list_Data) {
+    product_list_data.push({ type: "table", name: "Product_Control_List", database: "reorderDB", data: list_Data })
+    findListData(list_Data, body.email, [], function(resposne) {
+      product_list_data.push(response)
+      res.json({ data: product_list_data })
+    })
+    callback(list_Data)
+  })
+}
+
+function readDataFromWebServer(body, callback) {
+  let Web_Server_Data = [];
+  con.query(`select * from contact`, function(err, contact_data) {
+    con.query(`select * from customer`, function(err, customer_data) {
+      con.query(`select * from product`, function(err, product_data) {
+        con.query(`select * from productcodes`, function(err, productcodes_data) {
+          con.query(`select * from  productcontrol`, function(err, productcontrol_data) {
+            con.query(`select * from  productcontrolline`, function(err, productcontrolline_data) {
+              con.query(`select * from  productcontroltocontact`, function(err, productcontroltocontact_data) {
+                Web_Server_Data.push({ type: "table", name: "Customer_Table", database: "reorderDB", data: customer_data });
+                Web_Server_Data.push({ type: "table", name: "Contact_Table", database: "reorderDB", data: contact_data })
+                Web_Server_Data.push({ type: "table", name: "Product", database: "reorderDB", data: product_data })
+                Web_Server_Data.push({ type: "table", name: "ProductCodes", database: "reorderDB", data: productcodes_data })
+                Web_Server_Data.push({ type: "table", name: "Product_Control_List", database: "reorderDB", data: productcontrol_data })
+                Web_Server_Data.push({ type: "table", name: "List_to_Contact", database: "reorderDB", data: productcontroltocontact_data })
+                Web_Server_Data.push({ type: "table", name: "Product_Control_Line", database: "reorderDB", data: productcontrolline_data })
+                callback(Web_Server_Data)
+              })
+            })
+          })
+        })
+      })
+    })
+  })
+}
+
+
+app.get("/get/user/data", (req, res) => {
+  withStoredProcedure(req.body, function(response) {
+    // readDataFromWebServer(req.body, function(response) {
+    //   res.json({ data: response })
+    // })
+  })
+})
 let smtp_data = {}
 con.query(`select Value from configuration where ID=3`, function(err, SMTPServer) {
   smtp_data['SMTPServer'] = SMTPServer[0].Value
@@ -186,21 +245,41 @@ function fetchAllData(callback) {
   });
 }
 
-function readDataFromWebServer(body, callback) {
-  con.query(`CALL sp_productcontrol('${body.email}')`, function(err, list_Data) {
-    callback(list_Data)
-  })
 
-}
+// function readDataFromWebServer(body, callback) {
+//   let Web_Server_Data = [];
+//   con.query(`select * from contact`, function(err, contact_data) {
+//     con.query(`select * from customer`, function(err, customer_data) {
+//       con.query(`select * from product`, function(err, product_data) {
+//         con.query(`select * from productcodes`, function(err, productcodes_data) {
+//           con.query(`select * from  productcontrol`, function(err, productcontrol_data) {
+//             con.query(`select * from  productcontrolline`, function(err, productcontrolline_data) {
+//               con.query(`select * from  productcontroltocontact`, function(err, productcontroltocontact_data) {
+//                 Web_Server_Data.push({ type: "table", name: "Customer_Table", database: "reorderDB", data: customer_data });
+//                 Web_Server_Data.push({ type: "table", name: "Contact_Table", database: "reorderDB", data: contact_data })
+//                 Web_Server_Data.push({ type: "table", name: "Product", database: "reorderDB", data: product_data })
+//                 Web_Server_Data.push({ type: "table", name: "ProductCodes", database: "reorderDB", data: productcodes_data })
+//                 Web_Server_Data.push({ type: "table", name: "Product_Control_List", database: "reorderDB", data: productcontrol_data })
+//                 Web_Server_Data.push({ type: "table", name: "List_to_Contact", database: "reorderDB", data: productcontroltocontact_data })
+//                 Web_Server_Data.push({ type: "table", name: "Product_Control_Line", database: "reorderDB", data: productcontrolline_data })
+//                 callback(Web_Server_Data)
+//               })
+//             })
+//           })
+//         })
+//       })
+//     })
+//   })
+// }
 
 
-app.post("/get/user/data", (req, res) => {
-  // fetchAllData(function(response) {
-  readDataFromWebServer(req.body, function(response) {
-    res.json(response)
-  })
-  // })
-})
+// app.get("/get/user/data", (req, res) => {
+//   // fetchAllData(function(response) {
+//   readDataFromWebServer(req.body, function(response) {
+//     res.json({ data: response })
+//     // })
+//   })
+// })
 
 app.get("/fetch/data", (req, res, next) => {
   fetchAllData(function(response) {
