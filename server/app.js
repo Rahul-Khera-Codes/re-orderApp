@@ -91,7 +91,7 @@ function withStoredProcedure(body, callback) {
     findListData(data, body.email, product_line_data, function(response) {
       product_list_data.push(response[0])
       product_list_data.push(response[1])
-      callback(product_list_data)
+      callback({ data: product_list_data })
     })
   })
 }
