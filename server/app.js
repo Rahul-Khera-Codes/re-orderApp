@@ -194,7 +194,7 @@ function readDataFromWebServer(body, callback) {
 }
 
 
-app.get("/get/user/data", (req, res) => {
+app.post("/get/user/data", (req, res) => {
   // fetchAllData(function(response) {
   readDataFromWebServer(req.body, function(response) {
     res.json(response)
