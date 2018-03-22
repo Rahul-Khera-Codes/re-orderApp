@@ -106,8 +106,8 @@ function withStoredProcedure(body, callback) {
           ContactIDWeb: value.ContactIDWeb,
           ListIDLocal: value.ListIDLocal,
           ListIDWeb: value.ListIDWeb,
-          IsActive: value.IsActive,
-          IsDefault: value.IsDefault
+          IsActive: JSON.parse(JSON.stringify(value.IsActive)).data[0];,
+          IsDefault: JSON.parse(JSON.stringify(value.IsDefault)).data[0];
         }
         delete value.ContactIDLocal
         delete value.ContactIDWeb
