@@ -186,6 +186,21 @@ function fetchAllData(callback) {
   });
 }
 
+function readDataFromWebServer(body, callback) {
+  con.query(`CALL sp_productcontrol('${body.email}')`, function(err, list_Data) {
+    callback(list_Data)
+  })
+
+}
+
+
+app.get("/get/user/data", (req, res) => {
+  // fetchAllData(function(response) {
+  readDataFromWebServer(req.body, function(response) {
+    res.json(response)
+  })
+  // })
+})
 
 app.get("/fetch/data", (req, res, next) => {
   fetchAllData(function(response) {
@@ -458,11 +473,10 @@ app.put('/forget/password', function(req, res, next) {
   function sendUpdatedPassword(tableName, update_info, callback) {
     const transporter = mailer.createTransport({
       host: smtp_data.SMTPServer,
-      port: smtp_data.SMTPPort,
-      secure: false,
+      port: 25,
       auth: {
-        user: '',
-        pass: ''
+        user: 'bstgroup/user',
+        pass: '4201337'
       }
     });
     let mailOptions = {
