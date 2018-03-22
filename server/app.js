@@ -67,7 +67,7 @@ function findListData(list_data, email, line_data, callback) {
           let Product = {};
           _.map(val, (val1, key1) => {
             if (key1 == 'IDLocal' || key1 == 'IDWeb' || key1 == 'ListIDLocal' || key1 == 'ListIDWeb' || key1 == 'ProductIDLocal' || key1 == 'LastUpdatedDateTime') {
-              Product_Control_Line[key1] = val1.toString().replace(/['"]+/g, '')
+              Product_Control_Line[key1] = val1
             } else {
               if (key1 == 'IsActive') {
                 Product[key1] = JSON.parse(JSON.stringify(val1)).data[0];
