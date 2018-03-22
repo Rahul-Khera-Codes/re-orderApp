@@ -111,7 +111,7 @@ function withStoredProcedure(body, callback) {
         }
         delete value.ContactIDLocal
         delete value.ContactIDWeb
-        delete value.ListIdLocal
+        delete value.ListIDLocal
         delete value.ListIDWeb
         delete value.IsActive
         List_to_Contact.push(ListData)
