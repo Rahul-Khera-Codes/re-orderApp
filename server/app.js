@@ -96,9 +96,13 @@ function withStoredProcedure(body, callback) {
   let product_line_data = [];
   con.query(`CALL sp_productcontrol('${body.email}')`, function(err, list_Data) {
     list_data = _.filter(list_Data[0], (value) => {
-      value.IsDefault = JSON.parse(JSON.stringify(value.IsDefault)).data[0]
-      value.ReLoginToSubmit = JSON.parse(JSON.stringify(value.ReLoginToSubmit)).data[0]
-      value.IsActive = JSON.parse(JSON.stringify(value.IsActive)).data[0]
+      console.log(value)
+      if (value.IsDefault)
+        value.IsDefault = JSON.parse(JSON.stringify(value.IsDefault)).data[0]
+      else if (value.ReLoginToSubmit)
+        value.ReLoginToSubmit = JSON.parse(JSON.stringify(value.ReLoginToSubmit)).data[0]
+      else
+        value.IsActive = JSON.parse(JSON.stringify(value.IsActive)).data[0]
       return value
     })
     let data = JSON.parse(JSON.stringify(list_Data[0]))
