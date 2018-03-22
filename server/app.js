@@ -74,7 +74,7 @@ function findListData(list_data, email, line_data, callback) {
           })
           product_line.push(Product_Control_Line)
           product.push(Product);
-          if (fline_data.data.length == key + 1) {
+          if (line_data.data.length == key + 1) {
             let final_data = [{ type: "table", name: "Product", database: "reorderDB", data: product }, { type: "table", name: "Product_Control_Line", database: "reorderDB", data: product_line }]
             callback(final_data)
           }
