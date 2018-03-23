@@ -649,7 +649,6 @@ app.post('/get/userData', function(req, res, next) {
         let body = {};
         login_data.push({ type: 'table', name: 'Customer_Table', database: 'reorderDB', data: customer_data })
         login_data.push({ type: 'table', name: 'Contact_Table', database: 'reorderDB', data: contact_data })
-        console.log(login_data, table, "[[[[[[[[[[[[[[[[[[[")
         body['data'] = login_data;
         body = JSON.stringify(body)
         let findTable = _.filter(JSON.parse(body).data, (filtered_data) => { return filtered_data.name == table })[0];
@@ -658,14 +657,16 @@ app.post('/get/userData', function(req, res, next) {
           table = "Contact_Table"
           findTable = _.filter(JSON.parse(body).data, (filtered_data) => { return filtered_data.name == table })[0];
           loggedInUser = _.filter(findTable.data, (filtered_data) => { return (filtered_data.LoginBarcode == barCode) })[0];
-          console.log(loggedInUser)
           if (loggedInUser == undefined) {
             res.json({ status: 0, message: "Invalid User" })
           } else {
             loggedInUser['tableName'] = table;
-            console.log(loggedInUser, "email", loggedInUser.EmailAddress)
             withStoredProcedure({ email: loggedInUser.EmailAddress }, function(response) {
               delete loggedInUser['tableName']
+              loggedInUser = _.filter([loggedInUser], (value) => {
+                value.JobIDForce = JSON.parse(JSON.stringify(value.JobIDForce)).data[0]
+                return value
+              })
               let user_data = {
                 type: "table",
                 database: "reorderDB",
@@ -678,9 +679,12 @@ app.post('/get/userData', function(req, res, next) {
           }
         } else {
           loggedInUser['tableName'] = table;
-          console.log(loggedInUser, "email", loggedInUser.EmailAddress)
           withStoredProcedure({ email: loggedInUser.EmailAddress }, function(response) {
             delete loggedInUser['tableName']
+            loggedInUser = _.filter([loggedInUser], (value) => {
+              value.JobIDForce = JSON.parse(JSON.stringify(value.JobIDForce)).data[0]
+              return value
+            })
             let user_data = {
               type: "table",
               database: "reorderDB",
