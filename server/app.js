@@ -653,9 +653,7 @@ app.post('/get/userData', function(req, res, next) {
         body['data'] = login_data;
         body = JSON.stringify(body)
         let findTable = _.filter(JSON.parse(body).data, (filtered_data) => { return filtered_data.name == table })[0];
-        console.log(findTable, "+++++++++++++++++")
         let loggedInUser = _.filter(findTable.data, (filtered_data) => { return (filtered_data.LoginBarcode == barCode) })[0];
-        console.log(loggedInUser, "==============")
         if (loggedInUser == undefined) {
           table = "Contact_Table"
           findTable = _.filter(JSON.parse(body).data, (filtered_data) => { return filtered_data.name == table })[0];
@@ -665,6 +663,7 @@ app.post('/get/userData', function(req, res, next) {
             res.json({ status: 0, message: "Invalid User" })
           } else {
             loggedInUser['tableName'] = table;
+            console.log(loggedInUser, "email", loggedInUser.EmailAddress)
             withStoredProcedure({ email: loggedInUser.EmailAddress }, function(response) {
               delete loggedInUser['tableName']
               let user_data = {
