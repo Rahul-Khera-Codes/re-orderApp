@@ -60,7 +60,6 @@ function findListData(list_data, email, line_data, callback) {
       line_data = _.flattenDeep(line_data);
       let product_line = [];
       let product = [];
-      console.log(line_data.length)
       if (line_data.length) {
         _.forEach(line_data, (val, key) => {
           let Product_Control_Line = {};
@@ -97,7 +96,6 @@ function withStoredProcedure(body, callback) {
   con.query(`CALL sp_productcontrol('${body.email}')`, function(err, list_Data) {
     let List_to_Contact = [];
     list_data = _.filter(list_Data[0], (value) => {
-      console.log(value)
       if (value.ContactIDLocal) {
         let ListData = {
           IDlocal: value.IDLocal,
@@ -147,7 +145,6 @@ con.query(`select Value from configuration where ID=3`, function(err, SMTPServer
       smtp_data['SMTPSendSSL'] = SMTPSendSSL[0].Value
       con.query(`select Value from configuration where ID=6`, function(err, SMTPFromAddress) {
         smtp_data['SMTPFromAddress'] = SMTPFromAddress[0].Value
-        console.log(smtp_data)
       })
     })
   })
@@ -516,7 +513,6 @@ app.post('/get/userData', function(req, res, next) {
                   if (password_record[0].Password == password) {
                     withStoredProcedure(req.body, function(response) {
                       delete loggedInUser['tableName']
-                      console.log(loggedInUser)
                       loggedInUser = _.filter([loggedInUser], (value) => {
                         value.JobIDForce = JSON.parse(JSON.stringify(value.JobIDForce)).data[0]
                         value.Password = password
