@@ -652,8 +652,9 @@ app.post('/get/userData', function(req, res, next) {
         console.log(login_data, table, "[[[[[[[[[[[[[[[[[[[")
         body['data'] = login_data;
         let findTable = _.filter(JSON.parse(body).data, (filtered_data) => { return filtered_data.name == table })[0];
+        console.log(findTable, "+++++++++++++++++")
         let loggedInUser = _.filter(findTable.data, (filtered_data) => { return (filtered_data.LoginBarcode == barCode) })[0];
-        console.log(loggedInUser)
+        console.log(loggedInUser, "==============")
         if (loggedInUser == undefined) {
           table = "Contact_Table"
           findTable = _.filter(JSON.parse(body).data, (filtered_data) => { return filtered_data.name == table })[0];
