@@ -487,36 +487,106 @@ app.put('/update/password', function(req, res, next) {
 
 
 app.post('/get/userData', function(req, res, next) {
-let email = req.body.email || null
-let password = req.body.password || null
-let table = "Customer_Table"
-let barCode = req.body.barCode || null;
-con.query(`select * from customer`, function(err, customer_data) {
-  con.query(`select * from contact`, function(err, contact_data) {
-    if (email) {
-      let login_data = [];
-      let body = {};
-      login_data.push({ type: 'table', name: 'Customer_Table', database: 'reorderDB', data: customer_data })
-      login_data.push({ type: 'table', name: 'Contact_Table', database: 'reorderDB', data: contact_data })
-      body['data'] = login_data;
-      body = JSON.stringify(body)
-      let findTable = _.filter(JSON.parse(body).data, (filtered_data) => { return filtered_data.name == table })[0];
-      let loggedInUser = _.filter(findTable.data, (filtered_data) => { return (filtered_data.EmailAddress == email) })[0];
-      if (loggedInUser == undefined) {
-        table = "Contact_Table"
-        findTable = _.filter(JSON.parse(body).data, (filtered_data) => { return filtered_data.name == table })[0];
-        loggedInUser = _.filter(findTable.data, (filtered_data) => { return (filtered_data.EmailAddress == email) })[0];
+  let email = req.body.email || null
+  let password = req.body.password || null
+  let table = "Customer_Table"
+  let barCode = req.body.barCode || null;
+  con.query(`select * from customer`, function(err, customer_data) {
+    con.query(`select * from contact`, function(err, contact_data) {
+      if (email) {
+        let login_data = [];
+        let body = {};
+        login_data.push({ type: 'table', name: 'Customer_Table', database: 'reorderDB', data: customer_data })
+        login_data.push({ type: 'table', name: 'Contact_Table', database: 'reorderDB', data: contact_data })
+        body['data'] = login_data;
+        body = JSON.stringify(body)
+        let findTable = _.filter(JSON.parse(body).data, (filtered_data) => { return filtered_data.name == table })[0];
+        let loggedInUser = _.filter(findTable.data, (filtered_data) => { return (filtered_data.EmailAddress == email) })[0];
         if (loggedInUser == undefined) {
-          res.json({ status: 0, message: "Invalid User" })
+          table = "Contact_Table"
+          findTable = _.filter(JSON.parse(body).data, (filtered_data) => { return filtered_data.name == table })[0];
+          loggedInUser = _.filter(findTable.data, (filtered_data) => { return (filtered_data.EmailAddress == email) })[0];
+          if (loggedInUser == undefined) {
+            res.json({ status: 0, message: "Invalid User" })
+          } else {
+            loggedInUser['tableName'] = table;
+            if (loggedInUser && loggedInUser.Password == password) {
+              con.query(`select * from contactpasswordrecord where  ContactIDWeb=${loggedInUser.IDWeb}`, function(err, password_record) {
+                if (password_record.length) {
+                  if (password_record[0].Password == password) {
+                    withStoredProcedure(req.body, function(response) {
+                      delete loggedInUser['tableName']
+                      console.log(loggedInUser)
+                      loggedInUser = _.filter([loggedInUser], (value) => {
+                        value.JobIDForce = JSON.parse(JSON.stringify(value.JobIDForce)).data[0]
+                        value.Password = password
+                        return value
+                      })
+                      let user_data = {
+                        type: "table",
+                        database: "reorderDB",
+                        name: table,
+                        data: loggedInUser
+                      }
+                      response.data.push(user_data)
+                      res.json(response)
+                    })
+                  } else {
+                    res.json({ status: 0, message: "Invalid Password" })
+                  }
+                } else {
+                  withStoredProcedure(req.body, function(response) {
+                    delete loggedInUser['tableName']
+                    loggedInUser = _.filter([loggedInUser], (value) => {
+                      value.JobIDForce = JSON.parse(JSON.stringify(value.JobIDForce)).data[0]
+                      value.Password = password
+                      return value
+                    })
+                    let user_data = {
+                      type: "table",
+                      database: "reorderDB",
+                      name: table,
+                      data: loggedInUser
+                    }
+                    response.data.push(user_data)
+                    res.json(response)
+                  })
+                }
+              })
+            } else {
+              con.query(`select * from contactpasswordrecord where  ContactIDWeb=${loggedInUser.IDWeb} AND Password='${password}'`, function(err, customer_password_data) {
+                if (customer_password_data.length) {
+                  withStoredProcedure(req.body, function(response) {
+                    delete loggedInUser['tableName']
+                    loggedInUser = _.filter([loggedInUser], (value) => {
+                      value.JobIDForce = JSON.parse(JSON.stringify(value.JobIDForce)).data[0]
+                      value.Password = password
+                      return value
+                    })
+                    let user_data = {
+                      type: "table",
+                      database: "reorderDB",
+                      name: table,
+                      data: loggedInUser
+                    }
+                    response.data.push(user_data)
+                    res.json(response)
+                  })
+                } else {
+                  res.json({ status: 0, message: "Invalid User" })
+                }
+              })
+            }
+
+          }
         } else {
           loggedInUser['tableName'] = table;
           if (loggedInUser && loggedInUser.Password == password) {
-            con.query(`select * from contactpasswordrecord where  ContactIDWeb=${loggedInUser.IDWeb}`, function(err, password_record) {
-              if (password_record.length) {
-                if (password_record[0].Password == password) {
+            con.query(`select * from customerpasswordrecord where CustomerIDWeb=${loggedInUser.IDWeb}`, function(err, customer_password_data) {
+              if (customer_password_data.length) {
+                if (customer_password_data[0].Password == password) {
                   withStoredProcedure(req.body, function(response) {
                     delete loggedInUser['tableName']
-                    console.log(loggedInUser)
                     loggedInUser = _.filter([loggedInUser], (value) => {
                       value.JobIDForce = JSON.parse(JSON.stringify(value.JobIDForce)).data[0]
                       value.Password = password
@@ -554,7 +624,7 @@ con.query(`select * from customer`, function(err, customer_data) {
               }
             })
           } else {
-            con.query(`select * from contactpasswordrecord where  ContactIDWeb=${loggedInUser.IDWeb} AND Password='${password}'`, function(err, customer_password_data) {
+            con.query(`select * from customerpasswordrecord where CustomerIDWeb=${loggedInUser.IDWeb} AND Password='${password}'`, function(err, customer_password_data) {
               if (customer_password_data.length) {
                 withStoredProcedure(req.body, function(response) {
                   delete loggedInUser['tableName']
@@ -577,134 +647,52 @@ con.query(`select * from customer`, function(err, customer_data) {
               }
             })
           }
-
         }
-      } else {
-        loggedInUser['tableName'] = table;
-        if (loggedInUser && loggedInUser.Password == password) {
-          con.query(`select * from customerpasswordrecord where CustomerIDWeb=${loggedInUser.IDWeb}`, function(err, customer_password_data) {
-            if (customer_password_data.length) {
-              if (customer_password_data[0].Password == password) {
-                withStoredProcedure(req.body, function(response) {
-                  delete loggedInUser['tableName']
-                  loggedInUser = _.filter([loggedInUser], (value) => {
-                    value.JobIDForce = JSON.parse(JSON.stringify(value.JobIDForce)).data[0]
-                    value.Password = password
-                    return value
-                  })
-                  let user_data = {
-                    type: "table",
-                    database: "reorderDB",
-                    name: table,
-                    data: loggedInUser
-                  }
-                  response.data.push(user_data)
-                  res.json(response)
-                })
-              } else {
-                res.json({ status: 0, message: "Invalid Password" })
-              }
-            } else {
-              withStoredProcedure(req.body, function(response) {
-                delete loggedInUser['tableName']
-                loggedInUser = _.filter([loggedInUser], (value) => {
-                  value.JobIDForce = JSON.parse(JSON.stringify(value.JobIDForce)).data[0]
-                  value.Password = password
-                  return value
-                })
-                let user_data = {
-                  type: "table",
-                  database: "reorderDB",
-                  name: table,
-                  data: loggedInUser
-                }
-                response.data.push(user_data)
-                res.json(response)
-              })
-            }
-          })
-        } else {
-          con.query(`select * from customerpasswordrecord where CustomerIDWeb=${loggedInUser.IDWeb} AND Password='${password}'`, function(err, customer_password_data) {
-            if (customer_password_data.length) {
-              withStoredProcedure(req.body, function(response) {
-                delete loggedInUser['tableName']
-                loggedInUser = _.filter([loggedInUser], (value) => {
-                  value.JobIDForce = JSON.parse(JSON.stringify(value.JobIDForce)).data[0]
-                  value.Password = password
-                  return value
-                })
-                let user_data = {
-                  type: "table",
-                  database: "reorderDB",
-                  name: table,
-                  data: loggedInUser
-                }
-                response.data.push(user_data)
-                res.json(response)
-              })
-            } else {
-              res.json({ status: 0, message: "Invalid User" })
-            }
-          })
-        }
-      }
-    } else if (barCode) {
-      login_data.push({ type: 'table', name: 'Customer_Table', database: 'reorderDB', data: customer_data })
-      login_data.push({ type: 'table', name: 'Contact_Table', database: 'reorderDB', data: contact_data })
-      body['data'] = login_data;
-      let findTable = _.filter(JSON.parse(body).data, (filtered_data) => { return filtered_data.name == table })[0];
-      let loggedInUser = _.filter(findTable.data, (filtered_data) => { return (filtered_data.LoginBarcode == barCode) })[0];
-      if (loggedInUser == undefined) {
-        table = "Contact_Table"
-        findTable = _.filter(JSON.parse(body).data, (filtered_data) => { return filtered_data.name == table })[0];
-        loggedInUser = _.filter(findTable.data, (filtered_data) => { return (filtered_data.LoginBarcode == barCode) })[0];
+      } else if (barCode) {
+        login_data.push({ type: 'table', name: 'Customer_Table', database: 'reorderDB', data: customer_data })
+        login_data.push({ type: 'table', name: 'Contact_Table', database: 'reorderDB', data: contact_data })
+        body['data'] = login_data;
+        let findTable = _.filter(JSON.parse(body).data, (filtered_data) => { return filtered_data.name == table })[0];
+        let loggedInUser = _.filter(findTable.data, (filtered_data) => { return (filtered_data.LoginBarcode == barCode) })[0];
         if (loggedInUser == undefined) {
-          res.json({ status: 0, message: "Invalid User" })
+          table = "Contact_Table"
+          findTable = _.filter(JSON.parse(body).data, (filtered_data) => { return filtered_data.name == table })[0];
+          loggedInUser = _.filter(findTable.data, (filtered_data) => { return (filtered_data.LoginBarcode == barCode) })[0];
+          if (loggedInUser == undefined) {
+            res.json({ status: 0, message: "Invalid User" })
+          } else {
+            loggedInUser['tableName'] = table;
+            withStoredProcedure({ email: loggedInUser.EmailAddress }, function(response) {
+              delete loggedInUser['tableName']
+              let user_data = {
+                type: "table",
+                database: "reorderDB",
+                name: table,
+                data: [loggedInUser]
+              }
+              response.data.push(user_data)
+              res.json(response)
+            })
+          }
         } else {
           loggedInUser['tableName'] = table;
-          withStoredProcedure({ email: loggedInUser.EmailAddress }, function(response) {
+          getUserData(loggedInUser, function(response) {
             delete loggedInUser['tableName']
-            loggedInUser = _.filter([loggedInUser], (value) => {
-              value.JobIDForce = JSON.parse(JSON.stringify(value.JobIDForce)).data[0]
-              value.Password = password
-              return value
-            })
             let user_data = {
               type: "table",
               database: "reorderDB",
               name: table,
-              data: loggedInUser
+              data: [loggedInUser]
             }
             response.data.push(user_data)
             res.json(response)
           })
-          response.data.push(user_data)
-          res.json(response)
         }
+      } else {
+        res.json({ status: 0, message: "Invalid Login Type" })
       }
-    }
+    })
   })
-}
-}
-else {
-loggedInUser['tableName'] = table;
-getUserData(loggedInUser, function(response) {
-  delete loggedInUser['tableName']
-  let user_data = {
-    type: "table",
-    database: "reorderDB",
-    name: table,
-    data: [loggedInUser]
-  }
-  response.data.push(user_data)
-  res.json(response)
-})
-}
-} else {
-res.json({ status: 0, message: "Invalid Login Type" })
-}
-})
-})
 })
 
 app.listen(process.env.PORT || 3031)
