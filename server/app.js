@@ -98,7 +98,7 @@ function withStoredProcedure(body, callback) {
     list_data = _.filter(list_Data[0], (value) => {
       if (value.ContactIDLocal) {
         let ListData = {
-          IDlocal: value.IDLocal,
+          IDLocal: value.IDLocal,
           IDWeb: value.IDWeb,
           ContactIDLocal: value.ContactIDLocal,
           ContactIDWeb: value.ContactIDWeb,
