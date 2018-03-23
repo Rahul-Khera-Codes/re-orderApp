@@ -660,7 +660,7 @@ app.post('/get/userData', function(req, res, next) {
           if (loggedInUser == undefined) {
             res.json({ status: 0, message: "Invalid User" })
           } else {
-            con.query(`select * from customerpasswordrecord where CustomerIDWeb=${loggedInUser}`, function(err, data) {
+            con.query(`select * from contactpasswordrecord where ContactIDWeb=${loggedInUser.IDWeb}`, function(err, data) {
               password = data[0].Password;
             })
             loggedInUser['tableName'] = table;
@@ -682,7 +682,7 @@ app.post('/get/userData', function(req, res, next) {
             })
           }
         } else {
-          con.query(`select * from customerpasswordrecord where CustomerIDWeb=${loggedInUser}`, function(err, data) {
+          con.query(`select * from customerpasswordrecord where CustomerIDWeb=${loggedInUser.IDWeb}`, function(err, data) {
             password = data[0].Password;
           })
           loggedInUser['tableName'] = table;
