@@ -487,12 +487,12 @@ app.put('/update/password', function(req, res, next) {
 
 
 app.post('/get/userData', function(req, res, next) {
-  let email = req.body.email || null
-  let password = req.body.password || null
-  let table = "Customer_Table"
-  let barCode = req.body.barCode || null;
-  con.query(`select * from customer`, function(err, customer_data) {
-    con.query(`select * from contact`, function(err, contact_data) {
+let email = req.body.email || null
+let password = req.body.password || null
+let table = "Customer_Table"
+let barCode = req.body.barCode || null;
+con.query(`select * from customer`, function(err, customer_data) {
+  con.query(`select * from contact`, function(err, contact_data) {
       if (email) {
         let login_data = [];
         let body = {};
@@ -519,6 +519,7 @@ app.post('/get/userData', function(req, res, next) {
                       console.log(loggedInUser)
                       loggedInUser = _.filter([loggedInUser], (value) => {
                         value.JobIDForce = JSON.parse(JSON.stringify(value.JobIDForce)).data[0]
+                        value.Password = password
                         return value
                       })
                       let user_data = {
@@ -538,6 +539,7 @@ app.post('/get/userData', function(req, res, next) {
                     delete loggedInUser['tableName']
                     loggedInUser = _.filter([loggedInUser], (value) => {
                       value.JobIDForce = JSON.parse(JSON.stringify(value.JobIDForce)).data[0]
+                      value.Password = password
                       return value
                     })
                     let user_data = {
@@ -558,6 +560,7 @@ app.post('/get/userData', function(req, res, next) {
                     delete loggedInUser['tableName']
                     loggedInUser = _.filter([loggedInUser], (value) => {
                       value.JobIDForce = JSON.parse(JSON.stringify(value.JobIDForce)).data[0]
+                      value.Password = password
                       return value
                     })
                     let user_data = {
@@ -586,6 +589,7 @@ app.post('/get/userData', function(req, res, next) {
                     delete loggedInUser['tableName']
                     loggedInUser = _.filter([loggedInUser], (value) => {
                       value.JobIDForce = JSON.parse(JSON.stringify(value.JobIDForce)).data[0]
+                      value.Password = password
                       return value
                     })
                     let user_data = {
@@ -605,6 +609,7 @@ app.post('/get/userData', function(req, res, next) {
                   delete loggedInUser['tableName']
                   loggedInUser = _.filter([loggedInUser], (value) => {
                     value.JobIDForce = JSON.parse(JSON.stringify(value.JobIDForce)).data[0]
+                    value.Password = password
                     return value
                   })
                   let user_data = {
@@ -625,6 +630,7 @@ app.post('/get/userData', function(req, res, next) {
                   delete loggedInUser['tableName']
                   loggedInUser = _.filter([loggedInUser], (value) => {
                     value.JobIDForce = JSON.parse(JSON.stringify(value.JobIDForce)).data[0]
+                    value.Password = password
                     return value
                   })
                   let user_data = {
@@ -656,37 +662,47 @@ app.post('/get/userData', function(req, res, next) {
             res.json({ status: 0, message: "Invalid User" })
           } else {
             loggedInUser['tableName'] = table;
-            getUserData(loggedInUser, function(response) {
+            console.log(loggedInUser)
+            withStoredProcedure({ email: loggedInUser.EmailAddress }, function(response) {
               delete loggedInUser['tableName']
+              loggedInUser = _.filter([loggedInUser], (value) => {
+                value.JobIDForce = JSON.parse(JSON.stringify(value.JobIDForce)).data[0]
+                value.Password = password
+                return value
+              })
               let user_data = {
                 type: "table",
                 database: "reorderDB",
                 name: table,
-                data: [loggedInUser]
+                data: loggedInUser
               }
               response.data.push(user_data)
               res.json(response)
             })
-          }
-        } else {
-          loggedInUser['tableName'] = table;
-          getUserData(loggedInUser, function(response) {
-            delete loggedInUser['tableName']
-            let user_data = {
-              type: "table",
-              database: "reorderDB",
-              name: table,
-              data: [loggedInUser]
-            }
             response.data.push(user_data)
             res.json(response)
           })
-        }
-      } else {
-        res.json({ status: 0, message: "Invalid Login Type" })
       }
-    })
-  })
+    } else {
+      loggedInUser['tableName'] = table;
+      getUserData(loggedInUser, function(response) {
+        delete loggedInUser['tableName']
+        let user_data = {
+          type: "table",
+          database: "reorderDB",
+          name: table,
+          data: [loggedInUser]
+        }
+        response.data.push(user_data)
+        res.json(response)
+      })
+    }
+  }
+  else {
+    res.json({ status: 0, message: "Invalid Login Type" })
+  }
+})
+})
 })
 
 app.listen(process.env.PORT || 3031)
