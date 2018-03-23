@@ -21,11 +21,16 @@ export class ConsignmentInPage implements OnInit {
     err: string;
     myInputEnable: boolean = false;
     browser: any;
+    userInfo:any;
     constructor(private iab: InAppBrowser, private barcodeScanner: BarcodeScanner, public navCtrl: NavController, public navParams: NavParams, public _consignmentProvider: ConsignmentProvider) {
     }
-    
+
     ionViewWillEnter() {
         this.usageData.jobID = '';
+        this.userInfo = JSON.parse(localStorage.getItem('userDetails'))[0];
+        if (this.userInfo['JobIDForce']) {
+           this.usageData['jobID'] = " ";
+        }
     }
     ngOnInit() {
         this.usageData.selectedConsignment = this.navParams.get('selectedConsignment');

@@ -6,6 +6,7 @@ import {LoginProvider} from './../../providers/login/login';
 import {ConsignmentProvider} from './../../providers/consignment/consignment';
 import {ToastProvider} from './../../providers/toast/toast';
 import {ApiServiceProvider} from './../../providers/api-service/api-service';
+import {url} from '../../providers/config/config';
 @Component({
     selector: 'page-home',
     templateUrl: 'changepassword.html'
@@ -43,7 +44,7 @@ export class ChangePassword implements OnInit {
             details['newPassword'] = user.value.re_password;
             details['oldPassword'] = user.value.oldPassword;
             details['tableName'] = loginWith;
-            this._api.apiCallByPut("http://192.168.1.113:3031/update/password", details).subscribe(res => {
+            this._api.apiCallByPut(`${url.url}/update/password`, details).subscribe(res => {
                 if (loginWith == "customer") {
                     this._loginService.updatePassword("Customer_Table", user.value.oldPassword, userData.EmailAddress, user.value.re_password).then((res) => {
                         this._toast.presentToast("Password Change Successfully", 2000);

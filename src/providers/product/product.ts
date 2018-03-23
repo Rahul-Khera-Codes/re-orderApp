@@ -15,6 +15,25 @@ export class ProductProvider {
             })
         })
     }
+    queryToProductCode(ProductID){
+        return new Promise((resolve, reject) => {
+            let productCode = [];
+            this.openDB().then(() => {
+                this.DB.executeSql(`SELECT * FROM ProductCodes`, []).then((res) => {
+                    console.log(res,`SELECT * FROM ProductCodes WHERE ProductID = ${ProductID}`)
+                })
+                this.DB.executeSql(`SELECT * FROM ProductCodes WHERE ProductID = '${ProductID}'`, []).then((res) => {
+                    console.log("res",res)
+                        if (res.rows.length) {
+                        for (let i = 0; i < res.rows.length; i++) {
+                            productCode.push((res.rows.item(i)));
+                        }
+                    }
+                    resolve(productCode);
+                }).catch(e => console.log(e));
+            })
+        })        
+    }
     queryToProductControlLine(selectedConsignmentIDWeb, selectedConsignmentIDLocal) {
         return new Promise((resolve, reject) => {
             let productControlLineData = [];

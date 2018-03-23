@@ -16,36 +16,36 @@ export class ProgressDetailsPage {
     constructor(private _sqlLiteProvider: SqlLiteProvider, public navCtrl: NavController, public navParams: NavParams) {
         this.base = 0;
         let base = 0;
-        this.reference = this._sqlLiteProvider.progressDataEvent.subscribe((progressData) => {
-            this.progress = progressData;
-            if (this.progress && this.progress['error']) {
-                setTimeout(() => {
-                    this.navCtrl.pop({animate:false});
-                }, 3000)
-            }
-            this.count++;
-            if (!this.flag) {
-                base = 100 / this.progress['NoOfTotalTables'];
-                this.flag = true;
-                this.base += base;
-            } else {
-                this.base += base;
-            }
-            if ((this.progress['NoOfTotalTables'] - 1) == this.count) {
-                this.navCtrl.pop({animate:false});
-            }
-        })
+//        this.reference = this._sqlLiteProvider.progressDataEvent.subscribe((progressData) => {
+//            this.progress = progressData;
+//            if (this.progress && this.progress['error']) {
+//                setTimeout(() => {
+//                    this.navCtrl.pop({animate:false});
+//                }, 3000)
+//            }
+//            this.count++;
+//            if (!this.flag) {
+//                base = 100 / this.progress['NoOfTotalTables'];
+//                this.flag = true;
+//                this.base += base;
+//            } else {
+//                this.base += base;
+//            }
+//            if ((this.progress['NoOfTotalTables'] - 1) == this.count) {
+//                this.navCtrl.pop({animate:false});
+//            }
+//        })
         this.setCurrentTableProcessDetails();
     }
 
     setCurrentTableProcessDetails() {
-        this.referenceDetails = this._sqlLiteProvider.tablesEvent.subscribe((details) => {
-            this.details = details;
-        })
+//        this.referenceDetails = this._sqlLiteProvider.tablesEvent.subscribe((details) => {
+//            this.details = details;
+//        })
     }
 
     ngOnDestroy() {
-        this.reference.unsubscribe();
-        this.referenceDetails.unsubscribe();
+//        this.reference.unsubscribe();
+//        this.referenceDetails.unsubscribe();
     }
 }

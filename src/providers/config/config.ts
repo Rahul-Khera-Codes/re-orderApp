@@ -20,5 +20,7 @@ export const ConstantTableName = {
     "usageLine": "UsageLine"
 }
 export const url ={
-    "url":"http://192.168.1.24:3031"
+//    101.0.73.66
+//    192.168.1.24
+    "url":"http://101.0.73.66:3031"
 }

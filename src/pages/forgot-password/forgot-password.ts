@@ -32,10 +32,7 @@ export class ForgotPasswordPage {
         let rand = Math.random() * 1000000;
         let pwd = Math.ceil(rand);
         //this._login.encryptPassword(
-
         value['password'] = pwd;
-        console.log("value",value)
-//        101.0.73.66
         this._apiProvider.apiCallByPut(`${url.url}/forget/password`, value).subscribe(res => {
             value['password'] = pwd;
             this._login.updatePasswordWhenForgot(value['password'], value['email']).then((res) => {

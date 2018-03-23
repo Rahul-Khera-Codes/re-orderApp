@@ -107,6 +107,7 @@ export class ProductViewPage {
     }
 
     dismiss() {
+        this.isFound = true;
         this.myInput = '';
         this.products = this.productsRef;
         this.searchBar = false;
@@ -310,10 +311,15 @@ export class ProductViewPage {
         this.barcodeScanner.scan().then((barcodeData) => {
             filterBarcodeData = this.checkBarCodeOnproduct(barcodeData);
         }, (err) => {
+            this.isFound = true;
             //            this.err = err;
             // An error occurred
         }).then(() => {
+            this.isFound = true;
             if (filterBarcodeData && filterBarcodeData.length) {
+                this._productProvider.queryToProductCode(filterBarcodeData[0].ID).then((res) => {
+                    console.log(res);
+                })
                 let profileModal = this.modalCtrl.create(PopupPage, {data: filterBarcodeData[0]}, {cssClass: "always-modal"});
                 let qty = filterBarcodeData[0].qty;
                 profileModal.onDidDismiss(data => {
@@ -332,6 +338,7 @@ export class ProductViewPage {
         })
     }
     searchProduct(ev: any) {
+        this.isFound = true;
         this.products = this.productsRef;
         let val = ev.target.value;
         if (val && val.trim() != '') {
@@ -381,6 +388,7 @@ export class ProductViewPage {
         });
     }
     onSearchCancel() {
+        this.isFound = true;
         this.myInput = '';
         this.products = this.productsRef;
     }

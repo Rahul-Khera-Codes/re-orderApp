@@ -10,7 +10,7 @@
     "ProductCodes":
             "CREATE TABLE IF NOT EXISTS ProductCodes(ProductID CHAR,Barcode CHAR,Name CHAR)",
     "Product_Control_Line":
-            "CREATE TABLE IF NOT EXISTS Product_Control_Line(IDLocal CHAR,IDWeb CHAR,ListIDLocal CHAR,ListIDWeb CHAR,ProductIDLocal CHAR)",
+            "CREATE TABLE IF NOT EXISTS Product_Control_Line(IDLocal CHAR,IDWeb CHAR,ListIDLocal CHAR,ListIDWeb CHAR,ProductIDLocal CHAR,LastUpdatedDateTime CHAR)",
     "Product_Control_List":
             "CREATE TABLE IF NOT EXISTS Product_Control_List(IDLocal CHAR,IDWeb CHAR,Name CHAR,LastUpdatedDateTime CHAR,CustomerIDLocal CHAR,CustomerIDWeb CHAR,IsDefault BOOLEAN,ReLoginToSubmit BOOLEAN)",
     "Usage":
