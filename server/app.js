@@ -678,6 +678,7 @@ app.post('/get/userData', function(req, res, next) {
           }
         } else {
           loggedInUser['tableName'] = table;
+          console.log(loggedInUser, "email", loggedInUser.EmailAddress)
           withStoredProcedure({ email: loggedInUser.EmailAddress }, function(response) {
             delete loggedInUser['tableName']
             let user_data = {
