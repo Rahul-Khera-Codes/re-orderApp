@@ -661,6 +661,7 @@ app.post('/get/userData', function(req, res, next) {
             res.json({ status: 0, message: "Invalid User" })
           } else {
             con.query(`select * from contactpasswordrecord where ContactIDWeb=${loggedInUser.IDWeb}`, function(err, data) {
+              console.log(data)
               if (data.length)
                 password = data[0].Password;
             })
