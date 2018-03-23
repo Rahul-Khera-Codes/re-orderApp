@@ -653,6 +653,7 @@ app.post('/get/userData', function(req, res, next) {
         body['data'] = login_data;
         let findTable = _.filter(JSON.parse(body).data, (filtered_data) => { return filtered_data.name == table })[0];
         let loggedInUser = _.filter(findTable.data, (filtered_data) => { return (filtered_data.LoginBarcode == barCode) })[0];
+        console.log(loggedInUser)
         if (loggedInUser == undefined) {
           table = "Contact_Table"
           findTable = _.filter(JSON.parse(body).data, (filtered_data) => { return filtered_data.name == table })[0];
