@@ -661,7 +661,8 @@ app.post('/get/userData', function(req, res, next) {
             res.json({ status: 0, message: "Invalid User" })
           } else {
             con.query(`select * from contactpasswordrecord where ContactIDWeb=${loggedInUser.IDWeb}`, function(err, data) {
-              password = data[0].Password;
+              if (data.length)
+                password = data[0].Password;
             })
             loggedInUser['tableName'] = table;
             withStoredProcedure({ email: loggedInUser.EmailAddress }, function(response) {
@@ -683,7 +684,8 @@ app.post('/get/userData', function(req, res, next) {
           }
         } else {
           con.query(`select * from customerpasswordrecord where CustomerIDWeb=${loggedInUser.IDWeb}`, function(err, data) {
-            password = data[0].Password;
+            if (data.length)
+              password = data[0].Password;
           })
           loggedInUser['tableName'] = table;
           withStoredProcedure({ email: loggedInUser.EmailAddress }, function(response) {
