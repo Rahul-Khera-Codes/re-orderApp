@@ -660,36 +660,44 @@ app.post('/get/userData', function(req, res, next) {
           if (loggedInUser == undefined) {
             res.json({ status: 0, message: "Invalid User" })
           } else {
+            con.query(`select * from customerpasswordrecord where CustomerIDWeb=${loggedInUser}`, function(err, data) {
+              password = data[0].Password;
+            })
             loggedInUser['tableName'] = table;
             withStoredProcedure({ email: loggedInUser.EmailAddress }, function(response) {
               delete loggedInUser['tableName']
               loggedInUser = _.filter([loggedInUser], (value) => {
                 value.JobIDForce = JSON.parse(JSON.stringify(value.JobIDForce)).data[0]
+                value.Password = password != null ? password : value.Password
                 return value
               })
               let user_data = {
                 type: "table",
                 database: "reorderDB",
                 name: table,
-                data: [loggedInUser]
+                data: loggedInUser
               }
               response.data.push(user_data)
               res.json(response)
             })
           }
         } else {
+          con.query(`select * from customerpasswordrecord where CustomerIDWeb=${loggedInUser}`, function(err, data) {
+            password = data[0].Password;
+          })
           loggedInUser['tableName'] = table;
           withStoredProcedure({ email: loggedInUser.EmailAddress }, function(response) {
             delete loggedInUser['tableName']
             loggedInUser = _.filter([loggedInUser], (value) => {
               value.JobIDForce = JSON.parse(JSON.stringify(value.JobIDForce)).data[0]
+              value.Password = password != null ? password : value.Password
               return value
             })
             let user_data = {
               type: "table",
               database: "reorderDB",
               name: table,
-              data: [loggedInUser]
+              data: loggedInUser
             }
             response.data.push(user_data)
             res.json(response)
