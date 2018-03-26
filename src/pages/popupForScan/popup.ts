@@ -1,5 +1,6 @@
 import {Component, OnInit} from '@angular/core';
-import {NavParams, ViewController} from 'ionic-angular';
+import {NavParams, ViewController, ModalController} from 'ionic-angular';
+import {PopupSuccessPage} from './../popupForSuccess/popupSuccess';
 
 @Component({
     selector: 'page-popup',
@@ -8,7 +9,7 @@ import {NavParams, ViewController} from 'ionic-angular';
 export class PopupPage implements OnInit {
     data;
     qty = 0;
-    constructor(public viewCtrl: ViewController, public _navParams: NavParams) {
+    constructor(public modalCtrl: ModalController,public viewCtrl: ViewController, public _navParams: NavParams) {
     }
     ionViewWillEnter() {
     }
@@ -21,7 +22,15 @@ export class PopupPage implements OnInit {
         this.viewCtrl.dismiss(this.data);
     }
     submit() {
-        this.viewCtrl.dismiss(this.data);
+        console.log("this.data.qty", this.data.qty)
+        if (this.data.qty > 0) {
+            this.data['flag']=1;
+             let profileModal = this.modalCtrl.create(PopupSuccessPage, {data: "Successfully Submitted"}, {cssClass: "always-modalSuccess"});
+             profileModal.present();
+             this.viewCtrl.dismiss(this.data);
+        } else {
+            return false;
+        }
     }
     remove(productData) {
         if (productData['qty'] > 0) {

@@ -1,5 +1,5 @@
 import {Component, ViewChild} from '@angular/core';
-import {Platform} from 'ionic-angular';
+import {Platform, Events, IonicApp, App} from 'ionic-angular';
 import {StatusBar} from '@ionic-native/status-bar';
 import {SplashScreen} from '@ionic-native/splash-screen';
 import {LoginPage} from '../pages/login/login';
@@ -32,7 +32,8 @@ export class MyApp {
     landscape: boolean = true;
     exportErr: boolean | null | string = null;
     menuDisplay: boolean = false;
-    constructor(private _event: EventProvider, private _isLogin: IsLoginEventHandlerProvider, private network: Network, public _export: ExportDataProvider, private _consignmentProvider: ConsignmentProvider, private _ngZone: NgZone, private _storage: LocalStorageProvider, private _consignmentService: ConsignmentProvider, private _toast: ToastProvider, private _apiProvider: ApiServiceProvider, private _sqlService: SqlLiteProvider, private sqlitePorter: SQLitePorter, private _menuCtrl: MenuController, public _sqlLiteservice: SqlLiteProvider, platform: Platform, statusBar: StatusBar, splashScreen: SplashScreen) {
+    backPressed: boolean = false;
+    constructor(private app: App, private ionicApp: IonicApp, public events: Events, private _event: EventProvider, private _isLogin: IsLoginEventHandlerProvider, private network: Network, public _export: ExportDataProvider, private _consignmentProvider: ConsignmentProvider, private _ngZone: NgZone, private _storage: LocalStorageProvider, private _consignmentService: ConsignmentProvider, private _toast: ToastProvider, private _apiProvider: ApiServiceProvider, private _sqlService: SqlLiteProvider, private sqlitePorter: SQLitePorter, private _menuCtrl: MenuController, public _sqlLiteservice: SqlLiteProvider, public platform: Platform, statusBar: StatusBar, splashScreen: SplashScreen) {
         localStorage.setItem("displayMode", 'Landscape');
         this._apiProvider.apiInProcess.subscribe(isDone => {
             if (isDone) {
@@ -46,7 +47,7 @@ export class MyApp {
                 this.menuDisplay = true;
             }
         })
-        platform.ready().then(() => {
+        this.platform.ready().then(() => {
             statusBar.styleDefault();
             splashScreen.hide();
             this._menuCtrl.enable(true);
@@ -58,6 +59,36 @@ export class MyApp {
                 }
             });
         });
+        this.checkBackButton();
+    }
+    checkBackButton() {
+        this.platform.registerBackButtonAction(() => {
+            let ready = true;
+            if (this.myNav.canGoBack()) {
+                let activePortal = this.ionicApp._loadingPortal.getActive() ||
+                    this.ionicApp._modalPortal.getActive() ||
+                    this.ionicApp._toastPortal.getActive() ||
+                    this.ionicApp._overlayPortal.getActive();
+                if (activePortal) {
+                    ready = false;
+                    var refVar = activePortal;
+                    activePortal.dismiss();
+                    activePortal = refVar;
+                    //                    activePortal.onDidDismiss(() => {ready = true;});
+                } else {
+                    this.myNav.pop();
+                }
+            } else {
+                if (!this.backPressed) {
+                    this.backPressed = true;
+                    this._toast.presentToast('Press Again To Exit App', 3000);
+                    setTimeout(() => this.backPressed = false, 2000);
+                    return;
+                } else {
+                    navigator['app'].exitApp();
+                }
+            }
+        }, 100);
     }
     //    importData() {
     //        if (!this.isclick) {

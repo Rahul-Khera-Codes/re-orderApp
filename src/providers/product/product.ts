@@ -15,12 +15,12 @@ export class ProductProvider {
             })
         })
     }
-    queryToProductCode(ProductID){
+    queryToProductCode(ProductID) {
         return new Promise((resolve, reject) => {
             let productCode = [];
             this.openDB().then(() => {
-                this.DB.executeSql(`SELECT * FROM ProductCodes WHERE ProductID = '${ProductID}'`, []).then((res) => {
-                        if (res.rows.length) {
+                this.DB.executeSql(`SELECT * FROM ProductCodes WHERE ProductIDLocal IN (${ProductID.join()})`, []).then((res) => {
+                    if (res.rows.length) {
                         for (let i = 0; i < res.rows.length; i++) {
                             productCode.push((res.rows.item(i)));
                         }
@@ -28,7 +28,7 @@ export class ProductProvider {
                     resolve(productCode);
                 }).catch(e => console.log(e));
             })
-        })        
+        })
     }
     queryToProductControlLine(selectedConsignmentIDWeb, selectedConsignmentIDLocal) {
         return new Promise((resolve, reject) => {

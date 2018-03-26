@@ -10,8 +10,18 @@
     .ion-page{
         margin:0 auto;
         position: relative;
-        top: 20%;
+        top: 30%;
         width: 75%;
-        height: 33%
+        height: 20%
+    }
+}
+page-popup{
+    .item{
+        color:#ffffff;
+        background:#2530b7;
+    }
+    .content{
+        background:#2530b7;
+        color:white;
     }
 }

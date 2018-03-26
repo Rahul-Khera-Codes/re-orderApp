@@ -36,8 +36,7 @@
         "@ionic/storage": "2.1.3",
         "@types/jquery": "^3.3.0",
         "angular2-uuid": "^1.1.1",
-        "com.hiddentao.cordova.filepath": "~1.0.1",
-        "cordova-android": "^6.2.3",
+        "cordova-android": "^6.2.0",
         "cordova-ios": "4.5.4",
         "cordova-plugin-compat": "^1.2.0",
         "cordova-plugin-device": "^1.1.7",
@@ -89,7 +88,6 @@
             "cordova-plugin-inappbrowser": {},
             "cordova-plugin-file": {},
             "cordova-plugin-file-transfer": {},
-            "com.hiddentao.cordova.filepath": {},
             "cordova-plugin-x-toast": {}
         },
         "platforms": [

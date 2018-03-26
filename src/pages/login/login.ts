@@ -73,18 +73,14 @@ export class LoginPage {
     }
     getConsignmentAndCheckUserType() {
         this._consignmentProvider.checkUserType().then((userType) => {
-            console.log("userType", userType)
             if (userType == constantUserType['customer']) {
                 this._consignmentProvider.queryToProductControlList().then((consignmentList) => {
                     this.consignmentCheck(consignmentList['list']);
                 })
             } else {
-                console.log("else")
                 this._consignmentProvider.queryListToContact().then((listToContact) => {
-                    console.log("queryListToContact", listToContact)
                     this._consignmentProvider.queryProductControlListContentLogin(listToContact).then((consignmentList) => {
                         this.consignmentCheck(consignmentList['list']);
-                        console.log("queryProductControlListContentLogin", consignmentList)
                     }, (err) => {
                         console.log("err", err)
                     })
