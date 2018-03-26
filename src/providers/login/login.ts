@@ -54,7 +54,7 @@ export class LoginProvider {
                         }).catch(e => {
                             reject(e);
                         });
-                    }else{
+                    } else {
                         resolve(pass);
                     }
                 }, (err) => {
@@ -69,7 +69,6 @@ export class LoginProvider {
                 this.DataBase = db;
                 //this.encryptPassword()
                 this.DataBase.executeSql(`UPDATE ${tableName} SET Password='${newPwd}' , LastUpdatedDateTime='${this.getCurentTimeDate()}' WHERE EmailAddress='${email}' AND Password='${pwd}'`, []).then((res) => {
-                    console.log("res.rowsAffected", res.rowsAffected);
                     if (res.rowsAffected) {
                         resolve(newPwd);
                     } else {
@@ -88,7 +87,6 @@ export class LoginProvider {
             this._sqlProvider.openDb().then((db: SQLiteObject) => {
                 this.DataBase = db;
                 this.DataBase.executeSql(`SELECT * FROM Customer_Table WHERE EmailAddress='${formDataEmail}' AND Password='${formDataEmailPassword}'`, []).then((res) => {
-                    console.log("res", res)
                     if (res.rows.length) {
                         this.convertLoginResTojson(res);
                         this._localStorageProvider.setLocalStorageData('userType', "customer");
@@ -98,18 +96,12 @@ export class LoginProvider {
                         data['IDWeb'] = res.rows.item(0).IDWeb;
                         data['IDLocal'] = res.rows.item(0).IDLocal;
                         data['barCode'] = false;
-                        //                        this._sqlProvider.checkApiType("xyz", data).then(() => {
-                        //                            resolve(res);
-                        //                        }, (err) => {
                         this._sqlProvider.checkDataExistInTable("Product_Control_List").then((tableLength) => {
                             if (tableLength) {
-                                //                                    res['err'] = "synchronization failed";
                                 resolve(res);
                             } else {
-                                //                                    reject("synchronization failed");
                             }
                         })
-                        //                        })
                     } else {
                         resolve(this.authUserContact(formDataEmail, formDataEmailPassword));
                     }
@@ -129,38 +121,13 @@ export class LoginProvider {
                     data['IDWeb'] = res.rows.item(0).IDWeb;
                     data['IDLocal'] = res.rows.item(0).IDLocal;
                     data['barCode'] = false;
-                    //                    this._sqlProvider.checkApiType("xyz", data).then(() => {
-                    //                        resolve(res);
-                    //                    }, (err) => {
-                    //                        this._sqlProvider.checkDataExistInTable("Product_Control_List").then((tableLength) => {
-                    //                            if (tableLength) {
-                    //                                res['err'] = "synchronization failed";
                     resolve(res);
-                    //                            } else {
-                    //                                reject("synchronization failed");
-                    //                            }
-                    //                        })
-                    //                    })
                 } else {
                     reject("user not exist");
-                    //                    this.checkDataExistInTable();
                 }
             }).catch(e => reject(e));
         })
     }
-
-    getLoginRecord() {
-        return new Promise((resolve, reject) => {
-
-        })
-    }
-
-    //    checkDataExistInTable() {
-    //        this.DataBase.executeSql(`SELECT * FROM Customer_Table`, []).then((res) => {
-    //            console.log("res", res)
-    //        })
-    //
-    //    }
     authUserCustomerByBarCode(barCode) {
         return new Promise((resolve, reject) => {
             this._sqlProvider.openDb().then((db: SQLiteObject) => {
@@ -175,18 +142,7 @@ export class LoginProvider {
                         data['IDWeb'] = res.rows.item(0).IDWeb;
                         data['IDLocal'] = res.rows.item(0).IDLocal;
                         data['barCode'] = true;
-                        //                        this._sqlProvider.checkApiType("xyz", data).then(() => {
-                        //                            resolve(res);
-                        //                        }, (err) => {
-                        //                            this._sqlProvider.checkDataExistInTable("Product Control List").then((tableLength) => {
-                        //                                if (tableLength) {
-                        //                                    res['err'] = "synchronization failed";
                         resolve(res);
-                        //                                } else {
-                        //                                    reject("synchronization failed");
-                        //                                }
-                        //                            })
-                        //                        })
                     } else {
                         resolve(this.authUserContactByBarCode(barCode));
                     }
@@ -206,18 +162,7 @@ export class LoginProvider {
                     data['IDWeb'] = res.rows.item(0).IDWeb;
                     data['IDLocal'] = res.rows.item(0).IDLocal;
                     data['barCode'] = true;
-                    //                    this._sqlProvider.checkApiType("xyz", data).then(() => {
-                    //                        resolve(res);
-                    //                    }, (err) => {
-                    //                        this._sqlProvider.checkDataExistInTable("Product Control List").then((tableLength) => {
-                    //                            if (tableLength) {
-                    //                                res['err'] = "synchronization failed";
                     resolve(res);
-                    //                            } else {
-                    //                                reject("synchronization failed");
-                    //                            }
-                    //                        })
-                    //                    })
                 } else {
                     reject("user not exist");
                 }

@@ -17,7 +17,7 @@
                 <ion-icon name="menu" color='yellow'></ion-icon>
         </button>
         <img *ngIf="!searchBar" src="assets/imgs/bst.jpg" alt="" (click)="onClickImage('https://www.bstgroup.com.au/')" class='headerLogo'/>
-        <button ion-button float-right icon-only color='black' (click)="gotoSearch()"  *ngIf="isManualLogin && !searchBar">
+            <button ion-button float-right icon-only color='black' (click)="gotoSearch()"  *ngIf="!searchBar">
             <ion-icon name="search" color='red'></ion-icon>
         </button>
     </ion-navbar>
@@ -27,10 +27,10 @@
     <ion-grid class="black gridScroll"  >    
         <ion-row *ngIf="!isManualLogin">
             <ion-col col-6>
-                <button class="no-margin radius" color="gray" ion-button full margin-top  (click)="addProductByBarcode()">Scan</button>
+                <button class="no-margin radius" ion-button full margin-top color="red" (click)="submitProductByScan()">Submit</button>
             </ion-col>
             <ion-col col-6>
-                <button class="no-margin radius" ion-button full margin-top color="red" (click)="submitProductByScan()">Submit</button>
+                <button class="no-margin radius" ion-button full margin-top  (click)="addProductByBarcode()">Scan</button>
             </ion-col>
         </ion-row>
         <ion-row *ngIf="(isManualLogin && products && products.length)">
@@ -59,7 +59,7 @@
             </div>
         </div>
 
-        <ion-grid  *ngIf="isManualLogin && products && products.length" [ngClass]="{'portrait': displayMode == 'Portrait', 'landscape': displayMode != 'Portrait'}" no-padding>
+        <ion-grid  *ngIf="products && products.length" [ngClass]="{'portrait': displayMode == 'Portrait', 'landscape': displayMode != 'Portrait'}" no-padding>
             <div class="card1">   
                 <div class="rowForLandscape" wrap>
                     <div class="column cursorPointer" *ngFor="let product of products; let i=index">
@@ -72,7 +72,7 @@
                                 </div>
                                 <div class="columnForGrid50 padding ">
                                     <ion-card-content class="margin10 relative" >
-                                        <div class="row rowForLandscape" >
+                                        <div class="row rowForLandscape" style="text-align: center;">
                                             <div text-capitalize class="font16 fontWidth name cartTitle center" >
                                                 <span (click)="onClickImage(product.URL)"> {{product.Name}} </span>
                                             </div>    
@@ -97,7 +97,7 @@
                                         </div>
                                     </ion-card-content>
                                 </div>  
-                                <div class="row">
+                                <div class="row marginAuto">
                                     <div class="columnForGrid50 no-padding-top" padding *ngIf="displayMode != 'Portrait'">
                                          <ion-row class="border">
                                             <ion-col col-4 no-padding>
@@ -131,10 +131,10 @@
         <ion-grid padding-top>    
             <ion-row *ngIf="!isManualLogin">
                 <ion-col col-6>
-                    <button class="no-margin radius" color="gray" ion-button full margin-top  (click)="addProductByBarcode()">Scan</button>
+                    <button class="no-margin radius" ion-button full margin-top color="red" (click)="submitProductByScan()">Submit</button>
                 </ion-col>
                 <ion-col col-6>
-                    <button class="no-margin radius" ion-button full margin-top color="red" (click)="submitProductByScan()">Submit</button>
+                    <button class="no-margin radius" ion-button full margin-top  (click)="addProductByBarcode()">Scan</button>
                 </ion-col>
             </ion-row>
             <!--            <ion-row *ngIf="(isManualLogin && products && products.length && myInputEnable)">

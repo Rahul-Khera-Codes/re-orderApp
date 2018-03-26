@@ -318,7 +318,6 @@ export class ProductViewPage {
             this.isFound = true;
             if (filterBarcodeData && filterBarcodeData.length) {
                 this._productProvider.queryToProductCode(filterBarcodeData[0].ID).then((res) => {
-                    console.log(res);
                 })
                 let profileModal = this.modalCtrl.create(PopupPage, {data: filterBarcodeData[0]}, {cssClass: "always-modal"});
                 let qty = filterBarcodeData[0].qty;

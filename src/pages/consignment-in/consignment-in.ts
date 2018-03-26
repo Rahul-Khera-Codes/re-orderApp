@@ -29,7 +29,7 @@ export class ConsignmentInPage implements OnInit {
         this.usageData.jobID = '';
         this.userInfo = JSON.parse(localStorage.getItem('userDetails'))[0];
         if (this.userInfo['JobIDForce']) {
-           this.usageData['jobID'] = " ";
+//           this.usageData['jobID'] = " ";
         }
     }
     ngOnInit() {

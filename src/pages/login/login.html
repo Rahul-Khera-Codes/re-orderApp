@@ -64,7 +64,13 @@
         <div *ngSwitchCase="'remote'">
             <img class="paddingBarCode" src="assets/imgs/br.png" alt=""/>
             <div padding>
-                <button ion-button color="red" class="radius" block (click)="openBarCode()" >Sign In With Barcode</button>
+                <button ion-button color="red" class="radius" block (click)="openBarCode()" >
+                        <span  *ngIf="spinBarcode==false" >
+                        Sign In With Barcode
+                    </span>
+                    <ion-spinner name="circles"  *ngIf="spinBarcode" class="spin">
+                    </ion-spinner>
+                </button>
             </div>
             <div class="center" margin-top *ngIf="barCodeErr">
                  <ion-badge  color="danger">{{barCodeErr}}</ion-badge>

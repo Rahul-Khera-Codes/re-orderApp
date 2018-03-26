@@ -26,7 +26,8 @@ export class LoginPage {
     isConsignmentExist: boolean = false;
     relogin = false;
     preUserEmail: string;
-    spin = false;
+    spin: boolean = false;
+    spinBarcode: boolean = false;
     synErr: boolean = false;
     isRemember: boolean = false;
     constructor(public _local: LocalDbProvider, public _isLogin: IsLoginEventHandlerProvider, public _storage: LocalStorageProvider, public viewCtrl: ViewController, private _toast: ToastProvider, private _consignmentProvider: ConsignmentProvider, private _login: LoginProvider, private barcodeScanner: BarcodeScanner, public navCtrl: NavController, public navParams: NavParams, private formBuilder: FormBuilder) {
@@ -72,14 +73,18 @@ export class LoginPage {
     }
     getConsignmentAndCheckUserType() {
         this._consignmentProvider.checkUserType().then((userType) => {
+            console.log("userType", userType)
             if (userType == constantUserType['customer']) {
                 this._consignmentProvider.queryToProductControlList().then((consignmentList) => {
                     this.consignmentCheck(consignmentList['list']);
                 })
             } else {
+                console.log("else")
                 this._consignmentProvider.queryListToContact().then((listToContact) => {
+                    console.log("queryListToContact", listToContact)
                     this._consignmentProvider.queryProductControlListContentLogin(listToContact).then((consignmentList) => {
                         this.consignmentCheck(consignmentList['list']);
+                        console.log("queryProductControlListContentLogin", consignmentList)
                     }, (err) => {
                         console.log("err", err)
                     })
@@ -134,12 +139,15 @@ export class LoginPage {
     }
     openBarCode() {
         this.synErr = false;
+        this.spinBarcode = true;
+        this.barCodeErr = null;
         this.barcodeScanner.scan().then((barcodeData) => {
             this.barcodeData = barcodeData;
             this._local.callDBtoManage({barCode: barcodeData.text}).then((res) => {
                 if (!res['message']) {
                     this.authLoginByBarcode(barcodeData)
                 } else {
+                    this.spinBarcode = false;
                     this.barCodeErr = res['message'];
                 }
             }, (err) => {
@@ -152,18 +160,24 @@ export class LoginPage {
         });
     }
     authLoginByBarcode(barcodeData) {
+        console.log("barcodeData", barcodeData)
         this.barCodeErr = null;
         this._login.authUserCustomerByBarCode(barcodeData.text).then((response: any) => {
+            console.log("response", response)
             if (response && response.rows.length) {
+                console.log(response.rows.item(0).EmailAddress, this.preUserEmail)
                 if (response.rows.item(0).EmailAddress == this.preUserEmail) {
                     let data = {'login': 'true'};
                     this.viewCtrl.dismiss(data);
                 } else {
+                    console.log("getConsignmentAndCheckUserType")
                     this.getConsignmentAndCheckUserType();
                 }
+                this.spinBarcode = false;
                 this._toast.presentToast("Login Successful", 2000);
             }
         }, (err) => {
+            this.spinBarcode = false;
             console.log(err)
             this.barCodeErr = this.synErr ? 'Could not access the Web Server' : err;
         })

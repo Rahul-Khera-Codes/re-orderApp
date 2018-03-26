@@ -19,11 +19,7 @@ export class ProductProvider {
         return new Promise((resolve, reject) => {
             let productCode = [];
             this.openDB().then(() => {
-                this.DB.executeSql(`SELECT * FROM ProductCodes`, []).then((res) => {
-                    console.log(res,`SELECT * FROM ProductCodes WHERE ProductID = ${ProductID}`)
-                })
                 this.DB.executeSql(`SELECT * FROM ProductCodes WHERE ProductID = '${ProductID}'`, []).then((res) => {
-                    console.log("res",res)
                         if (res.rows.length) {
                         for (let i = 0; i < res.rows.length; i++) {
                             productCode.push((res.rows.item(i)));
@@ -53,11 +49,11 @@ export class ProductProvider {
         let idForConditionCheck = {}
         if (selectedConsignmentIDWeb != -1) {
             idForConditionCheck['name'] = constantidType['listWeb'];
-            idForConditionCheck['value'] = selectedConsignmentIDWeb;
+            idForConditionCheck['value'] = `${selectedConsignmentIDWeb}`;
             return idForConditionCheck;
         } else {
             idForConditionCheck['name'] = constantidType['listLocal'];
-            idForConditionCheck['value'] = selectedConsignmentIDLocal;
+            idForConditionCheck['value'] = `${selectedConsignmentIDLocal}`;
             return idForConditionCheck;
         }
     }

@@ -16,13 +16,14 @@
     </ion-list>
 
     <ion-list padding>
-        <ion-item *ngIf="isManualLogin">
+        <!--*ngIf="isManualLogin"-->
+        <ion-item >
             <ion-label color="primary">Job ID <span class="red" *ngIf="userInfo && userInfo['JobIDForce']">*</span></ion-label>
             <ion-input placeholder="ID" [(ngModel)]="usageData['jobID']"></ion-input>
         </ion-item>
 
         <ion-grid>
-            <ion-row *ngIf="isManualLogin">
+            <ion-row >
                 <ion-col col-12>
                     <button ion-button full color="red" class="radius"  (click)="buttonClick()">Save Job ID</button>
                 </ion-col>
@@ -30,11 +31,11 @@
                     <button ion-button  full class="radius" (click)="openBarCode()">Scan Job ID</button>
                 </ion-col>
             </ion-row>
-            <ion-row *ngIf="!isManualLogin">
+<!--            <ion-row *ngIf="!isManualLogin">
                 <ion-col col-12 >
                     <button ion-button  full class="radius" (click)="openBarCode()">Scan Job ID</button>
                 </ion-col>
-            </ion-row>
+            </ion-row>-->
         </ion-grid>
         <div padding text-center *ngIf="jobIDErr">
              <ion-badge color="danger"> Please Enter a Job ID </ion-badge>
