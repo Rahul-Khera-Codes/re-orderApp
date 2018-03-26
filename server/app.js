@@ -80,20 +80,23 @@ function findListData(list_data, email, line_data, callback) {
           product.push(Product);
           if (line_data.length == key + 1) {
             let product_id = _.map(product, 'ID');
-            console.log(product_id)
             con.query(`select * from productcodes where ProductIDLocal IN (${product_id.join()})`, function(err, product_codes) {
-              console.log(err, product_codes)
-              let final_data = [{ type: "table", name: "Product", database: "reorderDB", data: product }, { type: "table", name: "Product_Control_Line", database: "reorderDB", data: product_line }, { type: "table", name: "ProductCodes", database: "reorderDB", data: product_codes }]
+              let final_data = [{ type: "table", name: "Product", database: "reorderDB", data: product },
+                { type: "table", name: "Product_Control_Line", database: "reorderDB", data: product_line },
+                { type: "table", name: "ProductCodes", database: "reorderDB", data: product_codes }
+              ]
               callback(final_data)
             })
           }
         })
       } else {
         let product_id = _.map(product, 'ID');
-        console.log(product_id)
         con.query(`select * from productcodes where ProductIDLocal IN (${product_id.join()})`, function(err, product_codes) {
-          console.log(err, product_codes)
-          let final_data = [{ type: "table", name: "Product", database: "reorderDB", data: product }, { type: "table", name: "Product_Control_Line", database: "reorderDB", data: product_line }, { type: "table", name: "ProductCodes", database: "reorderDB", data: product_codes }]
+          let final_data = [{ type: "table", name: "Product", database: "reorderDB", data: product },
+            { type: "table", name: "Product_Control_Line", database: "reorderDB", data: product_line },
+            { type: "table", name: "ProductCodes", database: "reorderDB", data: product_codes }
+          ]
+          console.log(final_data[2])
           callback(final_data)
         })
       }
