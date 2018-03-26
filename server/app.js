@@ -85,6 +85,7 @@ function findListData(list_data, email, line_data, callback) {
                 { type: "table", name: "Product_Control_Line", database: "reorderDB", data: product_line },
                 { type: "table", name: "ProductCodes", database: "reorderDB", data: product_codes }
               ]
+              console.log(final_data[2])
               callback(final_data)
             })
           }
