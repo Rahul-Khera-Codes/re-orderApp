@@ -85,7 +85,6 @@ function findListData(list_data, email, line_data, callback) {
                 { type: "table", name: "Product_Control_Line", database: "reorderDB", data: product_line },
                 { type: "table", name: "ProductCodes", database: "reorderDB", data: product_codes }
               ]
-              console.log(final_data[2])
               callback(final_data)
             })
           }
@@ -97,7 +96,6 @@ function findListData(list_data, email, line_data, callback) {
             { type: "table", name: "Product_Control_Line", database: "reorderDB", data: product_line },
             { type: "table", name: "ProductCodes", database: "reorderDB", data: product_codes }
           ]
-          console.log(final_data[2])
           callback(final_data)
         })
       }
@@ -145,6 +143,7 @@ function withStoredProcedure(body, callback) {
     findListData(data, body.email, product_line_data, function(response) {
       product_list_data.push(response[0])
       product_list_data.push(response[1])
+      product_list_data.push(response[2])
       callback({ data: product_list_data })
     })
   })
