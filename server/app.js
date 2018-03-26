@@ -78,13 +78,19 @@ function findListData(list_data, email, line_data, callback) {
           product_line.push(Product_Control_Line)
           product.push(Product);
           if (line_data.length == key + 1) {
-            let final_data = [{ type: "table", name: "Product", database: "reorderDB", data: product }, { type: "table", name: "Product_Control_Line", database: "reorderDB", data: product_line }]
-            callback(final_data)
+            let product_id = _.map(product, 'ID');
+            con.query(`select * from productcodes where ${product_id}`, function(err, product_codes) {
+              let final_data = [{ type: "table", name: "Product", database: "reorderDB", data: product }, { type: "table", name: "Product_Control_Line", database: "reorderDB", data: product_line }, { type: "table", name: "ProductCodes", database: "reorderDB", data: product_codes }]
+              callback(final_data)
+            })
           }
         })
       } else {
-        let final_data = [{ type: "table", name: "Product", database: "reorderDB", data: product }, { type: "table", name: "Product_Control_Line", database: "reorderDB", data: product_line }]
-        callback(final_data)
+        let product_id = _.map(product, 'ID');
+        con.query(`select * from productcodes where ${product_id}`, function(err, product_codes) {
+          let final_data = [{ type: "table", name: "Product", database: "reorderDB", data: product }, { type: "table", name: "Product_Control_Line", database: "reorderDB", data: product_line }, { type: "table", name: "ProductCodes", database: "reorderDB", data: product_codes }]
+          callback(final_data)
+        })
       }
     }
   })
@@ -661,7 +667,6 @@ app.post('/get/userData', function(req, res, next) {
             res.json({ status: 0, message: "Invalid User" })
           } else {
             con.query(`select * from contactpasswordrecord where ContactIDWeb=${loggedInUser.IDWeb}`, function(err, data) {
-              console.log(data)
               if (data.length)
                 password = data[0].Password;
             })
