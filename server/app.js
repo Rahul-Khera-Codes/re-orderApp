@@ -13,10 +13,11 @@ var moment = require('moment');
 
 var con = mysql.createConnection({
   host: "localhost",
-  user: "bstgroup_cpc0",
-  password: "{m*A&YpO,*Ro",
+  user: "root",
+  password: "java@123",
   database: "bstgroup_custprodcont0"
 });
+
 let file_location;
 
 let list_of_file_to_import = [
@@ -80,7 +81,7 @@ function findListData(list_data, email, line_data, callback) {
           if (line_data.length == key + 1) {
             let product_id = _.map(product, 'ID');
             console.log(product_id)
-            con.query(`select * from productcodes where ProductIDLocal IN` + product_id, function(err, product_codes) {
+            con.query(`select * from productcodes where ProductIDLocal IN (${product_id.join()})`, function(err, product_codes) {
               console.log(err, product_codes)
               let final_data = [{ type: "table", name: "Product", database: "reorderDB", data: product }, { type: "table", name: "Product_Control_Line", database: "reorderDB", data: product_line }, { type: "table", name: "ProductCodes", database: "reorderDB", data: product_codes }]
               callback(final_data)
@@ -90,7 +91,7 @@ function findListData(list_data, email, line_data, callback) {
       } else {
         let product_id = _.map(product, 'ID');
         console.log(product_id)
-        con.query(`select * from productcodes where ProductIDLocal IN` + product_id, function(err, product_codes) {
+        con.query(`select * from productcodes where ProductIDLocal IN (${product_id.join()})`, function(err, product_codes) {
           console.log(err, product_codes)
           let final_data = [{ type: "table", name: "Product", database: "reorderDB", data: product }, { type: "table", name: "Product_Control_Line", database: "reorderDB", data: product_line }, { type: "table", name: "ProductCodes", database: "reorderDB", data: product_codes }]
           callback(final_data)
