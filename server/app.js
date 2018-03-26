@@ -79,8 +79,9 @@ function findListData(list_data, email, line_data, callback) {
           product.push(Product);
           if (line_data.length == key + 1) {
             let product_id = _.map(product, 'ID');
-            console.log(product_id)
+            // console.log(product_id)
             con.query(`select * from productcodes where ProductIDLocal in ${product_id}`, function(err, product_codes) {
+              console.log(product_codes)
               let final_data = [{ type: "table", name: "Product", database: "reorderDB", data: product }, { type: "table", name: "Product_Control_Line", database: "reorderDB", data: product_line }, { type: "table", name: "ProductCodes", database: "reorderDB", data: product_codes }]
               callback(final_data)
             })
@@ -88,8 +89,9 @@ function findListData(list_data, email, line_data, callback) {
         })
       } else {
         let product_id = _.map(product, 'ID');
-        console.log(product_id)
+        // console.log(product_id)
         con.query(`select * from productcodes where ProductIDLocal in  ${product_id}`, function(err, product_codes) {
+          console.log(product_codes)
           let final_data = [{ type: "table", name: "Product", database: "reorderDB", data: product }, { type: "table", name: "Product_Control_Line", database: "reorderDB", data: product_line }, { type: "table", name: "ProductCodes", database: "reorderDB", data: product_codes }]
           callback(final_data)
         })
