@@ -338,13 +338,11 @@ app.post('/save/data', function(req, res, next) {
         }]
 
         importUsageAndUsageLine(usageAndUsageLine, function(data) {
-          request('http://localhost:3031/import/dataToWebServer', function(error, response, body) {
-            if (err) {
-              console.log(err);
-            } else {
-              res.json({ message: "file is saved" })
-            }
-          })
+          if (err) {
+            console.log(err);
+          } else {
+            res.json({ message: "file is saved" })
+          }
         })
       });
     })
