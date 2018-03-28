@@ -354,7 +354,8 @@ app.post('/save/data', function(req, res, next) {
 
 let importUsageAndUsageLine = (usageAndUsageLine, callback) => {
   let file = usageAndUsageLine.splice(0, 1)[0];
-  con.query(`load local data infile '${export_file_location}/${file.filename}' into table ${file.tableName} fields terminated by '|#' LINES TERMINATED BY '[#]'`, function(err, insert_reponse) {
+  con.query(`load data infile '${export_file_location}/${file.filename}' into table ${file.tableName} fields terminated by '|#' LINES TERMINATED BY '[#]'`, function(err, insert_reponse) {
+    console.log(err)
     if (usageAndUsageLine.length) {
       importUsageAndUsageLine(usageAndUsageLine, callback)
     } else {
