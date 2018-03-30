@@ -2,7 +2,7 @@
     <ion-list>
         <ion-item class="itemCss">
             <ion-thumbnail item-end>
-               <img src="assets/imgs/success.png">
+               <img class="img1" src="assets/imgs/cross.png">
             </ion-thumbnail>
             <h2>
                 {{message}}
@@ -11,11 +11,14 @@
         </ion-item>
     </ion-list>
 </ion-content>
-<ion-footer no-lines>
+<ion-footer>
     <ion-grid no-padding no-lines>
-        <ion-row no-lines>
-            <ion-col center col-12 no-padding>
-                <button color="danger" style="margin: 0px auto;" class="center" ion-button Large (click)="dismiss()">Close</button>
+        <ion-row>
+            <ion-col col-6 no-padding>
+                <button no-margin ion-button full (click)="reSubmit()">Re-Scan</button>
+            </ion-col>
+            <ion-col col-6 no-padding>
+                <button ion-button no-margin full color="danger" (click)="dismiss()">Cancel</button>
             </ion-col>
         </ion-row>
     </ion-grid>

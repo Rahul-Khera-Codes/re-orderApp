@@ -37,6 +37,7 @@ import {EventProvider} from './../providers/event/event';
 import {Toast} from '@ionic-native/toast';
 import {PopupPage} from './../pages/popupForScan/popup';
 import {PopupSuccessPage} from './../pages/popupForSuccess/popupSuccess';;
+import {ReScanPage} from './../pages/rescanPopup/reScan';;
 
 @NgModule({
     declarations: [
@@ -52,7 +53,8 @@ import {PopupSuccessPage} from './../pages/popupForSuccess/popupSuccess';;
         ImageDirective,
         ProductViewPage,
         PopupPage,
-        PopupSuccessPage
+        PopupSuccessPage,
+        ReScanPage
     ],
     imports: [
         BrowserModule,
@@ -71,8 +73,9 @@ import {PopupSuccessPage} from './../pages/popupForSuccess/popupSuccess';;
         ForgotPasswordPage,
         ProductViewPage,
         PopupPage,
-        PopupSuccessPage
-    ],
+        PopupSuccessPage,
+        ReScanPage
+        ],
     providers: [
         StatusBar,
         SplashScreen,

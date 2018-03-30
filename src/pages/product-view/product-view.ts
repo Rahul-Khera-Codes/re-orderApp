@@ -22,6 +22,10 @@ import {InAppBrowser} from '@ionic-native/in-app-browser';
 import {EventProvider} from './../../providers/event/event';
 import {PopupPage} from './../popupForScan/popup';
 import {PopupSuccessPage} from './../popupForSuccess/popupSuccess';
+import {ReScanPage} from './../rescanPopup/reScan';
+import {ApiServiceProvider} from '../../providers/api-service/api-service';
+import {Observable} from 'rxjs/Rx';
+import {url} from '../../providers/config/config';
 
 @Component({
     selector: 'page-product-view',
@@ -53,7 +57,9 @@ export class ProductViewPage {
         "listIDLocal": "",
         "IDLocal": 0,
         "contactIDLocal": -1,
-        "customerIDLocal": -1
+        "customerIDLocal": -1,
+        "Orderdirect": "",
+        "Processed": ""
     }
     searchBar: boolean = false;
     isManualLogin = false;
@@ -63,7 +69,11 @@ export class ProductViewPage {
     spin: boolean = true;
     browser: any;
     productCode: any = [];
-    constructor(private _event: EventProvider, private iab: InAppBrowser, public _export: ExportDataProvider, public modalCtrl: ModalController, public _menuCtrl: MenuController, private _toast: ToastProvider, private _localStorage: LocalStorageProvider, private _consignmentProvider: ConsignmentProvider, private geolocation: Geolocation, private _productProvider: ProductProvider, public alertCtrl: AlertController, private barcodeScanner: BarcodeScanner, public navCtrl: NavController, public navParams: NavParams) {}
+    userDetails: any;
+    request: any;
+    count: number = 0;
+    orderdirect = "";
+    constructor(private _apiProvider: ApiServiceProvider, private _event: EventProvider, private iab: InAppBrowser, public _export: ExportDataProvider, public modalCtrl: ModalController, public _menuCtrl: MenuController, private _toast: ToastProvider, private _localStorage: LocalStorageProvider, private _consignmentProvider: ConsignmentProvider, private geolocation: Geolocation, private _productProvider: ProductProvider, public alertCtrl: AlertController, private barcodeScanner: BarcodeScanner, public navCtrl: NavController, public navParams: NavParams) {}
 
     ngOnInit() {
         this._event.mode.subscribe(event => {
@@ -72,7 +82,11 @@ export class ProductViewPage {
         this.checkLoginBy();
         this.selectedConsignment = this.navParams.get('selectedConsignment');
         this.usageData.jobID = this.navParams.get('jobID');
+        this.usageData.Orderdirect = this.navParams.get('selection');
+        this.orderdirect == this.navParams.get('selection');
         this.default = this.navParams.get('default');
+        this.userDetails = localStorage.getItem('userDetails') ? JSON.parse(localStorage.getItem('userDetails'))[0] : null;
+        //        this.usageData['Processed']=
         if (this.selectedConsignment) {
             this._productProvider.queryToProductControlLine(this.selectedConsignment.IDWeb, this.selectedConsignment.IDLocal).then((productControlLineData) => {
                 this.productControlLineData = productControlLineData;
@@ -84,9 +98,9 @@ export class ProductViewPage {
                             this.productCode = productCode;
                         }
                     })
-                    if (!this.isManualLogin) {
-                        quantity = 1;
-                    }
+                    //                    if (!this.isManualLogin) {
+                    //                        quantity = 1;
+                    //                    }
                     forEach(productDetails, (value) => {
                         value['qty'] = quantity;
                     })
@@ -121,7 +135,7 @@ export class ProductViewPage {
         this.searchBar = false;
     }
     onClickImage(url) {
-        this.browser = this.iab.create(url, '_blank', 'hardwareback=yes ,location=yes');
+        window.open(url, '_system');
     }
     checkLoginBy() {
         if (this._consignmentProvider.checkLoginBy() == constantLoginBy.manual) {
@@ -192,7 +206,8 @@ export class ProductViewPage {
             "IDLocal": 0,
             "productID": "",
             "usageIDLocal": 0,
-            "createdDateTime": ""
+            "createdDateTime": "",
+            "orderdirect": this.orderdirect
         }
         return new Promise((resolve, reject) => {
             this._consignmentProvider.checkUserType().then((userType) => {
@@ -263,7 +278,9 @@ export class ProductViewPage {
                         "listIDLocal": "",
                         "IDLocal": 0,
                         "contactIDLocal": -1,
-                        "customerIDLocal": -1
+                        "customerIDLocal": -1,
+                        "Orderdirect": "",
+                        "Processed": ""
                     }
                 })
             })
@@ -298,69 +315,114 @@ export class ProductViewPage {
     //    }
 
     checkBarCodeOnproduct(barcodeData: any) {
-        if (typeof barcodeData.text != "string") {
-            barcodeData.text = `${barcodeData.text}`;
-        }
-        return filter(this.products, (data: any) => {
-            if (data && (data.Barcode1 == barcodeData.text)) {
-                return data;
-            } else if (data && (data.Barcode2 == barcodeData.text)) {
-                return data;
-            } else if (data && (data.Barcode3 == barcodeData.text)) {
-                return data;
-            } else if (data && (data.Code == barcodeData.text)) {
-                return data;
-            } else {
-                if (this.productCode != "undefined" && this.productCode.length) {
-                    let code: any = filter(this.productCode, {'Barcode': barcodeData.text});
-                    if (code && code.length) {
-                        if (data && (data.ID == code[0].ProductIDLocal)) {
-                            return data;
-                        } else {
-                            return false;
-                        }
-                    }
+        return new Promise((resolve, reject) => {
+            if (typeof barcodeData.text != "string") {
+                barcodeData.text = `${barcodeData.text}`;
+            }
+            let filter_data = filter(this.products, (data: any) => {
+                if (data && (data.Barcode1.toLowerCase() == barcodeData.text.toLowerCase())) {
+                    return data;
+                } else if (data && (data.Barcode2.toLowerCase() == barcodeData.text.toLowerCase())) {
+                    return data;
+                } else if (data && (data.Barcode3.toLowerCase() == barcodeData.text.toLowerCase())) {
+                    return data;
+                } else if (data && (data.Code.toLowerCase() == barcodeData.text.toLowerCase())) {
+                    return data;
                 } else {
                     return false;
                 }
+            })
+            if (filter_data.length == 0) {
+                if (this.productCode != "undefined" && this.productCode.length) {
+
+                    this.productCodeFilter(this.productCode, barcodeData).then((code: any) => {
+                        if (code && code.length) {
+                            resolve(filter(this.products, (data: any) => {
+                                if (data && (data.ID.toLowerCase() == code[0].ProductIDLocal.toLowerCase())) {
+                                    return data;
+                                } else {
+                                    return false;
+                                }
+                            }))
+                        } else {
+                            resolve(filter_data);
+                        }
+                    })
+                } else {
+                    return false;
+                }
+            } else {
+                resolve(filter_data);
             }
+        })
+    }
+    productCodeFilter(productCode, barcodeData) {
+        return new Promise((resolve, reject) => {
+            resolve(filter(this.productCode, (codeData: any) => {
+                if (codeData.Barcode.toLowerCase() == barcodeData.text.toLowerCase()) {
+                    return codeData;
+                } else {
+                    return false;
+                }
+            }));
         })
     }
     addItemByBarcode() {
         let cancel = false;
-        let filterBarcodeData;
         this.isFound = true;
+        let userDetails: any = localStorage.getItem('userDetails') ? JSON.parse(localStorage.getItem('userDetails'))[0] : null;
         this.barcodeScanner.scan().then((barcodeData) => {
-            filterBarcodeData = this.checkBarCodeOnproduct(barcodeData);
-        }, (err) => {
-            this.isFound = true;
-            //            this.err = err;
-            // An error occurred
-        }).then(() => {
-            this.isFound = true;
-            if (filterBarcodeData && filterBarcodeData.length) {
-                let profileModal = this.modalCtrl.create(PopupPage, {data: filterBarcodeData[0]}, {cssClass: "always-modal"});
-                let qty = filterBarcodeData[0].qty;
-                profileModal.onDidDismiss((data) => {
-                    if (data && data.qty > 0) {
-                        this.isDataExistINList(data.ID, data.qty);
-                    } else {
-                        filterBarcodeData[0].qty = qty;
-                        this._toast.presentToast("Please add quentity", 3000);
-                    }
-                    if (data['flag']) {
-                        delete data['flag'];
-                        if (!data['flag']) {
-                            this.addItemByBarcode();
-                        }
-                    }
-                });
-                profileModal.present();
-            } else {
-                this._toast.presentToast("Product Not Found", 3000);
-                this.isFound = false;
+            if (barcodeData.text) {
+                if (userDetails && !((userDetails.addanyproduct == "true") || (userDetails.addanyproduct == "1"))) {
+                    this.checkBarCodeOnproduct(barcodeData).then((filterBarcodeData: any) => {
+                        this.isFound = true;
+                        this.createPopupForScanSearch(filterBarcodeData);
+                    }, (err) => {
+
+                    });
+                } else {
+                    this._apiProvider.apiCall(`${url.url}/search/barcode/${barcodeData.text}`).subscribe(res => {
+                        forEach(res.data, (value, key) => {
+                            value['qty'] = 0;
+                        });
+                        let filterBarcodeData = res.data;
+                        this.createPopupForScanSearch(filterBarcodeData);
+                    });
+                }
             }
+        }, (err) => {
+            console.log("error")
         })
+    }
+
+    createPopupForScanSearch(filterBarcodeData) {
+        if (filterBarcodeData && filterBarcodeData.length) {
+            let profileModal = this.modalCtrl.create(PopupPage, {data: filterBarcodeData[0]}, {cssClass: "always-modal"});
+            let qty = filterBarcodeData[0].qty;
+            profileModal.onDidDismiss((data) => {
+                if (data && data.qty > 0) {
+                    this.isDataExistINList(data.ID, data.qty);
+                } else {
+                    filterBarcodeData[0].qty = qty;
+                    this._toast.presentToast("Please add quentity", 3000);
+                }
+                if (data['flag']) {
+                    delete data['flag'];
+                    if (!data['flag']) {
+                        this.addItemByBarcode();
+                    }
+                }
+            });
+            profileModal.present();
+        } else {
+            let profileModal = this.modalCtrl.create(ReScanPage, {data: "No Product Found"}, {cssClass: "always-modalSuccess"});
+            profileModal.present();
+            profileModal.onDidDismiss((data) => {
+                if (data) {
+                    this.addItemByBarcode();
+                }
+            })
+        }
     }
     searchProduct(ev: any) {
         this.isFound = true;
@@ -371,6 +433,22 @@ export class ProductViewPage {
                 return (item['SearchText'].toLowerCase().indexOf(val.toLowerCase()) > -1);
             })
         }
+    }
+    searchAllProduct(ev: any) {
+        this.isFound = true;
+        this.products = this.productsRef;
+        let val = ev.target.value;
+        if (this.count > 0) {
+            this.request.unsubscribe();
+        }
+        this.count++;
+        this.request = this._apiProvider.apiCall(`${url.url}/search/product/${val}`).debounce((x) => {return Observable.timer(1000);}).subscribe(res => {
+            forEach(res.data, (value, key) => {
+                value['qty'] = 0;
+            })
+            this.products = res.data;
+        });
+
     }
     isDataExistINList(productID, qty, isPop?) {
         let data = {};
@@ -400,17 +478,18 @@ export class ProductViewPage {
     addProductByBarcode() {
         this.isFound = true;
         this.barcodeScanner.scan().then((barcodeData) => {
-            let filterBarcodeData = this.checkBarCodeOnproduct(barcodeData);
-            if (filterBarcodeData && filterBarcodeData.length) {
-                this.isDataExistINList(filterBarcodeData[0].ID, 1);
-            } else {
-                this._toast.presentToast("Product Not Found", 3000);
-                this.isFound = false;
-            }
-            this.addProductByBarcode();
-        }, (err) => {
-            this.err = err;
-            // An error occurred
+            this.checkBarCodeOnproduct(barcodeData).then((filterBarcodeData: any) => {
+                if (filterBarcodeData && filterBarcodeData.length) {
+                    this.isDataExistINList(filterBarcodeData[0].ID, 1);
+                } else {
+                    this._toast.presentToast("Product Not Found", 3000);
+                    this.isFound = false;
+                }
+                this.addProductByBarcode();
+            }, (err) => {
+                this.err = err;
+                // An error occurred
+            });
         });
     }
     onSearchCancel() {

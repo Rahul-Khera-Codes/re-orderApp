@@ -16,7 +16,8 @@ export class ConsignmentInPage implements OnInit {
     jobIDErr: boolean = false;
     usageData = {
         "jobID": "",
-        "selectedConsignment": ""
+        "selectedConsignment": "",
+        "selection":""
     }
     err: string;
     myInputEnable: boolean = false;
@@ -34,6 +35,7 @@ export class ConsignmentInPage implements OnInit {
     }
     ngOnInit() {
         this.usageData.selectedConsignment = this.navParams.get('selectedConsignment');
+        this.usageData.selection = this.navParams.get('selection');
         this.checkLoginBy();
     }
     onClickImage(url) {
@@ -50,7 +52,7 @@ export class ConsignmentInPage implements OnInit {
         if (this.usageData['jobID'] && this.usageData['jobID'].length) {
             this.myInputEnable = true;
             this.jobIDErr = false;
-            this.navCtrl.push(ProductViewPage, {'selectedConsignment': this.usageData.selectedConsignment, 'jobID': this.usageData.jobID}, {animate: false});
+            this.navCtrl.push(ProductViewPage, {'selectedConsignment': this.usageData.selectedConsignment, 'jobID': this.usageData.jobID,'selection':this.usageData.selection}, {animate: false});
         } else {
             this.jobIDErr = true;
             this.myInputEnable = false;
@@ -63,7 +65,7 @@ export class ConsignmentInPage implements OnInit {
             this.usageData['jobID'] = barcodeData.text;
             this.myInputEnable = true;
             if (this.usageData['jobID'] && this.usageData['jobID'].length) {
-                this.navCtrl.push(ProductViewPage, {'selectedConsignment': this.usageData.selectedConsignment, 'jobID': this.usageData.jobID}, {animate: false});
+                this.navCtrl.push(ProductViewPage, {'selectedConsignment': this.usageData.selectedConsignment, 'jobID': this.usageData.jobID,'selection':this.usageData.selection}, {animate: false});
             } else {
                 this.jobIDErr = true;
             }

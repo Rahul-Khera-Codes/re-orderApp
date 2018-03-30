@@ -22,7 +22,6 @@ export class PopupPage implements OnInit {
         this.viewCtrl.dismiss(this.data);
     }
     submit() {
-        console.log("this.data.qty", this.data.qty)
         if (this.data.qty > 0) {
             this.data['flag']=1;
              let profileModal = this.modalCtrl.create(PopupSuccessPage, {data: "Successfully Submitted"}, {cssClass: "always-modalSuccess"});

@@ -12,6 +12,7 @@ import {ForgotPasswordPage} from './../forgot-password/forgot-password';
 import {LocalStorageProvider} from '../../providers/local-storage/local-storage';
 import {IsLoginEventHandlerProvider} from '../../providers/is-login-event-handler/is-login-event-handler'
 import {LocalDbProvider} from '../../providers/local-db/local-db';
+import {AlertController} from 'ionic-angular';
 
 @Component({
     selector: 'page-login',
@@ -30,7 +31,7 @@ export class LoginPage {
     spinBarcode: boolean = false;
     synErr: boolean = false;
     isRemember: boolean = false;
-    constructor(public _local: LocalDbProvider, public _isLogin: IsLoginEventHandlerProvider, public _storage: LocalStorageProvider, public viewCtrl: ViewController, private _toast: ToastProvider, private _consignmentProvider: ConsignmentProvider, private _login: LoginProvider, private barcodeScanner: BarcodeScanner, public navCtrl: NavController, public navParams: NavParams, private formBuilder: FormBuilder) {
+    constructor(public alertCtrl: AlertController, public _local: LocalDbProvider, public _isLogin: IsLoginEventHandlerProvider, public _storage: LocalStorageProvider, public viewCtrl: ViewController, private _toast: ToastProvider, private _consignmentProvider: ConsignmentProvider, private _login: LoginProvider, private barcodeScanner: BarcodeScanner, public navCtrl: NavController, public navParams: NavParams, private formBuilder: FormBuilder) {
         this.relogin = this.navParams.get('relogin');
         this.preUserEmail = this.navParams.get('email');
         let userInfo = null;
@@ -65,7 +66,32 @@ export class LoginPage {
         } else if (consignmentList && consignmentList.length == 1) {
             this.isConsignmentExist = false;
             this._isLogin.eventGenraterForLogin();
-            this.navCtrl.setRoot(ConsignmentInPage, {"selectedConsignment": consignmentList[0], "default": true}, {animate: false});
+            let userDetails: any = localStorage.getItem('userDetails') ? JSON.parse(localStorage.getItem('userDetails'))[0] : null;
+            if ((userDetails && userDetails.Orderdirect == "true" && userDetails.addanyproduct == "true") || (userDetails && userDetails.Orderdirect == "1" && userDetails.addanyproduct == "1")) {
+                let confirm = this.alertCtrl.create({
+                    title: 'Please Select',
+                    message: '',
+                    buttons: [
+                        {
+                            text: 'Place Order',
+                            handler: () => {
+                                console.log('Disagree clicked');
+                                this.navCtrl.push(ConsignmentInPage, {"selectedConsignment": consignmentList[0], "selection": 'Place_Order'}, {animate: false});
+                            }
+                        },
+                        {
+                            text: 'Record Usage',
+                            handler: () => {
+                                console.log('Agree clicked');
+                                this.navCtrl.push(ConsignmentInPage, {"selectedConsignment": consignmentList[0], "selection": 'Record_Usage'}, {animate: false});
+                            }
+                        }
+                    ]
+                });
+                confirm.present();
+            } else {
+                this.navCtrl.setRoot(ConsignmentInPage, {"selectedConsignment": consignmentList[0], "default": true, "selection": ""}, {animate: false});
+            }
         } else {
             this._toast.presentToast("Consignment List Not Exist", 2000);
             this.isConsignmentExist = true;
@@ -156,17 +182,13 @@ export class LoginPage {
         });
     }
     authLoginByBarcode(barcodeData) {
-        console.log("barcodeData", barcodeData)
         this.barCodeErr = null;
         this._login.authUserCustomerByBarCode(barcodeData.text).then((response: any) => {
-            console.log("response", response)
             if (response && response.rows.length) {
-                console.log(response.rows.item(0).EmailAddress, this.preUserEmail)
                 if (response.rows.item(0).EmailAddress == this.preUserEmail) {
                     let data = {'login': 'true'};
                     this.viewCtrl.dismiss(data);
                 } else {
-                    console.log("getConsignmentAndCheckUserType")
                     this.getConsignmentAndCheckUserType();
                 }
                 this.spinBarcode = false;

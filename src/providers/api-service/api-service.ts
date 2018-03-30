@@ -2,6 +2,8 @@ import {HttpClient} from '@angular/common/http';
 import {Injectable, Output, EventEmitter} from '@angular/core';
 import 'rxjs/Rx';
 import {Observable} from 'rxjs/Observable';
+import { share } from 'rxjs/operators';
+
 @Injectable()
 export class ApiServiceProvider {
     @Output()
@@ -14,7 +16,7 @@ export class ApiServiceProvider {
     apiCall(path): Observable<any> {
         return this.http.get(path).map((res: Response) => {
             return res;
-        }).catch((error: any) => {
+        }).pipe(share()).catch((error: any) => {
             return Observable.throw(error || 'Server error')
         });
     }

@@ -7,7 +7,7 @@
     </ion-toolbar>
 </ion-header>
 <ion-content>
-    <ion-list>
+    <ion-list no-lines>
         <ion-item>
             <p>
                 Enter a quantity for this product you're so keen on adding
@@ -15,7 +15,7 @@
         </ion-item>
         <ion-item>
             <ion-thumbnail item-start>
-                <img [src]="data.ImageURL">
+                <img imageDirective [src]="data.ImageURL">
             </ion-thumbnail>
             <h2>{{data.Name}}</h2>
             <p>{{data.Code}}</p>
@@ -43,10 +43,10 @@
     <ion-grid no-padding>
         <ion-row>
             <ion-col col-6 no-padding>
-                <button ion-button full (click)="submit()">Submit</button>
+                <button no-margin ion-button full (click)="submit()">Submit</button>
             </ion-col>
             <ion-col col-6 no-padding>
-                <button ion-button full color="danger" (click)="dismiss()">Close</button>
+                <button ion-button no-margin full color="danger" (click)="dismiss()">Close</button>
             </ion-col>
         </ion-row>
     </ion-grid>

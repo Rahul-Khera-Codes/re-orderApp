@@ -1,8 +1,8 @@
 {
     "Contact_Table":
-            "CREATE TABLE IF NOT EXISTS Contact_Table(IDLocal CHAR,IDWeb CHAR,FirstName CHAR,LastName CHAR,EmailAddress CHAR,Password CHAR,CustomerIDLocal CHAR,CustomerIDWeb CHAR,JobIDForce CHAR,LastUpdatedDateTime CHAR,LoginBarcode CHAR)",
+            "CREATE TABLE IF NOT EXISTS Contact_Table(IDLocal CHAR,IDWeb CHAR,FirstName CHAR,LastName CHAR,EmailAddress CHAR,Password CHAR,CustomerIDLocal CHAR,CustomerIDWeb CHAR,JobIDForce CHAR,LastUpdatedDateTime CHAR,LoginBarcode CHAR,Orderdirect CHAR ,addanyproduct CHAR )",
     "Customer_Table":
-            "CREATE TABLE IF NOT EXISTS Customer_Table(IDLocal CHAR,IDWeb CHAR,FirstName CHAR,LastName CHAR,EmailAddress CHAR,Password CHAR,CustomerAccountIDLocal CHAR,JobIDForce CHAR,LastUpdatedDateTime CHAR,LoginBarcode CHAR)",
+            "CREATE TABLE IF NOT EXISTS Customer_Table(IDLocal CHAR,IDWeb CHAR,FirstName CHAR,LastName CHAR,EmailAddress CHAR,Password CHAR,CustomerAccountIDLocal CHAR,JobIDForce CHAR,LastUpdatedDateTime CHAR,LoginBarcode CHAR,Orderdirect CHAR ,addanyproduct CHAR)",
     "List_to_Contact":
             "CREATE TABLE IF NOT EXISTS List_to_Contact(IDLocal CHAR,IDWeb CHAR,ContactIDLocal CHAR,ContactIDWeb CHAR,ListIDLocal CHAR,ListIDWeb CHAR,IsActive INTEGER,IsDefault CHAR)",
     "Product":
@@ -16,5 +16,5 @@
     "Usage":
             "CREATE TABLE IF NOT EXISTS Usage(IDLocal CHAR,ListIDLocal CHAR,CustomerIDLocal CHAR,ContactIDLocal CHAR,CreatedDateTime CHAR,JobID CHAR,Longitude CHAR,Latitude CHAR)",
     "Usage_Line":
-            "CREATE TABLE IF NOT EXISTS Usage_Line(IDLocal CHAR,UsageIDLocal CHAR,ProductIDLocal CHAR,Quantity CHAR,CreatedDateTime CHAR )"
+            "CREATE TABLE IF NOT EXISTS Usage_Line(IDLocal CHAR,UsageIDLocal CHAR,ProductIDLocal CHAR,Quantity CHAR,CreatedDateTime CHAR,Orderdirect CHAR,Processed CHAR)"
 }

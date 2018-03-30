@@ -9,9 +9,14 @@
                     <ion-icon padding-top name="md-close" ></ion-icon>
             </button>
         </ion-buttons>
-        <ion-searchbar #searchbar style="width: 90%;" class="floatRight" *ngIf="searchBar"  [(ngModel)]="myInput"
+<!--        <ion-searchbar #searchbar style="width: 90%;" class="floatRight" *ngIf="searchBar && (!userDetails.addanyproduct || userDetails.addanyproduct == 'null' || userDetails.addanyproduct =='false' || userDetails.addanyproduct =='0') "  [(ngModel)]="myInput"
             [showCancelButton]="shouldShowCancel"
             (ionInput)="searchProduct($event)"
+            (ionCancel)="onSearchCancel($event)" ></ion-searchbar>-->
+<!--&& userDetails.addanyproduct && userDetails.addanyproduct== '1' || userDetails.addanyproduct== 'true'-->
+        <ion-searchbar #searchbar placeholder="search the Entire Product list" style="width: 90%;" class="floatRight" *ngIf="searchBar "  [(ngModel)]="myInput"
+            [showCancelButton]="shouldShowCancel"
+            (ionInput)="searchAllProduct($event)"
             (ionCancel)="onSearchCancel($event)" ></ion-searchbar>
         <button ion-button icon-only menuToggle (click)="openMenu()" *ngIf="!searchBar && default">
                 <ion-icon name="menu" color='yellow'></ion-icon>
@@ -42,7 +47,7 @@
             </ion-col>
         </ion-row>
     </ion-grid>
-    <ion-list no-margin color="lightGray">
+    <ion-list no-margin no-lines color="lightGray">
         <ion-list-header no-margin class="font16 fontWidth">
             {{selectedConsignment.Name}}
         </ion-list-header>

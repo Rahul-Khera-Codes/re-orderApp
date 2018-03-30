@@ -1,0 +1,20 @@
+{
+    "Contact_Table":
+            ["IDLocal", "IDWeb", "FirstName", "LastName", "EmailAddress", "Password", "CustomerIDWeb", "JobIDForce", "LastUpdatedDateTime", "LoginBarcode","Orderdirect","addanyproduct"],
+    "Customer_Table":
+            ["IDLocal", "IDWeb", "FirstName", "LastName", "EmailAddress", "Password", "CustomerAccountIDLocal", "JobIDForce", "LastUpdatedDateTime", "LoginBarcode","Orderdirect","addanyproduct"],
+    "List_to_Contact":
+            ["IDLocal", "IDWeb", "ContactIDLocal", "ContactIDWeb", "ListIDLocal", "ListIDWeb", "IsActive", "IsDefault"],
+    "Product":
+            ["ID", "Code", "Name", "Barcode1", "Barcode2", "Barcode3", "SearchText", "URL", "ImageURL", "IsActive"],
+    "ProductCodes":
+            ["ProductIDLocal", "Barcode", "SupplierID"],
+    "Product_Control_Line":
+            ["IDLocal", "IDWeb", "ListIDLocal", "ListIDWeb", "ProductIDLocal", "LastUpdatedDateTime"],
+    "Product_Control_List":
+            ["IDLocal", "IDWeb", "Name", "LastUpdatedDateTime", "CustomerIDLocal", "CustomerIDWeb", "IsDefault", "ReLoginToSubmit"],
+    "Usage":
+            ["IDLocal", "ListIDLocal", "CustomerIDLocal", "ContactIDLocal", "CreatedDateTime", "JobID", "Longitude", "Latitude","Orderdirect","Processed"],
+    "Usage_Line":
+            ["IDLocal", "UsageIDLocal", "ProductIDLocal", "Quantity", "CreatedDateTime","Orderdirect","Processed"]
+}
