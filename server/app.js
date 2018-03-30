@@ -725,6 +725,27 @@ app.post('/get/userData', function(req, res, next) {
   })
 })
 
+app.get('/search/product/:SearchText', function(req, res, next) {
+  con.query(`SELECT * FROM product WHERE SearchText LIKE '%${req.params.SearchText}%'`, function(err, resp) {
+    if (err) throw err;
+    res.json({ status: 1, data: resp })
+  })
+})
+
+app.get('/search/barcode/:Barcode', function(req, res, next) {
+  con.query(`SELECT * FROM productcodes WHERE BarCode = '${req.params.Barcode}'`, function(err, resp) {
+    if (err) throw err;
+    let ProductIDLocal = ''
+    if (resp.length != 0) {
+      ProductIDLocal = resp[0].ProductIDLocal;
+    }
+    con.query(`SELECT * FROM product WHERE ID = '${ProductIDLocal}' OR code = '${req.params.Barcode}' OR BarCode1='${req.params.Barcode}' OR BarCode2='${req.params.Barcode}' OR BarCode3='${req.params.Barcode}'`, function(err, data) {
+      if (err) throw err;
+      res.json({ status: 1, data: data })
+    })
+  })
+})
+
 app.listen(process.env.PORT || 3031)
 
 console.log("Started on port " + 3031);
