@@ -13,8 +13,8 @@ var moment = require('moment');
 
 var con = mysql.createConnection({
   host: "localhost",
-  user: "bstgroup_cpc0",
-  password: "{m*A&YpO,*Ro",
+  user: "root",
+  password: "java@123",
   database: "bstgroup_custprodcont0"
 });
 
@@ -725,8 +725,8 @@ app.post('/get/userData', function(req, res, next) {
   })
 })
 
-app.get('/search/product/:SearchText', function(req, res, next) {
-  con.query(`SELECT * FROM product WHERE SearchText LIKE '%${req.params.SearchText}%'`, function(err, resp) {
+app.get('/search/product/:SearchText/:page/:limit', function(req, res, next) {
+  con.query(`SELECT * FROM product WHERE SearchText LIKE '%${req.params.SearchText}%' LIMIT ${req.params.limit} OFFSET ${(req.params.page - 1) * req.params.limit}`, function(err, resp) {
     if (err) throw err;
     res.json({ status: 1, data: resp })
   })
