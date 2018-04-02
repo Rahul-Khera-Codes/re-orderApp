@@ -17,6 +17,7 @@ import {NgZone} from '@angular/core';
 import {constantLoginBy} from './../providers/config/config';
 import {ExportDataProvider} from './../providers/export-data/export-data';
 import {Network} from '@ionic-native/network';
+import {NetworkProvider} from '../providers/networkWatch/network';
 import {IsLoginEventHandlerProvider} from './../providers/is-login-event-handler/is-login-event-handler'
 @Component({
     templateUrl: 'app.html'
@@ -33,7 +34,7 @@ export class MyApp {
     exportErr: boolean | null | string = null;
     menuDisplay: boolean = false;
     backPressed: boolean = false;
-    constructor(private app: App, private ionicApp: IonicApp, public events: Events, private _event: EventProvider, private _isLogin: IsLoginEventHandlerProvider, private network: Network, public _export: ExportDataProvider, private _consignmentProvider: ConsignmentProvider, private _ngZone: NgZone, private _storage: LocalStorageProvider, private _consignmentService: ConsignmentProvider, private _toast: ToastProvider, private _apiProvider: ApiServiceProvider, private _sqlService: SqlLiteProvider, private sqlitePorter: SQLitePorter, private _menuCtrl: MenuController, public _sqlLiteservice: SqlLiteProvider, public platform: Platform, statusBar: StatusBar, splashScreen: SplashScreen) {
+    constructor(private _net: NetworkProvider, private app: App, private ionicApp: IonicApp, public events: Events, private _event: EventProvider, private _isLogin: IsLoginEventHandlerProvider, private network: Network, public _export: ExportDataProvider, private _consignmentProvider: ConsignmentProvider, private _ngZone: NgZone, private _storage: LocalStorageProvider, private _consignmentService: ConsignmentProvider, private _toast: ToastProvider, private _apiProvider: ApiServiceProvider, private _sqlService: SqlLiteProvider, private sqlitePorter: SQLitePorter, private _menuCtrl: MenuController, public _sqlLiteservice: SqlLiteProvider, public platform: Platform, statusBar: StatusBar, splashScreen: SplashScreen) {
         localStorage.setItem("displayMode", 'Landscape');
         this._apiProvider.apiInProcess.subscribe(isDone => {
             if (isDone) {
@@ -54,10 +55,14 @@ export class MyApp {
             this.loginBy = this._consignmentService.checkLoginBy();
             this.network.onConnect().subscribe(() => {
                 this.exportErr = localStorage.getItem("fail");
+                this._net.set(true);
                 if (localStorage.getItem("fail") != undefined) {
                     this._export.exportData();
                 }
             });
+            this.network.onDisconnect().subscribe(() => {
+                this._net.set(false);
+            })
         });
         this.checkBackButton();
     }

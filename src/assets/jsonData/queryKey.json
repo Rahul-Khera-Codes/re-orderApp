@@ -1,6 +1,6 @@
 {
     "Contact_Table":
-            ["IDLocal", "IDWeb", "FirstName", "LastName", "EmailAddress", "Password", "CustomerIDWeb", "JobIDForce", "LastUpdatedDateTime", "LoginBarcode","Orderdirect","addanyproduct"],
+            ["IDLocal", "IDWeb", "FirstName", "LastName", "EmailAddress", "Password","CustomerIDLocal", "CustomerIDWeb", "JobIDForce", "LastUpdatedDateTime", "LoginBarcode","Orderdirect","addanyproduct"],
     "Customer_Table":
             ["IDLocal", "IDWeb", "FirstName", "LastName", "EmailAddress", "Password", "CustomerAccountIDLocal", "JobIDForce", "LastUpdatedDateTime", "LoginBarcode","Orderdirect","addanyproduct"],
     "List_to_Contact":

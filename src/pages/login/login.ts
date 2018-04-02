@@ -88,7 +88,11 @@ export class LoginPage {
                         }
                     ]
                 });
+                let ref=confirm;
                 confirm.present();
+                confirm.onDidDismiss(data=>{
+                    ref.present();
+                })
             } else {
                 this.navCtrl.setRoot(ConsignmentInPage, {"selectedConsignment": consignmentList[0], "default": true, "selection": ""}, {animate: false});
             }

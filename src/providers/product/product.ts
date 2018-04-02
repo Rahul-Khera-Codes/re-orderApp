@@ -59,7 +59,7 @@ export class ProductProvider {
     }
     queryToUsage(usageData) {
         return new Promise((resolve, reject) => {
-            this.DB.executeSql(`insert into Usage VALUES (?,?,?,?,?,?,?,?)`, [usageData.IDLocal, usageData.listIDLocal, usageData.customerIDLocal, usageData.contactIDLocal, usageData.currentData, usageData.jobID, usageData.latitude, usageData.longitude]).then((res) => {
+            this.DB.executeSql(`insert into Usage VALUES (?,?,?,?,?,?,?,?,?,?)`, [usageData.IDLocal, usageData.listIDLocal, usageData.customerIDLocal, usageData.contactIDLocal, usageData.currentData, usageData.jobID, usageData.latitude, usageData.longitude, usageData.Orderdirect, usageData.Processed]).then((res) => {
                 resolve(res);
             }).catch(e => console.log(e))
         })
@@ -67,7 +67,7 @@ export class ProductProvider {
     queryToUsageLine(UsageLineDataArray) {
         return new Promise((resolve, reject) => {
             forEach(UsageLineDataArray, (value, key) => {
-                this.DB.executeSql(`insert into Usage_Line VALUES (?,?,?,?,?)`, [value.IDLocal, value.usageIDLocal, value.productID, value.qty, value.createdDateTime]).then((res) => {
+                this.DB.executeSql(`insert into Usage_Line VALUES (?,?,?,?,?,?,?)`, [value.IDLocal, value.usageIDLocal, value.productID, value.qty, value.createdDateTime, value.Orderdirect, value.Processed]).then((res) => {
                     resolve(res);
                 }).catch(e => {
                     console.log(e);

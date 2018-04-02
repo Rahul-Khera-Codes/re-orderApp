@@ -38,6 +38,7 @@ import {Toast} from '@ionic-native/toast';
 import {PopupPage} from './../pages/popupForScan/popup';
 import {PopupSuccessPage} from './../pages/popupForSuccess/popupSuccess';;
 import {ReScanPage} from './../pages/rescanPopup/reScan';;
+import {NetworkProvider} from '../providers/networkWatch/network';
 
 @NgModule({
     declarations: [
@@ -75,7 +76,7 @@ import {ReScanPage} from './../pages/rescanPopup/reScan';;
         PopupPage,
         PopupSuccessPage,
         ReScanPage
-        ],
+    ],
     providers: [
         StatusBar,
         SplashScreen,
@@ -100,7 +101,8 @@ import {ReScanPage} from './../pages/rescanPopup/reScan';;
         File,
         IsLoginEventHandlerProvider,
         EventProvider,
-        Toast
+        Toast,
+        NetworkProvider
     ]
 })
 export class AppModule {}

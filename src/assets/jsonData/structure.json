@@ -14,7 +14,7 @@
     "Product_Control_List":
             "CREATE TABLE IF NOT EXISTS Product_Control_List(IDLocal CHAR,IDWeb CHAR,Name CHAR,LastUpdatedDateTime CHAR,CustomerIDLocal CHAR,CustomerIDWeb CHAR,IsDefault BOOLEAN,ReLoginToSubmit BOOLEAN)",
     "Usage":
-            "CREATE TABLE IF NOT EXISTS Usage(IDLocal CHAR,ListIDLocal CHAR,CustomerIDLocal CHAR,ContactIDLocal CHAR,CreatedDateTime CHAR,JobID CHAR,Longitude CHAR,Latitude CHAR)",
+            "CREATE TABLE IF NOT EXISTS Usage(IDLocal CHAR,ListIDLocal CHAR,CustomerIDLocal CHAR,ContactIDLocal CHAR,CreatedDateTime CHAR,JobID CHAR,Longitude CHAR,Latitude CHAR,Orderdirect CHAR,Processed CHAR)",
     "Usage_Line":
             "CREATE TABLE IF NOT EXISTS Usage_Line(IDLocal CHAR,UsageIDLocal CHAR,ProductIDLocal CHAR,Quantity CHAR,CreatedDateTime CHAR,Orderdirect CHAR,Processed CHAR)"
 }

@@ -26,6 +26,8 @@ import {ReScanPage} from './../rescanPopup/reScan';
 import {ApiServiceProvider} from '../../providers/api-service/api-service';
 import {Observable} from 'rxjs/Rx';
 import {url} from '../../providers/config/config';
+import {NetworkProvider} from '../../providers/networkWatch/network';
+import * as _ from 'lodash';
 
 @Component({
     selector: 'page-product-view',
@@ -73,7 +75,17 @@ export class ProductViewPage {
     request: any;
     count: number = 0;
     orderdirect = "";
-    constructor(private _apiProvider: ApiServiceProvider, private _event: EventProvider, private iab: InAppBrowser, public _export: ExportDataProvider, public modalCtrl: ModalController, public _menuCtrl: MenuController, private _toast: ToastProvider, private _localStorage: LocalStorageProvider, private _consignmentProvider: ConsignmentProvider, private geolocation: Geolocation, private _productProvider: ProductProvider, public alertCtrl: AlertController, private barcodeScanner: BarcodeScanner, public navCtrl: NavController, public navParams: NavParams) {}
+    start = 0;
+    end = 20;
+    productlength = 0;
+    data: any;
+    enableInfinite: boolean = true;
+    infinite: any;
+    spinForSearch: boolean = false;
+    page: number = 1;
+    searchCheck: boolean = false;
+    valForSEarch = "";
+    constructor(private _net: NetworkProvider, private _apiProvider: ApiServiceProvider, private _event: EventProvider, private iab: InAppBrowser, public _export: ExportDataProvider, public modalCtrl: ModalController, public _menuCtrl: MenuController, private _toast: ToastProvider, private _localStorage: LocalStorageProvider, private _consignmentProvider: ConsignmentProvider, private geolocation: Geolocation, private _productProvider: ProductProvider, public alertCtrl: AlertController, private barcodeScanner: BarcodeScanner, public navCtrl: NavController, public navParams: NavParams) {}
 
     ngOnInit() {
         this._event.mode.subscribe(event => {
@@ -83,10 +95,9 @@ export class ProductViewPage {
         this.selectedConsignment = this.navParams.get('selectedConsignment');
         this.usageData.jobID = this.navParams.get('jobID');
         this.usageData.Orderdirect = this.navParams.get('selection');
-        this.orderdirect == this.navParams.get('selection');
+        this.orderdirect = this.usageData.Orderdirect;
         this.default = this.navParams.get('default');
         this.userDetails = localStorage.getItem('userDetails') ? JSON.parse(localStorage.getItem('userDetails'))[0] : null;
-        //        this.usageData['Processed']=
         if (this.selectedConsignment) {
             this._productProvider.queryToProductControlLine(this.selectedConsignment.IDWeb, this.selectedConsignment.IDLocal).then((productControlLineData) => {
                 this.productControlLineData = productControlLineData;
@@ -98,15 +109,13 @@ export class ProductViewPage {
                             this.productCode = productCode;
                         }
                     })
-                    //                    if (!this.isManualLogin) {
-                    //                        quantity = 1;
-                    //                    }
                     forEach(productDetails, (value) => {
                         value['qty'] = quantity;
                     })
                     this.spin = false;
-                    this.products = productDetails;
-                    this.productsRef = productDetails;
+                    this.productsRef = JSON.parse(JSON.stringify(productDetails));
+                    this.data = JSON.parse(JSON.stringify(productDetails));
+                    this.products = this.data.splice(this.start, this.end);
                 }, (err) => {
                     console.log(err);
                 })
@@ -131,8 +140,10 @@ export class ProductViewPage {
     dismiss() {
         this.isFound = true;
         this.myInput = '';
-        this.products = this.productsRef;
+        this.data = JSON.parse(JSON.stringify(this.productsRef))
+        this.products = this.data.splice(this.start, this.end);
         this.searchBar = false;
+        this.searchCheck = false;
     }
     onClickImage(url) {
         window.open(url, '_system');
@@ -207,7 +218,7 @@ export class ProductViewPage {
             "productID": "",
             "usageIDLocal": 0,
             "createdDateTime": "",
-            "orderdirect": this.orderdirect
+            "Orderdirect": this.orderdirect
         }
         return new Promise((resolve, reject) => {
             this._consignmentProvider.checkUserType().then((userType) => {
@@ -279,7 +290,7 @@ export class ProductViewPage {
                         "IDLocal": 0,
                         "contactIDLocal": -1,
                         "customerIDLocal": -1,
-                        "Orderdirect": "",
+                        "Orderdirect": this.orderdirect,
                         "Processed": ""
                     }
                 })
@@ -301,25 +312,14 @@ export class ProductViewPage {
             this.err = err;
         });
     }
-    //    jobFiledGetFocus() {
-    //        this.jobIdFocus = true;
-    //    }
-    //    openBarCode() {
-    //        this.barcodeScanner.scan().then((barcodeData) => {
-    //            this.usageData['jobID'] = barcodeData.text;
-    //            this.myInputEnable = true;
-    //            this.jobIdFocus = false;
-    //        }, (err) => {
-    //            this.err = err;
-    //        });
-    //    }
+
 
     checkBarCodeOnproduct(barcodeData: any) {
         return new Promise((resolve, reject) => {
             if (typeof barcodeData.text != "string") {
                 barcodeData.text = `${barcodeData.text}`;
             }
-            let filter_data = filter(this.products, (data: any) => {
+            let filter_data = filter(this.productsRef, (data: any) => {
                 if (data && (data.Barcode1.toLowerCase() == barcodeData.text.toLowerCase())) {
                     return data;
                 } else if (data && (data.Barcode2.toLowerCase() == barcodeData.text.toLowerCase())) {
@@ -337,7 +337,7 @@ export class ProductViewPage {
 
                     this.productCodeFilter(this.productCode, barcodeData).then((code: any) => {
                         if (code && code.length) {
-                            resolve(filter(this.products, (data: any) => {
+                            resolve(filter(this.productsRef, (data: any) => {
                                 if (data && (data.ID.toLowerCase() == code[0].ProductIDLocal.toLowerCase())) {
                                     return data;
                                 } else {
@@ -381,13 +381,17 @@ export class ProductViewPage {
 
                     });
                 } else {
-                    this._apiProvider.apiCall(`${url.url}/search/barcode/${barcodeData.text}`).subscribe(res => {
-                        forEach(res.data, (value, key) => {
-                            value['qty'] = 0;
+                    if (this._net.get()) {
+                        this._apiProvider.apiCall(`${url.url}/search/barcode/${barcodeData.text}`).subscribe(res => {
+                            forEach(res.data, (value, key) => {
+                                value['qty'] = 0;
+                            });
+                            let filterBarcodeData = res.data;
+                            this.createPopupForScanSearch(filterBarcodeData);
                         });
-                        let filterBarcodeData = res.data;
-                        this.createPopupForScanSearch(filterBarcodeData);
-                    });
+                    } else {
+                        this._toast.presentToast("Please cleck Network Connection", 3000);
+                    }
                 }
             }
         }, (err) => {
@@ -426,29 +430,51 @@ export class ProductViewPage {
     }
     searchProduct(ev: any) {
         this.isFound = true;
-        this.products = this.productsRef;
+        this.spinForSearch = true;
+        this.doInfinite(this.infinite, true);
+        //        this.products = this.productsRef;
+        this.data = JSON.parse(JSON.stringify(this.productsRef))
+        this.products = this.data.splice(this.start, this.end);
         let val = ev.target.value;
+        this.spinForSearch = false;
         if (val && val.trim() != '') {
-            this.products = this.products.filter((item) => {
+            this.data = this.products.filter((item) => {
                 return (item['SearchText'].toLowerCase().indexOf(val.toLowerCase()) > -1);
             })
+            this.products = this.data.splice(this.start, this.end);
         }
     }
     searchAllProduct(ev: any) {
-        this.isFound = true;
-        this.products = this.productsRef;
-        let val = ev.target.value;
-        if (this.count > 0) {
-            this.request.unsubscribe();
-        }
-        this.count++;
-        this.request = this._apiProvider.apiCall(`${url.url}/search/product/${val}`).debounce((x) => {return Observable.timer(1000);}).subscribe(res => {
-            forEach(res.data, (value, key) => {
-                value['qty'] = 0;
-            })
-            this.products = res.data;
-        });
+        if (this._net.get()) {
+            this.isFound = true;
+            this.doInfinite(this.infinite, true);
+            this.data = JSON.parse(JSON.stringify(this.productsRef))
+            this.products = this.data.splice(this.start, this.end);
+            this.searchCheck = false;
+            //            this.products = this.productsRef;
 
+            this.valForSEarch = ev.target.value;
+            if (this.valForSEarch && this.valForSEarch.length) {
+                this.searchCheck = true;
+                this.spinForSearch = true;
+                if (this.count > 0) {
+                    this.request.unsubscribe();
+                }
+                this.count++;
+                this.request = this._apiProvider.apiCall(`${url.url}/search/product/${this.valForSEarch}/${this.page}/${this.end}`).debounce((x) => {return Observable.timer(1000);}).subscribe(res => {
+                    forEach(res.data, (value, key) => {
+                        value['qty'] = 0;
+                    })
+                    this.spinForSearch = false;
+                    //                this.products = res.data;
+                    this.data = res.data;
+                    this.products = this.data.splice(this.start, this.end);
+                });
+            }
+        } else {
+            this.spinForSearch = false;
+            this._toast.presentToast("Please cleck Network Connection", 3000);
+        }
     }
     isDataExistINList(productID, qty, isPop?) {
         let data = {};
@@ -495,8 +521,49 @@ export class ProductViewPage {
     onSearchCancel() {
         this.isFound = true;
         this.myInput = '';
-        this.products = this.productsRef;
+        this.data = JSON.parse(JSON.stringify(this.productsRef))
+        this.products = this.data.splice(this.start, this.end);
+        this.searchCheck = false;
     }
-
-
+    doInfinite(infiniteScroll, check?) {
+        this.infinite = infiniteScroll;
+        if (check) {
+            if (this.infinite) {
+                infiniteScroll.complete();
+                infiniteScroll.enable(true);
+                return;
+            } else {
+                return;
+            }
+        }
+        if (this.searchCheck) {
+            if (this._net.get()) {
+                let val = this.valForSEarch;
+                this._apiProvider.apiCall(`${url.url}/search/product/${val}/${this.page + 1}/${this.end}`).debounce((x) => {return Observable.timer(1000);}).subscribe(res => {
+                    forEach(res.data, (value, key) => {
+                        value['qty'] = 0;
+                    })
+                    let data = res.data;
+                    this.products = this.products.concat(data);
+                    setTimeout(() => {
+                        infiniteScroll.complete();
+                    }, 100)
+                    if (data.length < this.end) {
+                        infiniteScroll.enable(false);
+                    }
+                });
+            } else {
+                this._toast.presentToast("Please cleck Network Connection", 3000);
+            }
+        } else {
+            let data = this.data.splice(this.start, this.end);
+            this.products = this.products.concat(data);
+            setTimeout(() => {
+                infiniteScroll.complete();
+            }, 100)
+            if (data.length < this.end) {
+                infiniteScroll.enable(false);
+            }
+        }
+    }
 }

@@ -16,6 +16,7 @@ export class HomePage {
         //         _.uniqBy(this.navParams.get('consignmentList'),"IDWeb");
     }
     itemSelected(selectedConsignment) {
+        let selection=false;
         let userDetails: any = localStorage.getItem('userDetails') ? JSON.parse(localStorage.getItem('userDetails'))[0] : null;
         if ((userDetails && userDetails.Orderdirect == "true" && userDetails.addanyproduct == "true") || (userDetails && userDetails.Orderdirect == "1" && userDetails.addanyproduct == "1")) {
             let confirm = this.alertCtrl.create({
@@ -25,20 +26,22 @@ export class HomePage {
                     {
                         text: 'Place Order',
                         handler: () => {
-                            console.log('Disagree clicked');
+                            selection=true;
                             this.navCtrl.push(ConsignmentInPage, {"selectedConsignment": selectedConsignment, "selection": 'Place_Order'}, {animate: false});
                         }
                     },
                     {
                         text: 'Record Usage',
                         handler: () => {
-                            console.log('Agree clicked');
+                            selection=true;
                             this.navCtrl.push(ConsignmentInPage, {"selectedConsignment": selectedConsignment, "selection": 'Record_Usage'}, {animate: false});
                         }
                     }
                 ]
             });
             confirm.present();
+            confirm.onDidDismiss(data => {
+            })
         } else {
             this.navCtrl.push(ConsignmentInPage, {"selectedConsignment": selectedConsignment, "selection": ""}, {animate: false});
         }

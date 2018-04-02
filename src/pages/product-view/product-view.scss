@@ -5,4 +5,9 @@ page-product-view {
     .marginAuto{
         margin: 0px auto;
     }
+    .spinSearch{
+        position: fixed;
+        z-index: 9999;
+        left: 45%;
+    }
 }

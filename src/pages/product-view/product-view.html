@@ -9,12 +9,11 @@
                     <ion-icon padding-top name="md-close" ></ion-icon>
             </button>
         </ion-buttons>
-<!--        <ion-searchbar #searchbar style="width: 90%;" class="floatRight" *ngIf="searchBar && (!userDetails.addanyproduct || userDetails.addanyproduct == 'null' || userDetails.addanyproduct =='false' || userDetails.addanyproduct =='0') "  [(ngModel)]="myInput"
+        <ion-searchbar #searchbar style="width: 90%;" class="floatRight" *ngIf="searchBar && (userDetails.addanyproduct == 'null' || userDetails.addanyproduct =='false' || userDetails.addanyproduct =='0') "  [(ngModel)]="myInput"
             [showCancelButton]="shouldShowCancel"
             (ionInput)="searchProduct($event)"
-            (ionCancel)="onSearchCancel($event)" ></ion-searchbar>-->
-<!--&& userDetails.addanyproduct && userDetails.addanyproduct== '1' || userDetails.addanyproduct== 'true'-->
-        <ion-searchbar #searchbar placeholder="search the Entire Product list" style="width: 90%;" class="floatRight" *ngIf="searchBar "  [(ngModel)]="myInput"
+            (ionCancel)="onSearchCancel($event)" ></ion-searchbar>
+        <ion-searchbar #searchbar placeholder="search the Entire Product list" style="width: 90%;" class="floatRight" *ngIf="searchBar && userDetails.addanyproduct== '1' || userDetails.addanyproduct== 'true'"  [(ngModel)]="myInput"
             [showCancelButton]="shouldShowCancel"
             (ionInput)="searchAllProduct($event)"
             (ionCancel)="onSearchCancel($event)" ></ion-searchbar>
@@ -47,8 +46,9 @@
             </ion-col>
         </ion-row>
     </ion-grid>
+    <ion-spinner name="bubbles" class="center spinSearch" *ngIf="spinForSearch"></ion-spinner>
     <ion-list no-margin no-lines color="lightGray">
-        <ion-list-header no-margin class="font16 fontWidth">
+        <ion-list-header no-lines no-margin class="font16 fontWidth">
             {{selectedConsignment.Name}}
         </ion-list-header>
     </ion-list>
@@ -133,6 +133,12 @@
         <ion-fab bottom right edge class="fab-up" (click)="scrollTop()">
             <button ion-fab mini><ion-icon name="arrow-dropup"></ion-icon></button>
         </ion-fab>
+        <ion-infinite-scroll (ionInfinite)="doInfinite($event)">
+            <ion-infinite-scroll-content
+                loadingSpinner="bubbles"
+                loadingText="Loading more data...">
+            </ion-infinite-scroll-content>
+        </ion-infinite-scroll>
         <ion-grid padding-top>    
             <ion-row *ngIf="!isManualLogin">
                 <ion-col col-6>
