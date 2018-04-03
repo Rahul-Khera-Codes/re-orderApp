@@ -18,6 +18,7 @@ var con = mysql.createConnection({
   database: "bstgroup_custprodcont0"
 });
 
+
 let file_location;
 
 let list_of_file_to_import = [
@@ -727,8 +728,13 @@ app.post('/get/userData', function(req, res, next) {
 
 app.get('/search/product/:SearchText/:page/:limit', function(req, res, next) {
   req.params.SearchText = req.params.SearchText.trim();
-  var searchArray = req.params.SearchText.replace(" ", "|");
-  con.query(`SELECT * FROM product WHERE SearchText REGEXP '${searchArray}' LIMIT ${req.params.limit} OFFSET ${(req.params.page - 1) * req.params.limit}`, function(err, resp) {
+  let array = req.params.SearchText.split(" ")
+  console.log(array)
+  let sql = `SELECT * from product where`;
+  _.forEach(array, (value, key) => {
+    sql = `${sql} SearchText LIKE '%${value}%' ${(key < (array.length-1)*1)?'and':''}`;
+  })
+  con.query(`${sql} LIMIT ${req.params.limit} OFFSET ${(req.params.page - 1) * req.params.limit}`, function(err, resp) {
     if (err) throw err;
     res.json({ status: 1, data: resp })
   })
