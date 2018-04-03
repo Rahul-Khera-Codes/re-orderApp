@@ -726,7 +726,9 @@ app.post('/get/userData', function(req, res, next) {
 })
 
 app.get('/search/product/:SearchText/:page/:limit', function(req, res, next) {
-  con.query(`SELECT * FROM product WHERE SearchText LIKE '%${req.params.SearchText}%' LIMIT ${req.params.limit} OFFSET ${(req.params.page - 1) * req.params.limit}`, function(err, resp) {
+  req.params.SearchText = req.params.SearchText.trim();
+  var searchArray = req.params.SearchText.replace(" ", "|");
+  con.query(`SELECT * FROM product WHERE SearchText REGEXP '${searchArray}' LIMIT ${req.params.limit} OFFSET ${(req.params.page - 1) * req.params.limit}`, function(err, resp) {
     if (err) throw err;
     res.json({ status: 1, data: resp })
   })
