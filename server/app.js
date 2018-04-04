@@ -18,7 +18,6 @@ var con = mysql.createConnection({
   database: "bstgroup_custprodcont0"
 });
 
-
 let file_location;
 
 let list_of_file_to_import = [
@@ -299,6 +298,7 @@ function fetchAllData(callback) {
 
 
 app.post('/save/data', function(req, res, next) {
+  console.log(req.body)
   let orignal_data = req.body;
   let fileData = "";
   let filtered = _.filter(structure, (filtered_data) => {
