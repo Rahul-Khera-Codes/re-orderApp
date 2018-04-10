@@ -133,6 +133,8 @@ function withStoredProcedure(body, callback) {
         value.ReLoginToSubmit = JSON.parse(JSON.stringify(value.ReLoginToSubmit)).data[0]
       if (value.IsActive)
         value.IsActive = JSON.parse(JSON.stringify(value.IsActive)).data[0]
+      if (value.IsDefaultPCTC)
+        value.IsDefaultPCTC = JSON.parse(JSON.stringify(value.IsDefaultPCTC)).data[0]
       return value
     })
     let data = JSON.parse(JSON.stringify(list_Data[0]))
