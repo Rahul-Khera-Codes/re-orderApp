@@ -80,7 +80,7 @@ export class ConsignmentProvider {
             }
             if (this.checkLoginBy() == constantLoginBy.manual) {
                 this.DB.executeSql(`SELECT * FROM Product_Control_List WHERE ${IDToBeCheck}=${this.checkIdIfNegative(userdata[0].IDWeb, userdata[0].IDLocal)['value']}`, []).then((res) => {
-                    if (res && res.rows.length) {
+                        if (res && res.rows.length) {
                         this.consignmentList = this.createList(res);
                     }
                 }).catch(e => console.log(e)).then(() => {
@@ -144,7 +144,7 @@ export class ConsignmentProvider {
             let Product_Control_ListComplete = false;
             for (let i = 0; i < listToContact.length; i++) {
                 this.DB.executeSql(`SELECT * FROM Product_Control_List WHERE ${this.IDCheckListToContact(listToContact[i].ListIDWeb, listToContact[i].ListIDLocal)['name']}="${this.IDCheckListToContact(listToContact[i].ListIDWeb, listToContact[i].ListIDLocal)['value']}"`, []).then((res) => {
-                    if (res && res.rows.length) {
+                         if (res && res.rows.length) {
                         for (j = 0; j < res.rows.length; j++) {
                             if (res.rows.item(j)) {
                                 this.consignmentList.push(res.rows.item(j));

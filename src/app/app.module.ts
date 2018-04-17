@@ -24,6 +24,7 @@ import {LocalDbProvider} from '../providers/local-db/local-db';
 import {ChangePassword} from '../pages/changePassword/changePassword';
 import {ForgotPasswordPage} from '../pages/forgot-password/forgot-password';
 import {HeaderScroller} from '../directive/header/header-scroller';
+import {SelectAll} from '../directive/selectText/selectText';
 import {ProductViewPage} from './../pages/product-view/product-view';
 import {ExportDataProvider} from '../providers/export-data/export-data';
 import {Network} from '@ionic-native/network';
@@ -39,6 +40,7 @@ import {PopupPage} from './../pages/popupForScan/popup';
 import {PopupSuccessPage} from './../pages/popupForSuccess/popupSuccess';;
 import {ReScanPage} from './../pages/rescanPopup/reScan';;
 import {NetworkProvider} from '../providers/networkWatch/network';
+import { Keyboard } from '@ionic-native/keyboard';
 
 @NgModule({
     declarations: [
@@ -55,7 +57,8 @@ import {NetworkProvider} from '../providers/networkWatch/network';
         ProductViewPage,
         PopupPage,
         PopupSuccessPage,
-        ReScanPage
+        ReScanPage,
+        SelectAll
     ],
     imports: [
         BrowserModule,
@@ -102,7 +105,8 @@ import {NetworkProvider} from '../providers/networkWatch/network';
         IsLoginEventHandlerProvider,
         EventProvider,
         Toast,
-        NetworkProvider
+        NetworkProvider,
+        Keyboard,
     ]
 })
 export class AppModule {}

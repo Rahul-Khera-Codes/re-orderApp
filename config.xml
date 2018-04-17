@@ -3,7 +3,7 @@
     <name>ReOrderApp</name>
     <description>App to quickly reorder items.</description>
     <author email="Ronn@ron.com" href="http://ionicframework.com/">Ron Kidd</author>
-    <content src="index.html" />
+    <content original-src="index.html" src="http://192.168.1.21:8100" />
     <access origin="*" />
     <allow-intent href="http://*/*" />
     <allow-intent href="https://*/*" />
@@ -91,6 +91,11 @@
         <splash density="port-xxhdpi" src="resources/android/splash/drawable-port-xxhdpi-screen.png" />
         <splash density="port-xxxhdpi" src="resources/android/splash/drawable-port-xxxhdpi-screen.png" />
     </platform>
+    <allow-navigation href="http://192.168.1.31:8100" />
+    <allow-navigation href="http://192.168.1.30:8100" />
+    <allow-navigation href="http://192.168.1.25:8100" />
+    <allow-navigation href="http://192.168.1.22:8100" />
+    <allow-navigation href="http://192.168.1.21:8100" />
     <engine name="android" spec="^6.2.0" />
     <engine name="ios" spec="4.5.4" />
     <plugin name="cordova-plugin-device" spec="^1.1.7" />
@@ -101,6 +106,7 @@
     </plugin>
     <plugin name="cordova-plugin-inappbrowser" spec="^2.0.2" />
     <plugin name="cordova-plugin-ionic-webview" spec="^1.1.16" />
+    <plugin name="cordova-plugin-laser-scanner" spec="0.0.4" />
     <plugin name="cordova-plugin-network-information" spec="^2.0.1" />
     <plugin name="cordova-plugin-splashscreen" spec="^4.1.0" />
     <plugin name="cordova-plugin-statusbar" spec="^2.3.0" />

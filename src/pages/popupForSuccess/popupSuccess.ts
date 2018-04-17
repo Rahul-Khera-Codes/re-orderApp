@@ -15,7 +15,7 @@ export class PopupSuccessPage implements OnInit {
         this.message = this._navParams.get('data');
         setTimeout(() => {
             this.viewCtrl.dismiss();
-        }, 2000)
+        }, 1000)
     }
     dismiss() {
         this.viewCtrl.dismiss();

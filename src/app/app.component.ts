@@ -34,8 +34,9 @@ export class MyApp {
     exportErr: boolean | null | string = null;
     menuDisplay: boolean = false;
     backPressed: boolean = false;
+    laserScan = true;
+    browser=false;
     constructor(private _net: NetworkProvider, private app: App, private ionicApp: IonicApp, public events: Events, private _event: EventProvider, private _isLogin: IsLoginEventHandlerProvider, private network: Network, public _export: ExportDataProvider, private _consignmentProvider: ConsignmentProvider, private _ngZone: NgZone, private _storage: LocalStorageProvider, private _consignmentService: ConsignmentProvider, private _toast: ToastProvider, private _apiProvider: ApiServiceProvider, private _sqlService: SqlLiteProvider, private sqlitePorter: SQLitePorter, private _menuCtrl: MenuController, public _sqlLiteservice: SqlLiteProvider, public platform: Platform, statusBar: StatusBar, splashScreen: SplashScreen) {
-        localStorage.setItem("displayMode", 'Landscape');
         this._apiProvider.apiInProcess.subscribe(isDone => {
             if (isDone) {
                 this.exportErr = true;
@@ -49,6 +50,8 @@ export class MyApp {
             }
         })
         this.platform.ready().then(() => {
+            localStorage.setItem("displayMode", 'Landscape');
+            localStorage.setItem("laserScan", 'true');
             statusBar.styleDefault();
             splashScreen.hide();
             this._menuCtrl.enable(true);
@@ -109,6 +112,24 @@ export class MyApp {
             this.displayMode = 'Portrait';
             localStorage.setItem("displayMode", 'Portrait');
             this._event.setEvent();
+        }
+    }
+    setScan(laserScan) {
+        if (laserScan) {
+            localStorage.setItem("laserScan", 'true');
+            this._event.setScanEvent();
+        } else {
+            localStorage.setItem("laserScan", 'false');
+            this._event.setScanEvent();
+        }
+    }
+    setBrowser(browser) {
+        if (browser) {
+            localStorage.setItem("defaultBrowser", 'true');
+            this._event.setBrowserEvent();
+        } else {
+            localStorage.setItem("defaultBrowser", 'false');
+            this._event.setBrowserEvent();
         }
     }
     checkLoginBy() {

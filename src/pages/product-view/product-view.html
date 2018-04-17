@@ -9,14 +9,18 @@
                     <ion-icon padding-top name="md-close" ></ion-icon>
             </button>
         </ion-buttons>
-        <ion-searchbar #searchbar style="width: 90%;" class="floatRight" *ngIf="searchBar && (userDetails.addanyproduct == 'null' || userDetails.addanyproduct =='false' || userDetails.addanyproduct =='0') "  [(ngModel)]="myInput"
-            [showCancelButton]="shouldShowCancel"
-            (ionInput)="searchProduct($event)"
-            (ionCancel)="onSearchCancel($event)" ></ion-searchbar>
-        <ion-searchbar #searchbar placeholder="search the Entire Product list" style="width: 90%;" class="floatRight" *ngIf="searchBar && userDetails.addanyproduct== '1' || userDetails.addanyproduct== 'true'"  [(ngModel)]="myInput"
-            [showCancelButton]="shouldShowCancel"
-            (ionInput)="searchAllProduct($event)"
-            (ionCancel)="onSearchCancel($event)" ></ion-searchbar>
+
+        <ion-searchbar select-all #searchbar style="width: 90%;" class="floatRight" *ngIf="searchBar && !defaultSearch"  [(ngModel)]="myInput"
+                       [showCancelButton]="shouldShowCancel"
+                       (ionInput)="searchProduct($event)"
+                       (ionCancel)="onSearchCancel($event)" 
+                       (keyup.enter)="closeKeybord($event.keyCode)"></ion-searchbar>
+
+        <ion-searchbar select-all #searchbar placeholder="search the Entire Product list" style="width: 90%;" class="floatRight" *ngIf="searchBar && (orderdirect*1) && defaultSearch"  [(ngModel)]="myInput"
+                       [showCancelButton]="shouldShowCancel"
+                       (ionInput)="searchAllProduct($event)"
+                       (ionCancel)="onSearchCancel($event)"
+                       (keyup.enter)="closeKeybord($event.keyCode)"></ion-searchbar> 
         <button ion-button icon-only menuToggle (click)="openMenu()" *ngIf="!searchBar && default">
                 <ion-icon name="menu" color='yellow'></ion-icon>
         </button>
@@ -31,24 +35,42 @@
     <ion-grid class="black gridScroll"  >    
         <ion-row *ngIf="!isManualLogin">
             <ion-col col-6>
-                <button class="no-margin radius" ion-button full margin-top color="red" (click)="submitProductByScan()">Submit</button>
+                <button class="no-margin radius" ion-button full margin-top color="red" (click)="submitProductByScan()">{{sub}}</button>
             </ion-col>
-            <ion-col col-6>
-                <button class="no-margin radius" ion-button full margin-top  (click)="addProductByBarcode()">Scan</button>
+            <ion-col col-6 *ngIf="sacnType != 'true'">
+                     <button class="no-margin radius" ion-button full margin-top  (click)="addProductByBarcode()">Scan</button>
+            </ion-col>
+            <ion-col col-6 *ngIf="sacnType == 'true'">
+                     <ion-item class='textbox focusBlue'>
+                    <ion-input select-all type="text" #focusInput placeholder="Scan Barcode Here" [(ngModel)]="laser" (keyup.enter)="addProductByLaser($event.keyCode)"></ion-input>
+                </ion-item>
             </ion-col>
         </ion-row>
         <ion-row *ngIf="(isManualLogin && products && products.length)">
             <ion-col col-6>
-                <button class="no-margin radius" ion-button full margin-top color='red' (click)="submitProduct()">Submit</button>
+                <button class="no-margin radius" ion-button full margin-top color='red' (click)="submitProduct()">{{sub}}</button>
             </ion-col>
-            <ion-col col-6>
-                <button class="no-margin radius" ion-button full margin-top  (click)="addItemByBarcode()">Scan</button>
+            <ion-col col-6 *ngIf="sacnType != 'true'">
+                     <button class="no-margin radius" ion-button full margin-top  (click)="addItemByBarcode()">Scan</button>
+            </ion-col>
+            <ion-col col-6 *ngIf="sacnType == 'true'">
+                     <ion-item  class='textbox focusBlue'>
+                    <ion-input select-all type="text" #focusInput placeholder="Scan Barcode Here" [(ngModel)]="laser" (keyup.enter)="addItemByLaser($event.keyCode)"></ion-input>
+                </ion-item>
+            </ion-col>
+        </ion-row>
+        <ion-row *ngIf="(orderdirect*1) && userDetails.addanyproduct && (userDetails.addanyproduct== '1' || userDetails.addanyproduct== 'true') ">
+            <ion-col no-padding>
+                <ion-item no-lines class="black" *ngIf="(orderdirect*1) && userDetails.addanyproduct== '1' || userDetails.addanyproduct== 'true' " >
+                    <ion-label style="color: white;">Search All Products</ion-label>
+                    <ion-toggle checked="true" [(ngModel)]="defaultSearch" (ngModelChange)="changeOrderDirect()"></ion-toggle>
+                </ion-item> 
             </ion-col>
         </ion-row>
     </ion-grid>
     <ion-spinner name="bubbles" class="center spinSearch" *ngIf="spinForSearch"></ion-spinner>
-    <ion-list no-margin no-lines color="lightGray">
-        <ion-list-header no-lines no-margin class="font16 fontWidth">
+    <ion-list no-margin no-lines color="lightGray" [ngClass]="{marginTop:(orderdirect*1)}">
+        <ion-list-header no-lines no-margin class="font16 fontWidth" *ngIf="selectedConsignment.Name">
             {{selectedConsignment.Name}}
         </ion-list-header>
     </ion-list>
@@ -57,7 +79,6 @@
         </ion-spinner>
     </div>
     <ion-list padding>
-
         <div *ngIf="isManualLogin">
             <div padding text-center *ngIf="products && products.length==0 || !isFound">
                  <ion-badge color="danger">Product Not Found </ion-badge>
@@ -91,7 +112,7 @@
                                                 </ion-col>
                                                 <ion-col col-4 no-padding>
                                                     <!--<span class="qty">  {{product['qty']}}  </span>-->
-                                                    <input type="number" autoCorrect=false class="qty" [(ngModel)]="product['qty']" (blur)="onBlurMethod(product)">
+                                                    <ion-input type="tel" select-all (keypress)="preventText($event)" autoCorrect=false class="qty inputQty" [(ngModel)]="product['qty']" (blur)="onBlurMethod($event,product)"></ion-input>
                                                 </ion-col>
                                                 <ion-col col-4 no-padding>
                                                     <button no-margin  color="gray" class="radiusRight" float-right ion-button icon-only (click)="add(product)">
@@ -112,7 +133,8 @@
                                             </ion-col>
                                             <ion-col col-4 no-padding>
                                                 <!--<span class="qty">  {{product['qty']}}  </span>-->
-                                                <input type="number" autoCorrect=false class="qty" [(ngModel)]="product['qty']" (blur)="onBlurMethod(product)">
+                                                <ion-input type="tel" select-all autoCorrect=false class="qty inputQty" [(ngModel)]="product['qty']" (keypress)="preventText($event)" (blur)="onBlurMethod($event,product)">
+                                                </ion-input>
                                             </ion-col>
                                             <ion-col col-4 no-padding>
                                                 <button no-margin  color="gray" class="radiusRight" float-right ion-button icon-only (click)="add(product)">
@@ -142,7 +164,7 @@
         <ion-grid padding-top>    
             <ion-row *ngIf="!isManualLogin">
                 <ion-col col-6>
-                    <button class="no-margin radius" ion-button full margin-top color="red" (click)="submitProductByScan()">Submit</button>
+                    <button class="no-margin radius" ion-button full margin-top color="red" (click)="submitProductByScan()">{{sub}}</button>
                 </ion-col>
                 <ion-col col-6>
                     <button class="no-margin radius" ion-button full margin-top  (click)="addProductByBarcode()">Scan</button>
@@ -155,7 +177,7 @@
                         </ion-row>-->
             <ion-row *ngIf="(isManualLogin && products && products.length)">
                 <ion-col col-6>
-                    <button class="no-margin radius" ion-button full margin-top color='red' (click)="submitProduct()">Submit</button>
+                    <button class="no-margin radius" ion-button full margin-top color='red' (click)="submitProduct()">{{sub}}</button>
                 </ion-col>
                 <ion-col col-6>
                     <button class="no-margin radius" ion-button full margin-top  (click)="addItemByBarcode()">Scan</button>

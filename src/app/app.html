@@ -13,7 +13,15 @@
         <ion-item menuClose *ngIf="_consignmentService.checkLoginBy()=='manual'" (click)="gotoChangePassword()">Change Password</ion-item>
         <ion-item *ngIf="checkLoginBy()">
             <ion-label>Gallery View</ion-label>
-            <ion-toggle checked="true" [(ngModel)]="landscape" (ngModelChange)="setDisplayMode(landscape)"></ion-toggle>
+            <ion-toggle [(ngModel)]="landscape" (ngModelChange)="setDisplayMode(landscape)"></ion-toggle>
+        </ion-item>
+        <ion-item *ngIf="checkLoginBy()">
+            <ion-label>Laser Scanner Enable</ion-label>
+            <ion-toggle [(ngModel)]="laserScan" (ngModelChange)="setScan(laserScan)"></ion-toggle>
+        </ion-item>
+        <ion-item *ngIf="checkLoginBy()">
+                  <ion-label>Use Default Browser</ion-label>
+            <ion-toggle  [color]="dark" [(ngModel)]="browser" (ngModelChange)="setBrowser(browser)"></ion-toggle>
         </ion-item>
         <ion-item menuClose (click)="logout()">Logout</ion-item>
     </ion-list>

@@ -18,7 +18,7 @@ export class HomePage {
     itemSelected(selectedConsignment) {
         let selection=false;
         let userDetails: any = localStorage.getItem('userDetails') ? JSON.parse(localStorage.getItem('userDetails'))[0] : null;
-        if ((userDetails && userDetails.Orderdirect == "true" && userDetails.addanyproduct == "true") || (userDetails && userDetails.Orderdirect == "1" && userDetails.addanyproduct == "1")) {
+        if (userDetails && (userDetails.Orderdirect == "true" || userDetails.Orderdirect == "1")) {
             let confirm = this.alertCtrl.create({
                 title: 'Please Select',
                 message: '',
@@ -27,14 +27,14 @@ export class HomePage {
                         text: 'Place Order',
                         handler: () => {
                             selection=true;
-                            this.navCtrl.push(ConsignmentInPage, {"selectedConsignment": selectedConsignment, "selection": 'Place_Order'}, {animate: false});
+                            this.navCtrl.push(ConsignmentInPage, {"selectedConsignment": selectedConsignment, "selection": 1}, {animate: false});
                         }
                     },
                     {
                         text: 'Record Usage',
                         handler: () => {
                             selection=true;
-                            this.navCtrl.push(ConsignmentInPage, {"selectedConsignment": selectedConsignment, "selection": 'Record_Usage'}, {animate: false});
+                            this.navCtrl.push(ConsignmentInPage, {"selectedConsignment": selectedConsignment, "selection": 0}, {animate: false});
                         }
                     }
                 ]
@@ -43,7 +43,7 @@ export class HomePage {
             confirm.onDidDismiss(data => {
             })
         } else {
-            this.navCtrl.push(ConsignmentInPage, {"selectedConsignment": selectedConsignment, "selection": ""}, {animate: false});
+            this.navCtrl.push(ConsignmentInPage, {"selectedConsignment": selectedConsignment, "selection": 0}, {animate: false});
         }
     }
     onClickImage(url) {

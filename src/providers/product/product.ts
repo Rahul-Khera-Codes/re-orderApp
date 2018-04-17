@@ -15,6 +15,25 @@ export class ProductProvider {
             })
         })
     }
+    queryProduct(data:any) {
+        return new Promise((resolve, reject) => {
+            let productSearch = [];
+            this.openDB().then(() => {
+                let search="";
+                forEach(data,(value,key:number)=>{
+                    search=`${search} SearchText LIKE '%${value}%' ${(key < (data.length-1)*1)?'and':''}`;
+                })
+                this.DB.executeSql(`SELECT * FROM Product WHERE ${search}`, []).then((res) => {
+                    if (res.rows.length) {
+                        for (let i = 0; i < res.rows.length; i++) {
+                            productSearch.push((res.rows.item(i)));
+                        }
+                    }
+                    resolve(productSearch);
+                }).catch(e => console.log(e));
+            })
+        })
+    }
     queryToProductCode(ProductID) {
         return new Promise((resolve, reject) => {
             let productCode = [];

@@ -28,6 +28,7 @@ import {Observable} from 'rxjs/Rx';
 import {url} from '../../providers/config/config';
 import {NetworkProvider} from '../../providers/networkWatch/network';
 import * as _ from 'lodash';
+import {Keyboard} from '@ionic-native/keyboard';
 
 @Component({
     selector: 'page-product-view',
@@ -36,6 +37,7 @@ import * as _ from 'lodash';
 export class ProductViewPage {
     @ViewChild("searchbar") searchbar: Searchbar;
     @ViewChild(Content) content: Content;
+    @ViewChild('focusInput') Input;
     barcodeData: object;
     err: string;
     myInput;
@@ -60,8 +62,8 @@ export class ProductViewPage {
         "IDLocal": 0,
         "contactIDLocal": -1,
         "customerIDLocal": -1,
-        "Orderdirect": "",
-        "Processed": ""
+        "Orderdirect": 0,
+        "Processed": 0
     }
     searchBar: boolean = false;
     isManualLogin = false;
@@ -74,7 +76,7 @@ export class ProductViewPage {
     userDetails: any;
     request: any;
     count: number = 0;
-    orderdirect = "";
+    orderdirect = 0;
     start = 0;
     end = 20;
     productlength = 0;
@@ -85,17 +87,46 @@ export class ProductViewPage {
     page: number = 1;
     searchCheck: boolean = false;
     valForSEarch = "";
-    constructor(private _net: NetworkProvider, private _apiProvider: ApiServiceProvider, private _event: EventProvider, private iab: InAppBrowser, public _export: ExportDataProvider, public modalCtrl: ModalController, public _menuCtrl: MenuController, private _toast: ToastProvider, private _localStorage: LocalStorageProvider, private _consignmentProvider: ConsignmentProvider, private geolocation: Geolocation, private _productProvider: ProductProvider, public alertCtrl: AlertController, private barcodeScanner: BarcodeScanner, public navCtrl: NavController, public navParams: NavParams) {}
+    sub: string;
+    defaultSearch = false;
+    sacnType = localStorage.getItem('laserScan');
+    browserDefault = 'false';
+    laser;
+    constructor(private keyboard: Keyboard, private _net: NetworkProvider, private _apiProvider: ApiServiceProvider, private _event: EventProvider, private iab: InAppBrowser, public _export: ExportDataProvider, public modalCtrl: ModalController, public _menuCtrl: MenuController, private _toast: ToastProvider, private _localStorage: LocalStorageProvider, private _consignmentProvider: ConsignmentProvider, private geolocation: Geolocation, private _productProvider: ProductProvider, public alertCtrl: AlertController, private barcodeScanner: BarcodeScanner, public navCtrl: NavController, public navParams: NavParams) {}
 
     ngOnInit() {
+        if (!this.sacnType) {
+            this.sacnType = 'true';
+        }
         this._event.mode.subscribe(event => {
             this.displayMode = localStorage.getItem('displayMode');
+        })
+        this._event.brower.subscribe(event => {
+            this.browserDefault = localStorage.getItem('defaultBrowser');
+        })
+        if (this.sacnType == 'true') {
+            setTimeout(() => {
+                this.Input.setFocus();
+            }, 1000);
+        }
+        this._event.scan.subscribe(event => {
+            this.sacnType = localStorage.getItem('laserScan');
+            if (this.sacnType == 'true') {
+                setTimeout(() => {
+                    this.Input.setFocus();
+                }, 500);
+            }
         })
         this.checkLoginBy();
         this.selectedConsignment = this.navParams.get('selectedConsignment');
         this.usageData.jobID = this.navParams.get('jobID');
         this.usageData.Orderdirect = this.navParams.get('selection');
         this.orderdirect = this.usageData.Orderdirect;
+        if (!this.orderdirect) {
+            this.sub = "Submit Usage"
+        } else {
+            this.sub = "Place Order"
+        }
         this.default = this.navParams.get('default');
         this.userDetails = localStorage.getItem('userDetails') ? JSON.parse(localStorage.getItem('userDetails'))[0] : null;
         if (this.selectedConsignment) {
@@ -121,8 +152,20 @@ export class ProductViewPage {
                 })
             })
         }
-        this.getLocation();
+        if (!(this.userDetails.addanyproduct == '1' || this.userDetails.addanyproduct == 'true') && (this.orderdirect * 1)) {
+            this.defaultSearch = true;
+        }
+        setTimeout(() => {
+            this.getLocation();
+        }, 2000)
 
+    }
+    changeOrderDirect() {
+        if (!this.defaultSearch) {
+            this.searchProduct({target: {value: this.myInput}});
+        } else {
+            this.searchAllProduct({target: {value: this.myInput}});
+        }
     }
     scrollTop() {
         this.content.scrollToTop(1000);
@@ -133,7 +176,7 @@ export class ProductViewPage {
     gotoSearch() {
         setTimeout(() => {
             this.searchbar.setFocus();
-        }, 200);
+        }, 500);
         this.searchBar = true;
     }
 
@@ -146,7 +189,15 @@ export class ProductViewPage {
         this.searchCheck = false;
     }
     onClickImage(url) {
-        window.open(url, '_system');
+        if (this.browserDefault == 'false') {
+            if (url != "null") {
+                this.browser = this.iab.create(url, '_self', "hardwareback=yes,location=yes,toolbar=true,keyboardDisplayRequiresUserAction=no");
+            }
+        } else {
+            if (url != "null") {
+                window.open(url, '_system');
+            } 
+        }
     }
     checkLoginBy() {
         if (this._consignmentProvider.checkLoginBy() == constantLoginBy.manual) {
@@ -182,12 +233,19 @@ export class ProductViewPage {
         this.isDataExistINList(productData.ID, productData['qty']);
     }
 
-    onBlurMethod(product) {
-        if (product['qty'] && product['qty'] > 0) {
+    onBlurMethod(event,product) {
+        if(product['qty']){
+        if (product['qty'] > 0) {
             this.isDataExistINList(product.ID, product['qty']);
         } else {
             product['qty'] = 0;
         }
+        }else {
+            product['qty'] = 0;
+        }
+    }
+    preventText(event){
+        return event.charCode >= 48 && event.charCode <= 57;
     }
     ionViewDidLoad() {
     }
@@ -218,7 +276,8 @@ export class ProductViewPage {
             "productID": "",
             "usageIDLocal": 0,
             "createdDateTime": "",
-            "Orderdirect": this.orderdirect
+            "Orderdirect": this.orderdirect,
+            "Processed": 0
         }
         return new Promise((resolve, reject) => {
             this._consignmentProvider.checkUserType().then((userType) => {
@@ -254,7 +313,7 @@ export class ProductViewPage {
         })
     }
     submit() {
-        if (this.usageData && this.usageData['IDLocal']) {
+        if (this.usageData && this.usageData['IDLocal'] && this.usageLineDataStore.length) {
             if (this.isLogin || this.selectedConsignment['ReLoginToSubmit'] && this.selectedConsignment['ReLoginToSubmit'] == "true") {
                 let profileModal = this.modalCtrl.create(LoginPage, {relogin: true, email: this.userData()['EmailAddress']});
                 profileModal.onDidDismiss(data => {
@@ -291,7 +350,7 @@ export class ProductViewPage {
                         "contactIDLocal": -1,
                         "customerIDLocal": -1,
                         "Orderdirect": this.orderdirect,
-                        "Processed": ""
+                        "Processed": 0
                     }
                 })
             })
@@ -349,7 +408,7 @@ export class ProductViewPage {
                         }
                     })
                 } else {
-                    return false;
+                    resolve(filter_data);
                 }
             } else {
                 resolve(filter_data);
@@ -367,13 +426,40 @@ export class ProductViewPage {
             }));
         })
     }
+    addItemByLaser(keyCode) {
+        if (typeof keyCode == 'number' && keyCode == 13) {
+            if (this.laser && this.laser.length) {
+                this.keyboard.close();
+                if (!this.defaultSearch) {
+                    this.checkBarCodeOnproduct({text: this.laser}).then((filterBarcodeData: any) => {
+                        this.isFound = true;
+                        this.createPopupForScanSearch(filterBarcodeData);
+                    }, (err) => {
+
+                    });
+                } else {
+                    if (this._net.get()) {
+                        this._apiProvider.apiCall(`${url.url}/search/barcode/${this.laser}`).subscribe(res => {
+                            forEach(res.data, (value, key) => {
+                                value['qty'] = 0;
+                            });
+                            let filterBarcodeData = res.data;
+                            this.createPopupForScanSearch(filterBarcodeData);
+                        });
+                    } else {
+                        this._toast.presentToast("Please cleck Network Connection", 3000);
+                    }
+                }
+            }
+        }
+    }
     addItemByBarcode() {
         let cancel = false;
         this.isFound = true;
         let userDetails: any = localStorage.getItem('userDetails') ? JSON.parse(localStorage.getItem('userDetails'))[0] : null;
         this.barcodeScanner.scan().then((barcodeData) => {
             if (barcodeData.text) {
-                if (userDetails && !((userDetails.addanyproduct == "true") || (userDetails.addanyproduct == "1"))) {
+                if (!this.defaultSearch) {
                     this.checkBarCodeOnproduct(barcodeData).then((filterBarcodeData: any) => {
                         this.isFound = true;
                         this.createPopupForScanSearch(filterBarcodeData);
@@ -408,12 +494,19 @@ export class ProductViewPage {
                     this.isDataExistINList(data.ID, data.qty);
                 } else {
                     filterBarcodeData[0].qty = qty;
-                    this._toast.presentToast("Please add quentity", 3000);
+                    //                    this._toast.presentToast("Please add quantity", 3000);
                 }
                 if (data['flag']) {
                     delete data['flag'];
                     if (!data['flag']) {
-                        this.addItemByBarcode();
+                        if (this.sacnType == 'true') {
+                            this.laser = null;
+                            setTimeout(() => {
+                                this.Input.setFocus();
+                            }, 500);
+                        } else {
+                            this.addItemByBarcode();
+                        }
                     }
                 }
             });
@@ -423,7 +516,14 @@ export class ProductViewPage {
             profileModal.present();
             profileModal.onDidDismiss((data) => {
                 if (data) {
-                    this.addItemByBarcode();
+                    if (this.sacnType == 'true') {
+                        this.laser = null;
+                        setTimeout(() => {
+                            this.Input.setFocus();
+                        }, 500);
+                    } else {
+                        this.addItemByBarcode();
+                    }
                 }
             })
         }
@@ -438,10 +538,20 @@ export class ProductViewPage {
         let val = ev.target.value;
         this.spinForSearch = false;
         if (val && val.trim() != '') {
-            this.data = this.products.filter((item) => {
-                return (item['SearchText'].toLowerCase().indexOf(val.toLowerCase()) > -1);
-            })
-            this.products = this.data.splice(this.start, this.end);
+            let data = val.split(" ")
+            this._productProvider.queryProduct(data).then((res) => {
+                forEach(res, (value, key) => {
+                    value['qty'] = 0;
+                })
+                this.data = res;
+                this.products = this.data.splice(this.start, this.end);
+                return this.products;
+            });
+        }
+    }
+    closeKeybord(keyCode) {
+        if (typeof keyCode == 'number' && keyCode == 13) {
+            this.keyboard.close();
         }
     }
     searchAllProduct(ev: any) {
@@ -517,6 +627,54 @@ export class ProductViewPage {
                 // An error occurred
             });
         });
+    }
+    addProductByLaser(keyCode) {
+        if (typeof keyCode == 'number' && keyCode == 13) {
+            if (this.laser.length) {
+                this.keyboard.close();
+                if (!this.defaultSearch) {
+                    this.checkBarCodeOnproduct({text: this.laser}).then((filterBarcodeData: any) => {
+                        if (filterBarcodeData && filterBarcodeData.length) {
+                            this.isDataExistINList(filterBarcodeData[0].ID, 1);
+                        } else {
+                            this._toast.presentToast("Product Not Found", 3000);
+                            this.isFound = false;
+                            this.laser = null;
+                            setTimeout(() => {
+                                this.Input.setFocus();
+                            }, 500);
+                        }
+                        this.laser = null;
+                        setTimeout(() => {
+                            this.Input.setFocus();
+                        }, 500);
+                    }, (err) => {
+                        this.err = err;
+                    });
+                } else {
+                    if (this._net.get()) {
+                        this._apiProvider.apiCall(`${url.url}/search/barcode/${this.laser}`).subscribe(res => {
+                            forEach(res.data, (value, key) => {
+                                value['qty'] = 0;
+                            });
+                            let filterBarcodeData = res.data;
+                            if (filterBarcodeData && filterBarcodeData.length) {
+                                this.isDataExistINList(filterBarcodeData[0].ID, 1);
+                            } else {
+                                this._toast.presentToast("Product Not Found", 3000);
+                                this.isFound = false;
+                                this.laser = null;
+                                setTimeout(() => {
+                                    this.Input.setFocus();
+                                }, 500);
+                            }
+                        });
+                    } else {
+                        this._toast.presentToast("Please cleck Network Connection", 3000);
+                    }
+                }
+            }
+        }
     }
     onSearchCancel() {
         this.isFound = true;

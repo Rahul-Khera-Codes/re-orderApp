@@ -9,7 +9,7 @@ import {PopupSuccessPage} from './../popupForSuccess/popupSuccess';
 export class PopupPage implements OnInit {
     data;
     qty = 0;
-    constructor(public modalCtrl: ModalController,public viewCtrl: ViewController, public _navParams: NavParams) {
+    constructor(public modalCtrl: ModalController, public viewCtrl: ViewController, public _navParams: NavParams) {
     }
     ionViewWillEnter() {
     }
@@ -23,10 +23,12 @@ export class PopupPage implements OnInit {
     }
     submit() {
         if (this.data.qty > 0) {
-            this.data['flag']=1;
-             let profileModal = this.modalCtrl.create(PopupSuccessPage, {data: "Successfully Submitted"}, {cssClass: "always-modalSuccess"});
-             profileModal.present();
-             this.viewCtrl.dismiss(this.data);
+            this.data['flag'] = 1;
+            let profileModal = this.modalCtrl.create(PopupSuccessPage, {data: "Successfully Submitted"}, {cssClass: "always-modalSuccess"});
+            profileModal.present();
+            profileModal.onDidDismiss((res) => {
+                this.viewCtrl.dismiss(this.data);
+            })
         } else {
             return false;
         }

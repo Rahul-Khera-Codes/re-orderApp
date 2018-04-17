@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnInit, ViewChild} from '@angular/core';
 import {NavController, NavParams} from 'ionic-angular';
 import {ConsignmentProvider} from './../../providers/consignment/consignment';
 import {constantLoginBy} from './../../providers/config/config';
@@ -11,18 +11,19 @@ import {InAppBrowser} from '@ionic-native/in-app-browser';
     templateUrl: 'consignment-in.html'
 })
 export class ConsignmentInPage implements OnInit {
+    @ViewChild('focusInput') myInput;
     isManualLogin = false;
     isLogin: boolean = false;
     jobIDErr: boolean = false;
     usageData = {
         "jobID": "",
         "selectedConsignment": "",
-        "selection":""
+        "selection": ""
     }
     err: string;
     myInputEnable: boolean = false;
     browser: any;
-    userInfo:any;
+    userInfo: any;
     constructor(private iab: InAppBrowser, private barcodeScanner: BarcodeScanner, public navCtrl: NavController, public navParams: NavParams, public _consignmentProvider: ConsignmentProvider) {
     }
 
@@ -30,8 +31,11 @@ export class ConsignmentInPage implements OnInit {
         this.usageData.jobID = '';
         this.userInfo = JSON.parse(localStorage.getItem('userDetails'))[0];
         if (this.userInfo['JobIDForce']) {
-//           this.usageData['jobID'] = " ";
+            //           this.usageData['jobID'] = " ";
         }
+        setTimeout(() => {
+            this.myInput.setFocus();
+        }, 500);
     }
     ngOnInit() {
         this.usageData.selectedConsignment = this.navParams.get('selectedConsignment');
@@ -52,10 +56,22 @@ export class ConsignmentInPage implements OnInit {
         if (this.usageData['jobID'] && this.usageData['jobID'].length) {
             this.myInputEnable = true;
             this.jobIDErr = false;
-            this.navCtrl.push(ProductViewPage, {'selectedConsignment': this.usageData.selectedConsignment, 'jobID': this.usageData.jobID,'selection':this.usageData.selection}, {animate: false});
+            this.navCtrl.push(ProductViewPage, {'selectedConsignment': this.usageData.selectedConsignment, 'jobID': this.usageData.jobID, 'selection': this.usageData.selection}, {animate: false});
         } else {
             this.jobIDErr = true;
             this.myInputEnable = false;
+        }
+    }
+    redirect(keyCode) {
+        if (typeof keyCode == 'number' && keyCode == 13) {
+            if (this.usageData['jobID'] && this.usageData['jobID'].length) {
+                this.myInputEnable = true;
+                this.jobIDErr = false;
+                this.navCtrl.push(ProductViewPage, {'selectedConsignment': this.usageData.selectedConsignment, 'jobID': this.usageData.jobID, 'selection': this.usageData.selection}, {animate: false});
+            } else {
+                this.jobIDErr = true;
+                this.myInputEnable = false;
+            }
         }
     }
     openBarCode() {
@@ -65,7 +81,7 @@ export class ConsignmentInPage implements OnInit {
             this.usageData['jobID'] = barcodeData.text;
             this.myInputEnable = true;
             if (this.usageData['jobID'] && this.usageData['jobID'].length) {
-                this.navCtrl.push(ProductViewPage, {'selectedConsignment': this.usageData.selectedConsignment, 'jobID': this.usageData.jobID,'selection':this.usageData.selection}, {animate: false});
+                this.navCtrl.push(ProductViewPage, {'selectedConsignment': this.usageData.selectedConsignment, 'jobID': this.usageData.jobID, 'selection': this.usageData.selection}, {animate: false});
             } else {
                 this.jobIDErr = true;
             }

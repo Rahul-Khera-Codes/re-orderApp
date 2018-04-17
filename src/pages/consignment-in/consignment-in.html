@@ -19,7 +19,7 @@
         <!--*ngIf="isManualLogin"-->
         <ion-item >
             <ion-label color="primary">Job ID <span class="red" *ngIf="userInfo && userInfo['JobIDForce']">*</span></ion-label>
-            <ion-input placeholder="ID" [(ngModel)]="usageData['jobID']"></ion-input>
+            <ion-input select-all placeholder="ID" #focusInput [(ngModel)]="usageData['jobID']" (keyup.enter)="redirect($event.keyCode)"></ion-input>
         </ion-item>
 
         <ion-grid>

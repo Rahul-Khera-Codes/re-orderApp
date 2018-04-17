@@ -13,6 +13,7 @@ import {LocalStorageProvider} from '../../providers/local-storage/local-storage'
 import {IsLoginEventHandlerProvider} from '../../providers/is-login-event-handler/is-login-event-handler'
 import {LocalDbProvider} from '../../providers/local-db/local-db';
 import {AlertController} from 'ionic-angular';
+import {Keyboard} from '@ionic-native/keyboard';
 
 @Component({
     selector: 'page-login',
@@ -31,7 +32,10 @@ export class LoginPage {
     spinBarcode: boolean = false;
     synErr: boolean = false;
     isRemember: boolean = false;
-    constructor(public alertCtrl: AlertController, public _local: LocalDbProvider, public _isLogin: IsLoginEventHandlerProvider, public _storage: LocalStorageProvider, public viewCtrl: ViewController, private _toast: ToastProvider, private _consignmentProvider: ConsignmentProvider, private _login: LoginProvider, private barcodeScanner: BarcodeScanner, public navCtrl: NavController, public navParams: NavParams, private formBuilder: FormBuilder) {
+    result;
+    laser: string;
+    spinForLaser: boolean = false;
+    constructor(private keyboard: Keyboard, public alertCtrl: AlertController, public _local: LocalDbProvider, public _isLogin: IsLoginEventHandlerProvider, public _storage: LocalStorageProvider, public viewCtrl: ViewController, private _toast: ToastProvider, private _consignmentProvider: ConsignmentProvider, private _login: LoginProvider, private barcodeScanner: BarcodeScanner, public navCtrl: NavController, public navParams: NavParams, private formBuilder: FormBuilder) {
         this.relogin = this.navParams.get('relogin');
         this.preUserEmail = this.navParams.get('email');
         let userInfo = null;
@@ -67,7 +71,7 @@ export class LoginPage {
             this.isConsignmentExist = false;
             this._isLogin.eventGenraterForLogin();
             let userDetails: any = localStorage.getItem('userDetails') ? JSON.parse(localStorage.getItem('userDetails'))[0] : null;
-            if ((userDetails && userDetails.Orderdirect == "true" && userDetails.addanyproduct == "true") || (userDetails && userDetails.Orderdirect == "1" && userDetails.addanyproduct == "1")) {
+            if (userDetails && (userDetails.Orderdirect == "true" || userDetails.Orderdirect == "1")) {
                 let confirm = this.alertCtrl.create({
                     title: 'Please Select',
                     message: '',
@@ -76,22 +80,22 @@ export class LoginPage {
                             text: 'Place Order',
                             handler: () => {
                                 console.log('Disagree clicked');
-                                this.navCtrl.push(ConsignmentInPage, {"selectedConsignment": consignmentList[0], "selection": 'Place_Order'}, {animate: false});
+                                this.navCtrl.setRoot(ConsignmentInPage, {"selectedConsignment": consignmentList[0], "selection": 1}, {animate: false});
                             }
                         },
                         {
                             text: 'Record Usage',
                             handler: () => {
                                 console.log('Agree clicked');
-                                this.navCtrl.push(ConsignmentInPage, {"selectedConsignment": consignmentList[0], "selection": 'Record_Usage'}, {animate: false});
+                                this.navCtrl.setRoot(ConsignmentInPage, {"selectedConsignment": consignmentList[0], "selection": 0}, {animate: false});
                             }
                         }
                     ]
                 });
-                let ref=confirm;
+                //                let ref = confirm;
                 confirm.present();
-                confirm.onDidDismiss(data=>{
-                    ref.present();
+                confirm.onDidDismiss(data => {
+                    //                    ref.present();
                 })
             } else {
                 this.navCtrl.setRoot(ConsignmentInPage, {"selectedConsignment": consignmentList[0], "default": true, "selection": ""}, {animate: false});
@@ -101,6 +105,7 @@ export class LoginPage {
             this.isConsignmentExist = true;
         }
     }
+
     getConsignmentAndCheckUserType() {
         this._consignmentProvider.checkUserType().then((userType) => {
             if (userType == constantUserType['customer']) {
@@ -120,6 +125,7 @@ export class LoginPage {
     }
     signin(formData) {
         this.synErr = false;
+        this.err = null;
         if (!this.spin) {
             this._consignmentProvider.removeUserData();
             if (this.isRemember) {
@@ -185,6 +191,27 @@ export class LoginPage {
             // An error occurred
         });
     }
+    redirect(keyCode) {
+        if (typeof keyCode == 'number' && keyCode == 13) {
+            this.spinForLaser = true;
+            this.keyboard.close();
+            if (this.laser && this.laser.length) {
+                this._local.callDBtoManage({barCode: this.laser}).then((res) => {
+                    if (!res['message']) {
+                        this.authLoginByBarcode({text: this.laser})
+                    } else {
+                        this.spinBarcode = false;
+                        this.laser = null;
+                        this.spinForLaser = false;
+                        this.barCodeErr = res['message'];
+                    }
+                }, (err) => {
+                    this.authLoginByBarcode({text: this.laser})
+                    this.synErr = true;
+                })
+            }
+        }
+    }
     authLoginByBarcode(barcodeData) {
         this.barCodeErr = null;
         this._login.authUserCustomerByBarCode(barcodeData.text).then((response: any) => {
@@ -196,11 +223,13 @@ export class LoginPage {
                     this.getConsignmentAndCheckUserType();
                 }
                 this.spinBarcode = false;
+                this.spinForLaser = false;
                 this._toast.presentToast("Login Successful", 2000);
             }
         }, (err) => {
             this.spinBarcode = false;
-            console.log(err)
+            this.laser = null;
+            this.spinForLaser = false;
             this.barCodeErr = this.synErr ? 'Could not access the Web Server' : err;
         })
     }
