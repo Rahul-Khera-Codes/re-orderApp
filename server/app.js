@@ -133,6 +133,8 @@ function withStoredProcedure(body, callback) {
         value.ReLoginToSubmit = JSON.parse(JSON.stringify(value.ReLoginToSubmit)).data[0]
       if (value.IsActive)
         value.IsActive = JSON.parse(JSON.stringify(value.IsActive)).data[0]
+      if (value.IsDefaultPCTC)
+        value.IsDefaultPCTC = JSON.parse(JSON.stringify(value.IsDefaultPCTC)).data[0]
       return value
     })
     let data = JSON.parse(JSON.stringify(list_Data[0]))
@@ -298,6 +300,7 @@ function fetchAllData(callback) {
 
 
 app.post('/save/data', function(req, res, next) {
+  console.log(req.body)
   let orignal_data = req.body;
   let fileData = "";
   let filtered = _.filter(structure, (filtered_data) => {
@@ -721,6 +724,34 @@ app.post('/get/userData', function(req, res, next) {
       } else {
         res.json({ status: 0, message: "Invalid Login Type" })
       }
+    })
+  })
+})
+
+app.get('/search/product/:SearchText/:page/:limit', function(req, res, next) {
+  req.params.SearchText = req.params.SearchText.trim();
+  let array = req.params.SearchText.split(" ")
+  console.log(array)
+  let sql = `SELECT * from product where`;
+  _.forEach(array, (value, key) => {
+    sql = `${sql} SearchText LIKE '%${value}%' ${(key < (array.length-1)*1)?'and':''}`;
+  })
+  con.query(`${sql} LIMIT ${req.params.limit} OFFSET ${(req.params.page - 1) * req.params.limit}`, function(err, resp) {
+    if (err) throw err;
+    res.json({ status: 1, data: resp })
+  })
+})
+
+app.get('/search/barcode/:Barcode', function(req, res, next) {
+  con.query(`SELECT * FROM productcodes WHERE BarCode = '${req.params.Barcode}'`, function(err, resp) {
+    if (err) throw err;
+    let ProductIDLocal = ''
+    if (resp.length != 0) {
+      ProductIDLocal = resp[0].ProductIDLocal;
+    }
+    con.query(`SELECT * FROM product WHERE ID = '${ProductIDLocal}' OR code = '${req.params.Barcode}' OR BarCode1='${req.params.Barcode}' OR BarCode2='${req.params.Barcode}' OR BarCode3='${req.params.Barcode}'`, function(err, data) {
+      if (err) throw err;
+      res.json({ status: 1, data: data })
     })
   })
 })
