@@ -387,9 +387,9 @@ app.put('/forget/password', function(req, res, next) {
     const transporter = mailer.createTransport({
       host: smtp_data.SMTPServer,
       port: 25,
-      auth: {
-        user: 'bstgroup/user',
-        pass: '4201337'
+      secure: false,
+      tls:{
+        rejectUnauthorized: false
       }
     });
     let mailOptions = {
