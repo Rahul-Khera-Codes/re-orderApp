@@ -1,0 +1,120 @@
+[
+{
+  "type": "table",
+  "name": "Customer_Table",
+  "database": "reorderDB",
+  "filename": "ppp_Customer_ProductControlCustomer",
+  "structure":
+  {
+    "IDLocal": "INTEGER",
+    "IDWeb": "INTEGER",
+    "FirstName": "CHAR",
+    "LastName": "CHAR",
+    "EmailAddress": "CHAR",
+    "Password": "CHAR",
+    "CustomerAccountIDLocal": "CHAR",
+    "JobIDForce": "CHAR",
+    "LastUpdatedDateTime": "CHAR",
+    "LoginBarcode": "CHAR"
+  }
+},
+{
+  "type": "table",
+  "name": "Contact_Table",
+  "database": "reorderDB",
+  "filename": "ppp_Customer_ProductControlContact",
+  "structure":
+  {
+    "IDLocal": "INTEGER",
+    "IDWeb": "INTEGER",
+    "FirstName": "CHAR",
+    "LastName": "CHAR",
+    "EmailAddress": "CHAR",
+    "Password": "CHAR",
+    "CustomerIDLocal": "CHAR",
+    "CustomerIDWeb": "CHAR",
+    "JobIDForce": "CHAR",
+    "LastUpdatedDateTime": "CHAR",
+    "LoginBarcode": "CHAR"
+  }
+},
+{
+  "type": "table",
+  "name": "Product",
+  "database": "reorderDB",
+  "filename": "ppp_Customer_ProductControlProduct",
+  "structure":
+  {
+    "ID": "INTEGER",
+    "Code": "INTEGER",
+    "Name": "CHAR",
+    "Barcode1": "CHAR",
+    "Barcode2": "CHAR",
+    "Barcode3": "CHAR",
+    "SearchText": "CHAR",
+    "URL": "CHAR",
+    "ImageURL": "CHAR",
+    "IsActive": "BOOLEAN"
+  }
+},
+{
+  "type": "table",
+  "name": "ProductCodes",
+  "database": "reorderDB",
+  "filename": "ppp_Customer_ProductControlProductCodes",
+  "structure":
+  {
+    "ProductID": "INTEGER",
+    "Barcode": "INTEGER",
+    "Name": "CHAR"
+  }
+},
+{
+  "type": "table",
+  "name": "Product_Control_List",
+  "database": "reorderDB",
+  "filename": "ppp_Customer_ProductControlProductControl",
+  "structure":
+  {
+    "IDLocal": "INTEGER",
+    "IDWeb": "INTEGER",
+    "Name": "CHAR",
+    "LastUpdatedDateTime": "CHAR",
+    "CustomerIDLocal": "INTEGER",
+    "CustomerIDWeb": "INTEGER",
+    "IsDefault": "CHAR",
+    "ReLoginToSubmit": "BOOLEAN"
+  }
+
+},
+{
+  "type": "table",
+  "name": "List_to_Contact",
+  "database": "reorderDB",
+  "filename": "ppp_Customer_ProductControlProductControlToContact",
+  "structure":
+  {
+    "IDLocal": "INTEGER",
+    "IDWeb": "INTEGER",
+    "ContactIDLocal": "INTEGER",
+    "ContactIDWeb": "INTEGER",
+    "ListIDLocal": "INTEGER",
+    "ListIDWeb": "INTEGER",
+    "IsActive": "INTEGER",
+    "IsDefault": "INTEGER"
+  }
+},
+{
+  "type": "table",
+  "name": "Product_Control_Line",
+  "database": "reorderDB",
+  "filename": "ppp_Customer_ProductControlProductControlLine",
+  "structure":
+  {
+    "IDLocal": "INTEGER",
+    "IDWeb": "INTEGER",
+    "ListIDLocal": "CHAR",
+    "ListIDWeb": "CHAR",
+    "ProductIDLocal": "INTEGER"
+  }
+}]
