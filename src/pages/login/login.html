@@ -1,0 +1,77 @@
+<ion-header>
+    <ion-navbar color="black" class='relative' *ngIf="!relogin">
+        <img src="assets/imgs/bst.jpg" alt="" class='headerLogo'/>
+    </ion-navbar>
+    <ion-toolbar *ngIf="relogin">
+        <ion-title>
+            Filter by
+        </ion-title>
+        <ion-buttons start>
+            <button ion-button (click)="dismiss()">
+                    <span ion-text color="primary" showWhen="ios">Cancel</span>
+                <ion-icon name="md-close" showWhen="android,windows,core"></ion-icon>
+            </button>
+        </ion-buttons>
+    </ion-toolbar>
+    <div padding style="background: #f8f8f8;">
+        <ion-segment [(ngModel)]="login">
+            <ion-segment-button value="custom">
+                Custom Login
+            </ion-segment-button>
+            <ion-segment-button value="remote">
+                Remote Login
+            </ion-segment-button>
+        </ion-segment>
+    </div>
+</ion-header>
+
+<ion-content> 
+    <div [ngSwitch]="login">
+        <form *ngSwitchCase="'custom'" [formGroup]="loginform" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" (ngSubmit)="signin(loginform.value)">
+            <ion-list>
+                <ion-item>
+                    <ion-label floating>Email</ion-label>
+                    <ion-input type="email" formControlName="email"></ion-input>
+                </ion-item>
+                <ion-item>
+                    <ion-label floating>Password</ion-label>
+                    <ion-input type="password" formControlName="password"></ion-input>
+                </ion-item>
+                <ion-item margin-top>
+                    <ion-label item-end>Save Account</ion-label>
+                    <ion-checkbox color="primary" [(ngModel)]="isRemember" [ngModelOptions]="{standalone: true}" (ngModelChange)="rememberMe()"></ion-checkbox>
+                </ion-item>
+                <div text-center padding-top>
+                    <a (click)="forgotPassword(loginform.value.email)">Forgot Password</a>
+                </div>
+            </ion-list>
+            <div padding>
+                <button ion-button color="red" class="radius" block [disabled]="!loginform.valid" >
+                        <span  *ngIf="spin==false" >
+                        Sign In
+                    </span>
+                    <ion-spinner name="circles"  *ngIf="spin" class="spin">
+                    </ion-spinner>
+                </button>
+            </div>
+            <div class="center" margin-top *ngIf="err">
+                 <ion-badge  color="danger">{{err}}</ion-badge>
+            </div>
+            <div class="center" margin-top *ngIf="isConsignmentExist">
+                 <ion-badge  color="danger">Consignment List not Exist</ion-badge>
+            </div>
+        </form> 
+        <div *ngSwitchCase="'remote'">
+            <img class="paddingBarCode" src="assets/imgs/br.png" alt=""/>
+            <div padding>
+                <button ion-button color="red" class="radius" block (click)="openBarCode()" >Sign In With Barcode</button>
+            </div>
+            <div class="center" margin-top *ngIf="barCodeErr">
+                 <ion-badge  color="danger">{{barCodeErr}}</ion-badge>
+            </div>
+            <div class="center" margin-top *ngIf="isConsignmentExist">
+                 <ion-badge  color="danger">Consignment List not Exist</ion-badge>
+            </div>
+        </div>
+    </div>
+</ion-content>
